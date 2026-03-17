@@ -1,4 +1,5 @@
 import { useState } from "react"; // User Input 
+import { apiClient } from "../api/client";
 
 type DailySummary = {
   date: string;
@@ -35,9 +36,28 @@ export default function DailySummaryPage() {
     const [error, setError] = useState<string | null>(null);
     const [summary, setSummary] = useState<DailySummary | null>(null);
 
-    const handleLoadSummary = () => {
-        setLoading(true);
-        setError("");
+    const handleLoadSummary = async () => {
+        if (!selectedDate) {
+            setError("Please select a date.");
+            setSummary(null);
+            return;
+        }
+
+        try {
+            setLoading(true);
+            setError("");
+
+            const response = await apiClient.get(
+                `/daily-summary?date=${selectedDate}`
+            );
+
+            setSummary(response.data);
+        } catch (error) {
+            setError("Failed to load daily summary.");
+            setSummary(null);
+        } finally {
+            setLoading(false);
+        }
 
         console.log("Loading summary for date:", selectedDate);
 
@@ -68,6 +88,30 @@ export default function DailySummaryPage() {
             </div>
 
             {error && <p style={{ color: "red" }}>{error}</p>}
+
+            {summary && (
+                <div style={{ marginTop: "24px" }}>
+                    <p>Date: {summary.date}</p>
+                    <p>Trip Count: {summary.tripCount}</p>
+                    <p>Total Collected Qty: {summary.totalCollectedQty}</p>
+                    <p>Total Loaded Qty: {summary.totalLoadedQty}</p>
+                    <p>Total Delivered Qty: {summary.totalDeliveredQty}</p>
+                    <p>Total Free Qty: {summary.totalFreeQty}</p>
+                    <p>Total To Be Paid Qty: {summary.totalToBePaidQty}</p>
+                    <p>Total Actual Paid Qty: {summary.totalActualPaidQty}</p>
+                    <p>Total Returned Qty: {summary.totalReturnedQty}</p>
+                    <p>Total Replacement Qty: {summary.totalReplacementQty}</p>
+                    <p>Total Cash Collected: {summary.totalCashCollected}</p>
+                    <p>Total Expenses: {summary.totalExpenses}</p>
+                    <p>Total Payroll Paid: {summary.totalPayrollPaid}</p>
+                    <p>Total Debt Created Today: {summary.totalDebtCreatedToday}</p>
+                    <p>Total Debt Payments Today: {summary.totalDebtPaymentsToday}</p>
+                    <p>Outstanding Debt: {summary.outstandingDebt}</p>
+                    <p>Net Cash Flow: {summary.netCashFlow}</p>
+                </div>
+            )}
+
+
         </section>
     )
 }
