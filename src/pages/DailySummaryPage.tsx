@@ -1,5 +1,25 @@
 import { useState } from "react"; // User Input 
 
+type DailySummary = {
+  date: string;
+  tripCount: number;
+  totalCollectedQty: number;
+  totalLoadedQty: number;
+  totalDeliveredQty: number;
+  totalFreeQty: number;
+  totalToBePaidQty: number;
+  totalActualPaidQty: number;
+  totalReturnedQty: number;
+  totalReplacementQty: number;
+  totalCashCollected: number;
+  totalExpenses: number;
+  totalPayrollPaid: number;
+  totalDebtCreatedToday: number;
+  totalDebtPaymentsToday: number;
+  outstandingDebt: number;
+  netCashFlow: number;
+};
+
 function getTodayLocalDate() {
     const today = new Date();
     const year = today.getFullYear();
@@ -9,12 +29,11 @@ function getTodayLocalDate() {
     return `${year}-${month}-${day}`;
 }
 
-
-
 export default function DailySummaryPage() {
     const [selectedDate, setSelectedDate] = useState(getTodayLocalDate()); // Initialize with today's date
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [summary, setSummary] = useState<DailySummary | null>(null);
 
     const handleLoadSummary = () => {
         setLoading(true);
