@@ -12,7 +12,7 @@ export default function AppLayout({ children }: Props) {
                     padding: 16,
                 }}
             >
-                <strong>Refilling Station</strong>
+                <strong>Water Refilling Station</strong>
             </header>
 
             <main style={{ padding: 20 }}>{children}</main>
