@@ -13,9 +13,18 @@ function getTodayLocalDate() {
 
 export default function DailySummaryPage() {
     const [selectedDate, setSelectedDate] = useState(getTodayLocalDate()); // Initialize with today's date
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleLoadSummary = () => {
+        setLoading(true);
+        setError("");
+
         console.log("Loading summary for date:", selectedDate);
+
+        setTimeout(() => {
+            setLoading(false);
+        }, 500);
     };
 
     return (
@@ -34,9 +43,12 @@ export default function DailySummaryPage() {
             </div>
 
             <div style={{ marginTop: "12px" }}>
-                <button onClick={handleLoadSummary}>Load Summary</button>
+                <button onClick={handleLoadSummary} disabled={loading}>
+                    {loading ? "Loading..." : "Load Summary"}
+                </button>
             </div>
 
+            {error && <p style={{ color: "red" }}>{error}</p>}
         </section>
     )
 }
