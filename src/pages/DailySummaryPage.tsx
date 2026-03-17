@@ -94,24 +94,22 @@ export default function DailySummaryPage() {
                     <p>Date: {summary.date}</p>
                     <p>Trip Count: {summary.tripCount}</p>
                     <p>Total Collected Qty: {summary.totalCollectedQty}</p>
-                    <p>Total Loaded Qty: {summary.totalLoadedQty}</p>
+                    {/* <p>Total Loaded Qty: {summary.totalLoadedQty}</p> */}
                     <p>Total Delivered Qty: {summary.totalDeliveredQty}</p>
                     <p>Total Free Qty: {summary.totalFreeQty}</p>
-                    <p>Total To Be Paid Qty: {summary.totalToBePaidQty}</p>
-                    <p>Total Actual Paid Qty: {summary.totalActualPaidQty}</p>
+                    {/* <p>Total To Be Paid Qty: {summary.totalToBePaidQty}</p> */}
+                    {/* <p>Total Actual Paid Qty: {summary.totalActualPaidQty}</p> */}
                     <p>Total Returned Qty: {summary.totalReturnedQty}</p>
                     <p>Total Replacement Qty: {summary.totalReplacementQty}</p>
                     <p>Total Cash Collected: {summary.totalCashCollected}</p>
                     <p>Total Expenses: {summary.totalExpenses}</p>
-                    <p>Total Payroll Paid: {summary.totalPayrollPaid}</p>
+                    <p>Total Salary Paid: {summary.totalPayrollPaid}</p>
                     <p>Total Debt Created Today: {summary.totalDebtCreatedToday}</p>
                     <p>Total Debt Payments Today: {summary.totalDebtPaymentsToday}</p>
                     <p>Outstanding Debt: {summary.outstandingDebt}</p>
                     <p>Net Cash Flow: {summary.netCashFlow}</p>
                 </div>
             )}
-
-
         </section>
     )
 }
