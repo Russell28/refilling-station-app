@@ -48,7 +48,7 @@ export default function DailySummaryPage() {
             setError("");
 
             const response = await apiClient.get(
-                `/daily-summary?date=${selectedDate}`
+                `/daily-summary/${selectedDate}`
             );
 
             setSummary(response.data);
