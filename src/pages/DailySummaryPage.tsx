@@ -14,6 +14,10 @@ function getTodayLocalDate() {
 export default function DailySummaryPage() {
     const [selectedDate, setSelectedDate] = useState(getTodayLocalDate()); // Initialize with today's date
 
+    const handleLoadSummary = () => {
+        console.log("Loading summary for date:", selectedDate);
+    };
+
     return (
         <section>
             <h2>Daily Summary</h2>
@@ -29,9 +33,9 @@ export default function DailySummaryPage() {
                 />
             </div>
 
-            <p style={{ marginTop: "12px" }}>
-                You selected: <strong>{selectedDate}</strong>
-            </p>
+            <div style={{ marginTop: "12px" }}>
+                <button onClick={handleLoadSummary}>Load Summary</button>
+            </div>
 
         </section>
     )
