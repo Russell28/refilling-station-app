@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { getTrips } from "../api/tripsApi";
 import type { Trip } from "../types/Trip";
+import { useNavigate } from "react-router-dom";
 
 export default function TripsPage() {
+  const navigate = useNavigate();
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,6 +27,7 @@ export default function TripsPage() {
   return (
     <section>
       <h2>Trips</h2>
+      <button onClick={() => navigate("/trips/new")}>New Trip</button>
       {loading && <p>Loading trips...</p>}
       {error && <p>{error}</p>}
 
@@ -60,6 +63,7 @@ export default function TripsPage() {
             <th style={{ textAlign: "right" }}>Estimated Cash</th>
             <th style={{ textAlign: "right" }}>Actual Cash</th>
             <th>Notes</th>
+            <th>Edit</th>
           </tr>
         </thead>
 
@@ -102,7 +106,11 @@ export default function TripsPage() {
                 {trip.actualCashCollected.toFixed(2)}
               </td>
               <td>{trip.notes || "-"}</td>
-
+              <td>
+                <button onClick={() => navigate(`/trips/${trip.id}/edit`)}>
+                  Edit
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

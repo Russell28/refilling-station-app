@@ -3,6 +3,7 @@ import AppLayout from "./layouts/AppLayout";
 import DashboardPage from "./pages/DashboardPage";
 import DailySummaryPage from "./pages/DailySummaryPage";
 import TripsPage from "./pages/TripsPage";
+import TripsFormPage from "./pages/TripsFormPage";
 
 export default function App() {
   return (
@@ -11,6 +12,8 @@ export default function App() {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/daily-summary" element={<DailySummaryPage />} />
         <Route path="/trips" element={<TripsPage />} />
+        <Route path="/trips/new" element={<TripsFormPage />} />
+        <Route path="/trips/:id/edit" element={<TripsFormPage />} />
       </Routes>
     </AppLayout>
   );
