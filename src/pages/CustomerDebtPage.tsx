@@ -9,6 +9,7 @@ export default function CustomerDebtPage() {
     const [error, setError] = useState<string | null>(null);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedDebt, setSelectedDebt] = useState<CustomerDebt | null>(null);
+    const [formError, setFormError] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -50,11 +51,14 @@ export default function CustomerDebtPage() {
             } else {
                 await createCustomerDebt(formValues);
             }
-            
+
+            // refresh list after save
+            const debts = await getCustomerDebts();
+            setCustomerDebts(debts);
             setIsFormOpen(false);
             setSelectedDebt(null);
         } catch (err) {
-            setError("Failed to save customer debt.");
+            setFormError("Failed to save customer debt.");
         } finally {
             setSaving(false);
         }
@@ -67,7 +71,7 @@ export default function CustomerDebtPage() {
         return <p>Loading customer debts...</p>;
     }
     if (error) {
-        return <p>{error}</p>;
+        return <p style={{ color: "red" }}>{error}</p>;
     }
     return (
         <div>
@@ -103,6 +107,7 @@ export default function CustomerDebtPage() {
             </table>
 
             <p>{saving ? "Saving..." : null}</p>
+            <p style={{ color: "red" }}>{formError}</p>
             {isFormOpen && (
                 <CustomerDebtForm
                     debt={selectedDebt}
