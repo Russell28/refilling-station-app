@@ -14,6 +14,7 @@ export type TripFormValues = {
   freeQty: number;
   toBePaidQty: number;
   actualPaidQty: number;
+  actualCashCollected: number;
   returnedQty: number;
   replacementQty: number;
 };
@@ -35,6 +36,7 @@ export const emptyTripForm: TripFormValues = {
   freeQty: 0,
   toBePaidQty: 0,
   actualPaidQty: 0,
+  actualCashCollected: 0,
   returnedQty: 0,
   replacementQty: 0,
 };
