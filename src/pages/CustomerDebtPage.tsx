@@ -56,7 +56,7 @@ export default function CustomerDebtPage() {
                 </tbody>
 
             </table>
-
+            
             <CustomerDebtForm />
         </div>
     );
