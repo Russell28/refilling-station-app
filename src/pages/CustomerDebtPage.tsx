@@ -7,6 +7,7 @@ export default function CustomerDebtPage() {
     const [customerDebts, setCustomerDebts] = useState<CustomerDebt[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isFormOpen, setIsFormOpen] = useState(false);
 
     useEffect(() => {
         const loadDebts = async () => {
@@ -23,6 +24,16 @@ export default function CustomerDebtPage() {
         loadDebts();
     }, []); // [] run once on first load
 
+    function onAddClick() {
+        setIsFormOpen(true);
+        console.log("Add new debt");
+    }
+
+    function onEditClick(debt: CustomerDebt) {
+        setIsFormOpen(true);
+        console.log("Edit debt:", debt);
+    }
+
     if (loading) {
         return <p>Loading customer debts...</p>;
     }
@@ -32,7 +43,7 @@ export default function CustomerDebtPage() {
     return (
         <div>
             <h1>Customer Debt Entries</h1>
-            <button onClick={() => console.log("New Debt clicked")}>New Debt</button>
+            <button onClick={onAddClick}>New Debt</button>
             <table>
                 <thead>
                     <tr>
@@ -41,6 +52,7 @@ export default function CustomerDebtPage() {
                         <th>Amount</th>
                         <th>Related Trip</th>
                         <th>Notes</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,16 +63,25 @@ export default function CustomerDebtPage() {
                             <td>{debt.amount}</td>
                             <td>{debt.relatedTripId}</td>
                             <td>{debt.notes}</td>
+                            <td>
+                                <button onClick={() => onEditClick(debt)}>Edit</button>
+                                <button onClick={() => console.log("Delete debt:", debt)}>Delete</button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
 
             </table>
             
-            <CustomerDebtForm 
-                onSubmit={(values) => console.log("Form submitted with values:", values)}
-                onCancel={() => console.log("Form cancelled")}
-            />
+            {isFormOpen && (
+                <CustomerDebtForm 
+                    onSubmit={(values) => console.log("Form submitted with values:", values)}
+                    onCancel={() => {
+                        console.log("Form cancelled");
+                        setIsFormOpen(false);
+                    }}
+                />
+            )}
         </div>
     );
 }
