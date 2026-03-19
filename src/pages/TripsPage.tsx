@@ -34,9 +34,10 @@ export default function TripsPage() {
       <table style={{ borderCollapse: "collapse", width: "100%" }}>
         <thead>
           <tr style={{ backgroundColor: "#f0f0f0" }}>
-            <th colSpan={9} style={{ textAlign: "center" }}>Trip Info</th>
+            <th colSpan={2} style={{ textAlign: "center" }}>Trip Info</th>
             <th colSpan={6} style={{ textAlign: "center" }}>Quantities</th>
-            <th colSpan={4} style={{ textAlign: "center" }}>Payments</th>
+            <th colSpan={5} style={{ textAlign: "center" }}>Payments</th>
+            <th colSpan={1} style={{ textAlign: "center" }}>Action</th>
           </tr>
           <tr style={{ backgroundColor: "#fafafa" }}>
             {/* Trip Info */}
@@ -63,6 +64,8 @@ export default function TripsPage() {
             <th style={{ textAlign: "right" }}>Estimated Cash</th>
             <th style={{ textAlign: "right" }}>Actual Cash</th>
             <th>Notes</th>
+
+            {/* Action */}
             <th>Edit</th>
           </tr>
         </thead>
@@ -106,7 +109,7 @@ export default function TripsPage() {
                 {trip.actualCashCollected.toFixed(2)}
               </td>
               <td>{trip.notes || "-"}</td>
-              <td>
+              <td style={{ textAlign: "center" }}>
                 <button onClick={() => navigate(`/trips/${trip.id}/edit`)}>
                   Edit
                 </button>
