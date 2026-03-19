@@ -4,6 +4,7 @@ import DashboardPage from "./pages/DashboardPage";
 import DailySummaryPage from "./pages/DailySummaryPage";
 import TripsPage from "./pages/TripsPage";
 import TripsFormPage from "./pages/TripsFormPage";
+import CustomerDebtPage from "./pages/CustomerDebtPage";
 
 export default function App() {
   return (
@@ -14,6 +15,8 @@ export default function App() {
         <Route path="/trips" element={<TripsPage />} />
         <Route path="/trips/new" element={<TripsFormPage />} />
         <Route path="/trips/:id/edit" element={<TripsFormPage />} />
+        <Route path="/debt-entries" element={<CustomerDebtPage />} />
+
       </Routes>
     </AppLayout>
   );
