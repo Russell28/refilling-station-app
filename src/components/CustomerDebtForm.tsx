@@ -16,8 +16,15 @@ const emptyForm: CustomerDebtFormValues = {
     notes: "",
 };
 
+type DebtFormProps = {
+    onSubmit: (values: CustomerDebtFormValues) => void; // parent callback when form is submitted
+    onCancel: () => void; // parent callback when form is cancelled
+};
 
-export default function CustomerDebtForm() {
+export default function CustomerDebtForm({
+    onSubmit, // callback to parent with form values when user submits
+    onCancel, // callback to parent when user cancels the form 
+}: DebtFormProps) {
     const [form, setForm] = useState<CustomerDebtFormValues>(emptyForm);
 
     function handleTextChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -41,6 +48,7 @@ export default function CustomerDebtForm() {
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         console.log("customer debt form values:", form);
+        onSubmit(form);
     }
 
     return (
@@ -98,6 +106,9 @@ export default function CustomerDebtForm() {
             <div style={{ marginTop: 12 }}>
                 <button type="submit">Save</button>
             </div>
+            <button type="button" onClick={onCancel}>
+                Cancel
+            </button>
         </form>
     );
 }

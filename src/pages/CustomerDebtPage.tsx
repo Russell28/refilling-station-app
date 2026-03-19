@@ -57,7 +57,10 @@ export default function CustomerDebtPage() {
 
             </table>
             
-            <CustomerDebtForm />
+            <CustomerDebtForm 
+                onSubmit={(values) => console.log("Form submitted with values:", values)}
+                onCancel={() => console.log("Form cancelled")}
+            />
         </div>
     );
 }
