@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { type TripFormValues, emptyTripForm } from "../types/TripFormValues";
 import { getTripById } from "../api/tripsApi";
+import { formatDateForInput, formatTimeForInput } from "../utils/date";
 
 export default function TripsFormPage() {
     const { id } = useParams(); // detect if we have an "id" param in the URL
@@ -18,15 +19,15 @@ export default function TripsFormPage() {
             try {
                 const data = await getTripById(Number(id));
                 setForm({
-                    date: data.date ?? "",
+                    date: formatDateForInput(data.date),
                     tripNumber: data.tripNumber ?? 0,
                     segment: data.segment ?? "",
                     source: data.source ?? "",
                     tripType: data.tripType ?? "",
                     employeeName: data.employeeName ?? "",
                     customerCategory: data.customerCategory ?? "",
-                    timeStarted: data.timeStarted ?? "",
-                    timeEnded: data.timeEnded ?? "",
+                    timeStarted: formatTimeForInput(data.timeStarted),
+                    timeEnded: formatTimeForInput(data.timeEnded),
                     collectedQty: data.collectedQty ?? 0,
                     loadedQty: data.loadedQty ?? 0,
                     deliveredQty: data.deliveredQty ?? 0,
