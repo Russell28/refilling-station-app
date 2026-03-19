@@ -108,7 +108,7 @@ export default function TripsPage() {
               <td style={{ textAlign: "right" }}>
                 {trip.actualCashCollected.toFixed(2)}
               </td>
-              <td>{trip.notes || "-"}</td>
+              <td>{trip.notes}</td>
               <td style={{ textAlign: "center" }}>
                 <button onClick={() => navigate(`/trips/${trip.id}/edit`)}>
                   Edit

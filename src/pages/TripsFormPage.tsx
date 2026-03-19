@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { type TripFormValues, emptyTripForm } from "../types/TripFormValues";
-import { getTripById } from "../api/tripsApi";
+import { createTrip, getTripById, updateTrip } from "../api/tripsApi";
 import { formatDateForInput, formatTimeForInput } from "../utils/date";
 
 export default function TripsFormPage() {
@@ -11,6 +11,9 @@ export default function TripsFormPage() {
 
     const isEditMode = !!id; // If "id" exists, we're in edit mode. If no "id", we're in create mode.
     const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
     useEffect(() => {
         if (!isEditMode) return;
         setLoading(true); // Start loading when we know we need to fetch data
@@ -52,15 +55,24 @@ export default function TripsFormPage() {
         navigate("/trips");
     }
 
-    function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault(); // Prevent default form submission behavior like page reload
+        try {
+            setSaving(true);
+            setError(""); // Clear previous errors
 
-        if (isEditMode) {
-            console.log("Submitting edit for trip ID:", id);
-            navigate("/trips");
-        } else {
-            console.log("Submitting new trip");
-            navigate("/trips");
+            if (isEditMode) {
+                await updateTrip(Number(id), form);
+                navigate("/trips");
+            } else {
+                await createTrip(form);
+                navigate("/trips");
+            }
+        } catch (err) {
+            console.error(err);
+            setError("An error occurred while saving the trip. Please try again.");
+        } finally {
+            setSaving(false);
         }
     }
 
