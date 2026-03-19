@@ -8,6 +8,7 @@ export default function CustomerDebtPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const [selectedDebt, setSelectedDebt] = useState<CustomerDebt | null>(null);
 
     useEffect(() => {
         const loadDebts = async () => {
@@ -25,13 +26,19 @@ export default function CustomerDebtPage() {
     }, []); // [] run once on first load
 
     function onAddClick() {
+        setSelectedDebt(null); // clear any selected debt when adding new
         setIsFormOpen(true);
-        console.log("Add new debt");
     }
 
     function onEditClick(debt: CustomerDebt) {
+        setSelectedDebt(debt);
         setIsFormOpen(true);
-        console.log("Edit debt:", debt);
+        console.log("Edit debt:", selectedDebt);
+    }
+
+    function onCancelClick() {
+        setSelectedDebt(null);
+        setIsFormOpen(false);
     }
 
     if (loading) {
@@ -72,14 +79,12 @@ export default function CustomerDebtPage() {
                 </tbody>
 
             </table>
-            
+
             {isFormOpen && (
-                <CustomerDebtForm 
+                <CustomerDebtForm
+                    debt={selectedDebt}
                     onSubmit={(values) => console.log("Form submitted with values:", values)}
-                    onCancel={() => {
-                        console.log("Form cancelled");
-                        setIsFormOpen(false);
-                    }}
+                    onCancel={() => { onCancelClick() }}
                 />
             )}
         </div>
