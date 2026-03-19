@@ -1,7 +1,27 @@
 import { apiClient } from "./client";
-import type { CustomerDebt } from "../types/CustomerDebt";
+import type { CustomerDebt, CustomerDebtFormValues } from "../types/CustomerDebt";
 
 export async function getCustomerDebts(): Promise<CustomerDebt[]> {
     const response = await apiClient.get("/debt-entries");
+    return response.data;
+}
+
+export async function createCustomerDebt(payload: CustomerDebtFormValues): Promise<CustomerDebt> {
+    const apiPayload = {
+        ...payload,
+        date: payload.date ? new Date(payload.date).toISOString() : null,
+    };
+
+    const response = await apiClient.post("/debt-entries", apiPayload);
+    return response.data;
+}
+
+export async function updateCustomerDebt(id: number, payload: CustomerDebtFormValues): Promise<CustomerDebt> {
+    const apiPayload = {
+        ...payload,
+        date: payload.date ? new Date(payload.date).toISOString() : null,
+    };
+
+    const response = await apiClient.put(`/debt-entries/${id}`, apiPayload);
     return response.data;
 }

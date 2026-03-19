@@ -6,3 +6,11 @@ export type CustomerDebt = {
     relatedTripId?: number; // nullable in backend
     notes: string;
 };
+
+export type CustomerDebtFormValues = {
+    date: string;
+    customerName: string;
+    amount: number;
+    relatedTripId?: number; // optional because it can be null in backend
+    notes: string;
+};

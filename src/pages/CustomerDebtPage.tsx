@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { CustomerDebt } from "../types/CustomerDebt";
-import { getCustomerDebts } from "../api/customerDebtsApi";
+import type { CustomerDebt, CustomerDebtFormValues } from "../types/CustomerDebt";
+import { createCustomerDebt, getCustomerDebts, updateCustomerDebt } from "../api/customerDebtsApi";
 import CustomerDebtForm from "../components/CustomerDebtForm";
 
 export default function CustomerDebtPage() {
@@ -9,6 +9,7 @@ export default function CustomerDebtPage() {
     const [error, setError] = useState<string | null>(null);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedDebt, setSelectedDebt] = useState<CustomerDebt | null>(null);
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         const loadDebts = async () => {
@@ -40,6 +41,27 @@ export default function CustomerDebtPage() {
         setSelectedDebt(null);
         setIsFormOpen(false);
     }
+
+    async function handleSubmit(formValues: CustomerDebtFormValues) {
+        try {
+            setSaving(true);
+            if (selectedDebt) {
+                await updateCustomerDebt(selectedDebt.id, formValues);
+            } else {
+                await createCustomerDebt(formValues);
+            }
+            
+            setIsFormOpen(false);
+            setSelectedDebt(null);
+        } catch (err) {
+            setError("Failed to save customer debt.");
+        } finally {
+            setSaving(false);
+        }
+
+    }
+
+
 
     if (loading) {
         return <p>Loading customer debts...</p>;
@@ -80,10 +102,11 @@ export default function CustomerDebtPage() {
 
             </table>
 
+            <p>{saving ? "Saving..." : null}</p>
             {isFormOpen && (
                 <CustomerDebtForm
                     debt={selectedDebt}
-                    onSubmit={(values) => console.log("Form submitted with values:", values)}
+                    onSubmit={handleSubmit}
                     onCancel={() => { onCancelClick() }}
                 />
             )}

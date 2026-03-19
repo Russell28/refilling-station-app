@@ -1,20 +1,12 @@
 import { useEffect, useState } from "react";
-import type { CustomerDebt } from "../types/CustomerDebt";
+import type { CustomerDebt, CustomerDebtFormValues } from "../types/CustomerDebt";
 import { formatDateForInput } from "../utils/date";
-
-type CustomerDebtFormValues = {
-    date: string;
-    customerName: string;
-    amount: number;
-    relatedTripId?: number; // optional because it can be null in backend
-    notes: string;
-};
 
 const emptyForm: CustomerDebtFormValues = {
     date: "",
     customerName: "",
     amount: 0,
-    relatedTripId: 0,
+    relatedTripId: undefined,
     notes: "",
 };
 
@@ -25,11 +17,11 @@ type DebtFormProps = {
 };
 
 function mapDebtToFormValues(debt: CustomerDebt | null): CustomerDebtFormValues {
-    return {
+    return { // Map explicitly converts debt.relatedTripId null to 0 for form input, since HTML number input can't handle null
         date: debt ? debt.date : "",
         customerName: debt ? debt.customerName : "",
         amount: debt ? debt.amount : 0,
-        relatedTripId: debt && debt.relatedTripId ? debt.relatedTripId : 0,
+        relatedTripId: debt && debt.relatedTripId ? debt.relatedTripId : undefined,
         notes: debt ? debt.notes : "",
     }
 }
@@ -114,7 +106,7 @@ export default function CustomerDebtForm({
                     <input
                         type="number"
                         name="relatedTripId"
-                        value={form.relatedTripId}
+                        value={form.relatedTripId ?? ""} // if relatedTripId is undefined, set input value to empty string so it becomes blank in the form
                         onChange={handleNumberChange}
                     />
                 </div>
