@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { CustomerDebt } from "../types/CustomerDebt";
 import { getCustomerDebts } from "../api/customerDebtsApi";
+import CustomerDebtForm from "../components/CustomerDebtForm";
 
 export default function CustomerDebtPage() {
     const [customerDebts, setCustomerDebts] = useState<CustomerDebt[]>([]);
@@ -30,8 +31,8 @@ export default function CustomerDebtPage() {
     }
     return (
         <div>
-            <h1>Customer Debt Page</h1>
-            
+            <h1>Customer Debt Entries</h1>
+            <button onClick={() => console.log("New Debt clicked")}>New Debt</button>
             <table>
                 <thead>
                     <tr>
@@ -55,6 +56,8 @@ export default function CustomerDebtPage() {
                 </tbody>
 
             </table>
+
+            <CustomerDebtForm />
         </div>
     );
 }
