@@ -69,7 +69,7 @@ export default function ExpensesPage() {
     async function handleSubmit(formValues: ExpenseFormValues) {
         try {
             setSaving(true);
-            setError(null);
+            setFormError(null);
             if (selectedRecord) {
                 await updateExpense(selectedRecord.id, formValues);
             } else {
@@ -83,7 +83,7 @@ export default function ExpensesPage() {
             setSelectedRecord(null);
 
         } catch (err) {
-            setError("Failed to create expense.");
+            setFormError("Failed to create expense.");
         } finally {
             setSaving(false);
         }
