@@ -92,6 +92,12 @@ export default function TripsFormPage() {
     if (loading) {
         return <p>Loading trip...</p>;
     }
+    if (error) {
+        return <p>{error}</p>;
+    }
+    if (saving) {
+        return <p>Saving trip...</p>;
+    }
     return (
         <div>
             <h1>{isEditMode ? "Edit Trip" : "New Trip"}</h1>
