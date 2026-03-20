@@ -16,7 +16,7 @@ export default function ExpensesPage() {
             try {
                 setLoading(true);
                 setError(null);
-                const expenses =await getExpenses();
+                const expenses = await getExpenses();
                 setExpenses(expenses);
 
             } catch (err) {
@@ -31,12 +31,18 @@ export default function ExpensesPage() {
 
     function onAddClick() {
         setIsFormOpen(true);
+        setSelectedRecord(null); // clear any selected record when adding new
     }
 
     function onEditClick(expense: Expense) {
         setSelectedRecord(expense);
         setIsFormOpen(true);
         console.log("Edit expense:", expense);
+    }
+
+    function oncancel() {
+        setSelectedRecord(null);
+        setIsFormOpen(false);
     }
 
     function onDeleteClick(id: number) {
@@ -70,7 +76,7 @@ export default function ExpensesPage() {
                     {expenses.map((expense) => (
                         <tr key={expense.id}>
                             <td>{formatDateForInput(expense.date)}</td>
-                            <td>{expense.category}</td>
+                            <td>{expense.expenseCategory}</td>
                             <td>{expense.amount.toFixed(2)}</td>
                             <td>{expense.notes}</td>
                             <td>
@@ -82,7 +88,14 @@ export default function ExpensesPage() {
                 </tbody>
             </table>
 
-            { isFormOpen && <ExpenseForm /> }
+            {
+                isFormOpen &&
+                <ExpenseForm 
+                    expense={selectedRecord}  
+                    onSubmit={(values) => console.log("Form submitted with values:", values)}
+                    onCancel={oncancel}
+                />
+            }
         </div>
     );
 }
