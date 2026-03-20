@@ -6,6 +6,7 @@ import TripsPage from "./pages/TripsPage";
 import TripsFormPage from "./pages/TripsFormPage";
 import CustomerDebtPage from "./pages/CustomerDebtPage";
 import ExpensesPage from "./features/expenses/ExpensesPage";
+import PayrollsPage from "./features/payrolls/PayrollsPage";
 
 export default function App() {
   return (
@@ -20,6 +21,8 @@ export default function App() {
         <Route path="/debt-entries" element={<CustomerDebtPage />} />
         {/* Expenses */}
         <Route path="/expenses" element={<ExpensesPage />} />
+        {/* Payrolls */}
+        <Route path="/payrolls" element={<PayrollsPage />} />
 
       </Routes>
     </AppLayout>
