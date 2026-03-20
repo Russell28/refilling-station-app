@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Expense, ExpenseFormValues } from "./Expense";
-import { createExpense, getExpenses, updateExpense } from "./expenseApi";
+import { createExpense, deleteExpense, getExpenses, updateExpense } from "./expenseApi";
 import { formatDateForInput } from "../../utils/date";
 import ExpenseForm from "./ExpenseForm";
 
@@ -46,8 +46,24 @@ export default function ExpensesPage() {
         setIsFormOpen(false);
     }
 
-    function onDeleteClick(id: number) {
-        console.log("Delete expense with id:", id);
+    async function onDeleteClick(id: number) {
+        const confirmed = window.confirm("Are you sure you want to delete this expense?");
+        if (!confirmed) {
+            return;
+        }
+        try {
+            setLoading(true);
+            setError(null);
+            await deleteExpense(id);
+
+            // refresh list after delete
+            const expenses = await getExpenses();
+            setExpenses(expenses);
+        } catch (err) {
+            setError("Failed to delete expense.");
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function handleSubmit(formValues: ExpenseFormValues) {

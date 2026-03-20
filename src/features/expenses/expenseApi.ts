@@ -23,3 +23,7 @@ export async function updateExpense(id: number, payload: ExpenseFormValues): Pro
     const response = await apiClient.put(`/expenses/${id}`, apiPayload);
     return response.data;
 }
+
+export async function deleteExpense(id: number): Promise<void> {
+    await apiClient.delete(`/expenses/${id}`);
+}
