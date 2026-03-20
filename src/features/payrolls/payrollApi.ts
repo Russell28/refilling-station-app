@@ -24,3 +24,7 @@ export async function updatePayroll(id: number, payload: PayrollFormValues): Pro
     const response = await apiClient.put(`/payroll-entries/${id}`, apiPayload);
     return response.data;
 }
+
+export async function deletePayroll(id: number): Promise<void> {
+    await apiClient.delete(`/payroll-entries/${id}`);
+}

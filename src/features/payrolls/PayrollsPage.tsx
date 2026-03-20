@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Payroll, PayrollFormValues } from "./Payroll";
-import { createPayroll, getPayrolls, updatePayroll } from "./payrollApi";
+import { createPayroll, deletePayroll, getPayrolls, updatePayroll } from "./payrollApi";
 import { formatDateForInput } from "../../utils/date";
 import PayrollEntryForm from "./PayrollEntryForm";
 
@@ -68,6 +68,25 @@ export default function PayrollsPage() {
         }
     }
 
+    async function onDeleteClick(payrollId: number) {
+        const confirmed = window.confirm("Are you sure you want to delete this payroll entry?");
+        if (!confirmed) {
+            return;
+        }
+        try {
+            setLoading(true);
+            setError(null);
+            await deletePayroll(payrollId);
+            // refresh list after delete
+            const payrolls = await getPayrolls();
+            setPayrolls(payrolls);
+        } catch (err) {
+            setError("Failed to delete payroll.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
     if (loading) {
         return <div>Loading payrolls...</div>;
     }
@@ -105,7 +124,7 @@ export default function PayrollsPage() {
                             <td>{payroll.notes}</td>
                             <td>
                                 <button onClick={() => onEditClick(payroll)}>Edit</button>
-                                <button>Delete</button>
+                                <button onClick={() => onDeleteClick(payroll.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}
