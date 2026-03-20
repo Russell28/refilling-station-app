@@ -43,3 +43,7 @@ export async function updateTrip(id: number, payload: TripFormValues): Promise<T
     const response = await apiClient.put(`/trips/${id}`, apiPayload);
     return response.data;
 }
+
+export async function deleteTrip(id: number): Promise<void> {
+    await apiClient.delete(`/trips/${id}`);
+}

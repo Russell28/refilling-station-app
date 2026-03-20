@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getTrips } from "../api/tripsApi";
+import { deleteTrip, getTrips } from "../api/tripsApi";
 import type { Trip } from "../types/Trip";
 import { useNavigate } from "react-router-dom";
 
@@ -23,6 +23,25 @@ export default function TripsPage() {
     }
     loadTrips();
   }, []); // [] run once on first load
+
+  async function onDeleteClick(tripId: number) {
+    const confirmed = window.confirm("Are you sure you want to delete this trip?");
+    if (!confirmed) {
+      return;
+    }
+    try {
+      setLoading(true);
+      setError(null);
+      await deleteTrip(tripId);
+      
+      const trips = await getTrips();
+      setTrips(trips);
+    } catch (error) {
+      setError("Failed to delete trip.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <section>
@@ -113,6 +132,7 @@ export default function TripsPage() {
                 <button onClick={() => navigate(`/trips/${trip.id}/edit`)}>
                   Edit
                 </button>
+                <button onClick={() => onDeleteClick(trip.id)}>Delete</button>
               </td>
             </tr>
           ))}
