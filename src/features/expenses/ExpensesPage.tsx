@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import type { Expense } from "./Expense";
-import { getExpenses } from "./expenseApi";
+import type { Expense, ExpenseFormValues } from "./Expense";
+import { createExpense, getExpenses, updateExpense } from "./expenseApi";
 import { formatDateForInput } from "../../utils/date";
 import ExpenseForm from "./ExpenseForm";
 
@@ -10,6 +10,8 @@ export default function ExpensesPage() {
     const [error, setError] = useState<string | null>(null);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState<Expense | null>(null);
+    const [formError, setFormError] = useState<string | null>(null);
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         const loadExpenses = async () => {
@@ -37,16 +39,38 @@ export default function ExpensesPage() {
     function onEditClick(expense: Expense) {
         setSelectedRecord(expense);
         setIsFormOpen(true);
-        console.log("Edit expense:", expense);
     }
 
-    function oncancel() {
+    function onCancel() {
         setSelectedRecord(null);
         setIsFormOpen(false);
     }
 
     function onDeleteClick(id: number) {
         console.log("Delete expense with id:", id);
+    }
+
+    async function handleSubmit(formValues: ExpenseFormValues) {
+        try {
+            setSaving(true);
+            setError(null);
+            if (selectedRecord) {
+                await updateExpense(selectedRecord.id, formValues);
+            } else {
+                await createExpense(formValues);
+            }
+
+            // refresh list after create
+            const expenses = await getExpenses();
+            setExpenses(expenses);
+            setIsFormOpen(false);
+            setSelectedRecord(null);
+
+        } catch (err) {
+            setError("Failed to create expense.");
+        } finally {
+            setSaving(false);
+        }
     }
 
     if (loading) {
@@ -88,12 +112,14 @@ export default function ExpensesPage() {
                 </tbody>
             </table>
 
+            <p>{saving ? "Saving..." : null}</p>
+            <p style={{ color: "red" }}>{formError}</p>
             {
                 isFormOpen &&
-                <ExpenseForm 
-                    expense={selectedRecord}  
-                    onSubmit={(values) => console.log("Form submitted with values:", values)}
-                    onCancel={oncancel}
+                <ExpenseForm
+                    expense={selectedRecord}
+                    onSubmit={handleSubmit}
+                    onCancel={onCancel}
                 />
             }
         </div>
