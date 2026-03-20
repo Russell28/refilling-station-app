@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { CustomerDebt, CustomerDebtFormValues } from "../types/CustomerDebt";
-import { createCustomerDebt, getCustomerDebts, updateCustomerDebt } from "../api/customerDebtsApi";
+import { createCustomerDebt, deleteCustomerDebt, getCustomerDebts, updateCustomerDebt } from "../api/customerDebtsApi";
 import CustomerDebtForm from "../components/CustomerDebtForm";
 
 export default function CustomerDebtPage() {
@@ -65,7 +65,25 @@ export default function CustomerDebtPage() {
 
     }
 
+    async function onDeleteClick(id: number) {
+        const confirmed = window.confirm("Are you sure you want to delete this customer debt?");
+        if (!confirmed) {
+            return;
+        }
+        try {
+            setLoading(true);
+            setError(null);
+            await deleteCustomerDebt(id);
 
+            // refresh list after delete
+            const debts = await getCustomerDebts();
+            setCustomerDebts(debts);
+        } catch (err) {
+            setError("Failed to delete customer debt.");
+        } finally {
+            setLoading(false);
+        }
+    }
 
     if (loading) {
         return <p>Loading customer debts...</p>;
@@ -98,7 +116,7 @@ export default function CustomerDebtPage() {
                             <td>{debt.notes}</td>
                             <td>
                                 <button onClick={() => onEditClick(debt)}>Edit</button>
-                                <button onClick={() => console.log("Delete debt:", debt)}>Delete</button>
+                                <button onClick={() => onDeleteClick(debt.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}

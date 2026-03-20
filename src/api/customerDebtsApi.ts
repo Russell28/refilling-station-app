@@ -25,3 +25,7 @@ export async function updateCustomerDebt(id: number, payload: CustomerDebtFormVa
     const response = await apiClient.put(`/debt-entries/${id}`, apiPayload);
     return response.data;
 }
+
+export async function deleteCustomerDebt(id: number): Promise<void> {
+    await apiClient.delete(`/debt-entries/${id}`);
+}
