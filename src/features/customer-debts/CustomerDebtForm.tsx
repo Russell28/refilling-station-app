@@ -1,48 +1,36 @@
 import { useEffect, useState } from "react";
-import type { CustomerDebt, CustomerDebtFormValues } from "./CustomerDebt";
+import  { type CustomerDebt, type CustomerDebtFormValues, emptyForm } from "./CustomerDebt";
 import { formatDateForInput } from "../../utils/date";
-
-
-const emptyForm: CustomerDebtFormValues = {
-    date: "",
-    customerName: "",
-    amount: 0,
-    relatedTripId: undefined,
-    notes: "",
-};
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
+import TextInput from "../../components/ui/TextInput";
 
 type DebtFormProps = {
-    debt: CustomerDebt | null; // if null, form is for new debt. If not null, form is for editing existing debt
-    onSubmit: (values: CustomerDebtFormValues) => void; // parent callback when form is submitted
-    onCancel: () => void; // parent callback when form is cancelled
+    debt: CustomerDebt | null;
+    onSubmit: (values: CustomerDebtFormValues) => void;
+    onCancel: () => void;
 };
 
 function mapDebtToFormValues(debt: CustomerDebt | null): CustomerDebtFormValues {
-    return { // Map explicitly converts debt.relatedTripId null to 0 for form input, since HTML number input can't handle null
-        date: debt ? debt.date : "",
-        customerName: debt ? debt.customerName : "",
-        amount: debt ? debt.amount : 0,
-        relatedTripId: debt && debt.relatedTripId ? debt.relatedTripId : undefined,
-        notes: debt ? debt.notes : "",
-    }
+    return {
+        date: debt?.date ?? "",
+        customerName: debt?.customerName ?? "",
+        amount: debt?.amount ?? 0,
+        relatedTripId: debt?.relatedTripId ?? undefined,
+        notes: debt?.notes ?? "",
+    };
 }
 
 export default function CustomerDebtForm({
     debt,
-    onSubmit, // callback to parent with form values when user submits
-    onCancel, // callback to parent when user cancels the form 
+    onSubmit,
+    onCancel,
 }: DebtFormProps) {
-    const [form, setForm] = useState<CustomerDebtFormValues>(emptyForm); // only works on first load, if debt changes later it won't update form state
+    const [form, setForm] = useState<CustomerDebtFormValues>(emptyForm);
 
     useEffect(() => {
-        if(debt) {
-            setForm(mapDebtToFormValues(debt));
-        } else {
-            setForm(emptyForm);
-        }
-    }, [debt]); // whenever debt prop changes, update form state with new debt values (or empty if null)
-
-
+        setForm(mapDebtToFormValues(debt));
+    }, [debt]);
 
     function handleTextChange(e: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = e.target;
@@ -58,77 +46,94 @@ export default function CustomerDebtForm({
 
         setForm((prev) => ({
             ...prev,
-            [name]: value === "" ? 0 : Number(value),
+            [name]:
+                name === "relatedTripId"
+                    ? value === ""
+                        ? undefined
+                        : Number(value)
+                    : value === ""
+                      ? 0
+                      : Number(value),
         }));
     }
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        console.log("customer debt form values:", form);
         onSubmit(form);
     }
 
     return (
-        <div>
-            <h2>{debt ? "Edit Customer Debt" : "New Customer Debt"}</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Date</label>
-                    <input
+        <Card className="border-slate-300">
+            <div className="mb-4">
+                <h2 className="text-lg font-semibold text-slate-900">
+                    {debt ? "Edit Customer Debt" : "New Customer Debt"}
+                </h2>
+                <p className="mt-1 text-sm text-slate-500">
+                    Fill in the customer debt details below.
+                </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <TextInput
+                        label="Date"
                         type="date"
                         name="date"
                         value={formatDateForInput(form.date)}
                         onChange={handleTextChange}
                     />
-                </div>
 
-                <div>
-                    <label>Customer Name</label>
-                    <input
+                    <TextInput
+                        label="Customer Name"
                         type="text"
                         name="customerName"
                         value={form.customerName}
                         onChange={handleTextChange}
+                        placeholder="Enter customer name"
                     />
-                </div>
 
-                <div>
-                    <label>Amount</label>
-                    <input
+                    <TextInput
+                        label="Amount"
                         type="number"
                         name="amount"
                         value={form.amount}
                         onChange={handleNumberChange}
+                        placeholder="0"
                     />
-                </div>
 
-                <div>
-                    <label>Related Trip ID</label>
-                    <input
+                    <TextInput
+                        label="Related Trip ID"
                         type="number"
                         name="relatedTripId"
-                        value={form.relatedTripId ?? ""} // if relatedTripId is undefined, set input value to empty string so it becomes blank in the form
+                        value={form.relatedTripId ?? ""}
                         onChange={handleNumberChange}
+                        placeholder="Optional"
                     />
                 </div>
 
-                <div>
-                    <label>Notes</label>
+                <label className="block">
+                    <span className="mb-1 block text-sm font-medium text-slate-700">
+                        Notes
+                    </span>
                     <input
                         type="text"
                         name="notes"
                         value={form.notes}
                         onChange={handleTextChange}
+                        placeholder="Optional notes"
+                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-slate-900"
                     />
-                </div>
+                </label>
 
-                <div style={{ marginTop: 12 }}>
-                    <button type="submit">Save</button>
+                <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                    <Button type="button" variant="secondary" onClick={onCancel}>
+                        Cancel
+                    </Button>
+                    <Button type="submit">
+                        Save
+                    </Button>
                 </div>
-                <button type="button" onClick={onCancel}>
-                    Cancel
-                </button>
             </form>
-        </div>
+        </Card>
     );
 }

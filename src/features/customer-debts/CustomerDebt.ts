@@ -14,3 +14,11 @@ export type CustomerDebtFormValues = {
     relatedTripId?: number; // optional because it can be null in backend
     notes: string;
 };
+
+export const emptyForm: CustomerDebtFormValues = {
+    date: "",
+    customerName: "",
+    amount: 0,
+    relatedTripId: undefined,
+    notes: "",
+};

@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import type { CustomerDebt, CustomerDebtFormValues } from "./CustomerDebt";
 import { createCustomerDebt, deleteCustomerDebt, getCustomerDebts, updateCustomerDebt } from "./customerDebtsApi";
 import CustomerDebtForm from "./CustomerDebtForm";
+import Card from "../../components/ui/Card";
+import Button from "../../components/ui/Button";
+import PageHeader from "../../components/ui/PageHeader";
 
 export default function CustomerDebtPage() {
     const [customerDebts, setCustomerDebts] = useState<CustomerDebt[]>([]);
@@ -57,6 +60,7 @@ export default function CustomerDebtPage() {
             setCustomerDebts(debts);
             setIsFormOpen(false);
             setSelectedDebt(null);
+            setFormError(null);
         } catch (err) {
             setFormError("Failed to save customer debt.");
         } finally {
@@ -92,47 +96,173 @@ export default function CustomerDebtPage() {
         return <p style={{ color: "red" }}>{error}</p>;
     }
     return (
-        <div>
-            <h1>Customer Debt Entries</h1>
-            <button onClick={onAddClick}>New Debt</button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Customer</th>
-                        <th>Amount</th>
-                        <th>Related Trip</th>
-                        <th>Notes</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {customerDebts.map((debt) => (
-                        <tr key={debt.id}>
-                            <td>{new Date(debt.date).toLocaleDateString()}</td>
-                            <td>{debt.customerName}</td>
-                            <td>{debt.amount}</td>
-                            <td>{debt.relatedTripId}</td>
-                            <td>{debt.notes}</td>
-                            <td>
-                                <button onClick={() => onEditClick(debt)}>Edit</button>
-                                <button onClick={() => onDeleteClick(debt.id)}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
+        <div className="space-y-4">
+            <PageHeader
+                title="Customer Debt Entries"
+                description="Track unpaid balances and customer debt records."
+                action={
+                    <Button className="w-full sm:w-auto" onClick={onAddClick}>
+                        New Debt
+                    </Button>
+                }
+            />
 
-            </table>
+            {error && (
+                <Card className="border-red-200 bg-red-50">
+                    <p className="text-sm text-red-700">{error}</p>
+                </Card>
+            )}
 
-            <p>{saving ? "Saving..." : null}</p>
-            <p style={{ color: "red" }}>{formError}</p>
+            {formError && (
+                <Card className="border-red-200 bg-red-50">
+                    <p className="text-sm text-red-700">{formError}</p>
+                </Card>
+            )}
+
+            {saving && (
+                <Card>
+                    <p className="text-sm text-slate-500">Saving...</p>
+                </Card>
+            )}
+
             {isFormOpen && (
                 <CustomerDebtForm
                     debt={selectedDebt}
                     onSubmit={handleSubmit}
-                    onCancel={() => { onCancelClick() }}
+                    onCancel={onCancelClick}
                 />
             )}
+
+            <Card className="p-0">
+                {loading ? (
+                    <div className="p-4">
+                        <p className="text-sm text-slate-500">
+                            Loading customer debts...
+                        </p>
+                    </div>
+                ) : customerDebts.length === 0 ? (
+                    <div className="p-4">
+                        <p className="text-sm text-slate-500">
+                            No customer debt entries yet.
+                        </p>
+                    </div>
+                ) : (
+                    <>
+                        <div className="hidden overflow-x-auto md:block">
+                            <table className="min-w-full text-sm">
+                                <thead className="bg-slate-50 text-left text-slate-500">
+                                    <tr>
+                                        <th className="px-4 py-3 font-medium">Date</th>
+                                        <th className="px-4 py-3 font-medium">Customer</th>
+                                        <th className="px-4 py-3 font-medium">Amount</th>
+                                        <th className="px-4 py-3 font-medium">Related Trip</th>
+                                        <th className="px-4 py-3 font-medium">Notes</th>
+                                        <th className="px-4 py-3 font-medium">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {customerDebts.map((debt) => (
+                                        <tr
+                                            key={debt.id}
+                                            className="border-t border-slate-200"
+                                        >
+                                            <td className="px-4 py-3">
+                                                {new Date(debt.date).toLocaleDateString()}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                {debt.customerName}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                ₱{debt.amount.toLocaleString()}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                {debt.relatedTripId ?? "-"}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                {debt.notes || "-"}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="secondary"
+                                                        onClick={() => onEditClick(debt)}
+                                                    >
+                                                        Edit
+                                                    </Button>
+                                                    <Button
+                                                        variant="danger"
+                                                        onClick={() =>
+                                                            onDeleteClick(debt.id)
+                                                        }
+                                                    >
+                                                        Delete
+                                                    </Button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div className="space-y-3 p-4 md:hidden">
+                            {customerDebts.map((debt) => (
+                                <div
+                                    key={debt.id}
+                                    className="rounded-xl border border-slate-200 p-4"
+                                >
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p className="font-medium text-slate-900">
+                                                {debt.customerName}
+                                            </p>
+                                            <p className="text-sm text-slate-500">
+                                                {new Date(debt.date).toLocaleDateString()}
+                                            </p>
+                                        </div>
+
+                                        <p className="font-semibold text-slate-900">
+                                            ₱{debt.amount.toLocaleString()}
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-3 space-y-1 text-sm text-slate-600">
+                                        <p>
+                                            <span className="font-medium text-slate-700">
+                                                Related Trip:
+                                            </span>{" "}
+                                            {debt.relatedTripId ?? "-"}
+                                        </p>
+                                        <p>
+                                            <span className="font-medium text-slate-700">
+                                                Notes:
+                                            </span>{" "}
+                                            {debt.notes || "-"}
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-4 flex gap-2">
+                                        <Button
+                                            variant="secondary"
+                                            className="flex-1"
+                                            onClick={() => onEditClick(debt)}
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            variant="danger"
+                                            className="flex-1"
+                                            onClick={() => onDeleteClick(debt.id)}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
+            </Card>
         </div>
     );
 }
