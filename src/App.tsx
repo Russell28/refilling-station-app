@@ -7,10 +7,13 @@ import TripsFormPage from "./pages/TripsFormPage";
 import CustomerDebtPage from "./pages/CustomerDebtPage";
 import ExpensesPage from "./features/expenses/ExpensesPage";
 import PayrollsPage from "./features/payrolls/PayrollsPage";
+import Navbar from "./components/Navbar";
 
 export default function App() {
   return (
     <AppLayout>
+      <Navbar />
+      
       <Routes>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/daily-summary" element={<DailySummaryPage />} />
