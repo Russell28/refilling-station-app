@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { deleteTrip, getTrips } from "../api/tripsApi";
-import type { Trip } from "../types/Trip";
+import { deleteTrip, getTrips } from "./tripsApi";
+import type { Trip } from "./Trip";
 import { useNavigate } from "react-router-dom";
 
 export default function TripsPage() {

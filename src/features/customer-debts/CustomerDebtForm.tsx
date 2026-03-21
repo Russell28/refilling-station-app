@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import type { CustomerDebt, CustomerDebtFormValues } from "../types/CustomerDebt";
-import { formatDateForInput } from "../utils/date";
+import type { CustomerDebt, CustomerDebtFormValues } from "./CustomerDebt";
+import { formatDateForInput } from "../../utils/date";
+
 
 const emptyForm: CustomerDebtFormValues = {
     date: "",

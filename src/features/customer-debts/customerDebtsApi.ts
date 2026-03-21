@@ -1,5 +1,5 @@
-import { apiClient } from "./client";
-import type { CustomerDebt, CustomerDebtFormValues } from "../types/CustomerDebt";
+import { apiClient } from "../../api/client";
+import type { CustomerDebt, CustomerDebtFormValues } from "./CustomerDebt";
 
 export async function getCustomerDebts(): Promise<CustomerDebt[]> {
     const response = await apiClient.get("/debt-entries");

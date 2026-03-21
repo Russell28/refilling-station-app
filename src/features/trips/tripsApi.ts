@@ -1,6 +1,5 @@
-import { apiClient } from "./client";
-import type { Trip } from "../types/Trip";
-import type { TripFormValues } from "../types/TripFormValues";
+import { apiClient } from "../../api/client";
+import type { Trip, TripFormValues } from "./Trip";
 
 export async function getTrips(): Promise<Trip[]> {
     const response = await apiClient.get("/trips");

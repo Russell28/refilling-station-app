@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import type { CustomerDebt, CustomerDebtFormValues } from "../types/CustomerDebt";
-import { createCustomerDebt, deleteCustomerDebt, getCustomerDebts, updateCustomerDebt } from "../api/customerDebtsApi";
-import CustomerDebtForm from "../components/CustomerDebtForm";
+import type { CustomerDebt, CustomerDebtFormValues } from "./CustomerDebt";
+import { createCustomerDebt, deleteCustomerDebt, getCustomerDebts, updateCustomerDebt } from "./customerDebtsApi";
+import CustomerDebtForm from "./CustomerDebtForm";
 
 export default function CustomerDebtPage() {
     const [customerDebts, setCustomerDebts] = useState<CustomerDebt[]>([]);

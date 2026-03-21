@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { type TripFormValues, emptyTripForm } from "../types/TripFormValues";
-import { createTrip, getTripById, updateTrip } from "../api/tripsApi";
-import { formatDateForInput, formatTimeForInput } from "../utils/date";
+import { type TripFormValues, emptyTripForm } from "./Trip";
+import { createTrip, getTripById, updateTrip } from "./tripsApi";
+import { formatDateForInput, formatTimeForInput } from "../../utils/date";
 
 export default function TripsFormPage() {
     const { id } = useParams(); // detect if we have an "id" param in the URL
