@@ -1,5 +1,9 @@
-import { useState, useEffect } from "react"; // User Input 
+import { useState, useEffect } from "react";
 import { apiClient } from "../../api/client";
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
+import PageHeader from "../../components/ui/PageHeader";
+import TextInput from "../../components/ui/TextInput";
 
 type DailySummary = {
   date: string;
@@ -30,20 +34,32 @@ function getTodayLocalDate() {
     return `${year}-${month}-${day}`;
 }
 
+function SummaryMetricCard({
+    label,
+    value,
+    valueClassName = "text-slate-900",
+}: {
+    label: string;
+    value: string | number;
+    valueClassName?: string;
+}) {
+    return (
+        <Card>
+            <p className="text-sm text-slate-500">{label}</p>
+            <p className={`mt-2 text-2xl font-semibold ${valueClassName}`}>
+                {value}
+            </p>
+        </Card>
+    );
+}
+
 export default function DailySummaryPage() {
     const [selectedDate, setSelectedDate] = useState(getTodayLocalDate()); // Initialize with today's date
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [summary, setSummary] = useState<DailySummary | null>(null);
 
-    useEffect(() => {
-        const LoadData = async () => {
-            await handleLoadSummary();
-        };
-        LoadData();
-    }, [selectedDate]);
-
-    const handleLoadSummary = async () => {
+    async function handleLoadSummary() {
         if (!selectedDate) {
             setError("Please select a date.");
             setSummary(null);
@@ -52,12 +68,9 @@ export default function DailySummaryPage() {
 
         try {
             setLoading(true);
-            setError("");
+            setError(null);
 
-            const response = await apiClient.get(
-                `/daily-summary/${selectedDate}`
-            );
-
+            const response = await apiClient.get(`/daily-summary/${selectedDate}`);
             setSummary(response.data);
         } catch (error) {
             setError("Failed to load daily summary.");
@@ -65,58 +78,222 @@ export default function DailySummaryPage() {
         } finally {
             setLoading(false);
         }
+    }
 
-        console.log("Loading summary for date:", selectedDate);
-
-        setTimeout(() => {
-            setLoading(false);
-        }, 500);
-    };
+    useEffect(() => {
+        handleLoadSummary();
+    }, [selectedDate]);
 
     return (
-        <section>
-            <h2>Daily Summary</h2>
+        <div className="space-y-4">
+            <PageHeader
+                title="Daily Summary"
+                description="View trips, collections, expenses, payroll, and cash flow for a selected date."
+            />
 
-            <div style={{ marginTop: "16px" }}>
-                <label htmlFor="summary-date">Select Date</label>
-                <br />
-                <input
-                    id="summary-date"
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                />
-            </div>
+            <Card>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+                    <div className="w-full sm:max-w-xs">
+                        <TextInput
+                            label="Select Date"
+                            type="date"
+                            value={selectedDate}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                        />
+                    </div>
 
-            <div style={{ marginTop: "12px" }}>
-                <button onClick={handleLoadSummary} disabled={loading}>
-                    {loading ? "Loading..." : "Load Summary"}
-                </button>
-            </div>
-
-            {error && <p style={{ color: "red" }}>{error}</p>}
-
-            {summary && (
-                <div style={{ marginTop: "24px" }}>
-                    <p>Date: {summary.date}</p>
-                    <p>Trip Count: {summary.tripCount}</p>
-                    <p>Total Collected Qty: {summary.totalCollectedQty}</p>
-                    {/* <p>Total Loaded Qty: {summary.totalLoadedQty}</p> */}
-                    <p>Total Delivered Qty: {summary.totalDeliveredQty}</p>
-                    <p>Total Free Qty: {summary.totalFreeQty}</p>
-                    {/* <p>Total To Be Paid Qty: {summary.totalToBePaidQty}</p> */}
-                    {/* <p>Total Actual Paid Qty: {summary.totalActualPaidQty}</p> */}
-                    <p>Total Returned Qty: {summary.totalReturnedQty}</p>
-                    <p>Total Replacement Qty: {summary.totalReplacementQty}</p>
-                    <p>Total Cash Collected: {summary.totalCashCollected}</p>
-                    <p>Total Expenses: {summary.totalExpenses}</p>
-                    <p>Total Salary Paid: {summary.totalPayrollPaid}</p>
-                    <p>Total Debt Created Today: {summary.totalDebtCreatedToday}</p>
-                    <p>Total Debt Payments Today: {summary.totalDebtPaymentsToday}</p>
-                    <p>Outstanding Debt: {summary.outstandingDebt}</p>
-                    <p>Net Cash Flow: {summary.netCashFlow}</p>
+                    {/* Optional if you want manual load instead of auto-load on date change */}
+                    {/* <Button onClick={handleLoadSummary} disabled={loading}>
+                        {loading ? "Loading..." : "Load Summary"}
+                    </Button> */}
                 </div>
+            </Card>
+
+            {error && (
+                <Card className="border-red-200 bg-red-50">
+                    <p className="text-sm text-red-700">{error}</p>
+                </Card>
             )}
-        </section>
-    )
+
+            {loading && (
+                <Card>
+                    <p className="text-sm text-slate-500">Loading summary...</p>
+                </Card>
+            )}
+
+            {summary && !loading && (
+                <>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                        <SummaryMetricCard
+                            label="Net Cash Flow"
+                            value={`₱${summary.netCashFlow.toLocaleString()}`}
+                            valueClassName={
+                                summary.netCashFlow >= 0
+                                    ? "text-emerald-600"
+                                    : "text-red-600"
+                            }
+                        />
+                        <SummaryMetricCard
+                            label="Total Cash Collected"
+                            value={`₱${summary.totalCashCollected.toLocaleString()}`}
+                        />
+                        <SummaryMetricCard
+                            label="Total Expenses"
+                            value={`₱${summary.totalExpenses.toLocaleString()}`}
+                        />
+                        <SummaryMetricCard
+                            label="Total Salary Paid"
+                            value={`₱${summary.totalPayrollPaid.toLocaleString()}`}
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                        <Card>
+                            <h3 className="mb-4 text-lg font-semibold text-slate-900">
+                                Trip Summary
+                            </h3>
+
+                            <div className="space-y-3 text-sm">
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Date</span>
+                                    <span className="font-medium text-slate-900">
+                                        {summary.date}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Trip Count</span>
+                                    <span className="font-medium text-slate-900">
+                                        {summary.tripCount}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Total Collected Qty</span>
+                                    <span className="font-medium text-slate-900">
+                                        {summary.totalCollectedQty}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Total Delivered Qty</span>
+                                    <span className="font-medium text-slate-900">
+                                        {summary.totalDeliveredQty}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Total Free Qty</span>
+                                    <span className="font-medium text-slate-900">
+                                        {summary.totalFreeQty}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Total Returned Qty</span>
+                                    <span className="font-medium text-slate-900">
+                                        {summary.totalReturnedQty}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Total Replacement Qty</span>
+                                    <span className="font-medium text-slate-900">
+                                        {summary.totalReplacementQty}
+                                    </span>
+                                </div>
+
+                                {/* Optional extra trip metrics */}
+                                {/* <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Total Loaded Qty</span>
+                                    <span className="font-medium text-slate-900">
+                                        {summary.totalLoadedQty}
+                                    </span>
+                                </div> */}
+
+                                {/* <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Total To Be Paid Qty</span>
+                                    <span className="font-medium text-slate-900">
+                                        {summary.totalToBePaidQty}
+                                    </span>
+                                </div> */}
+
+                                {/* <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Total Actual Paid Qty</span>
+                                    <span className="font-medium text-slate-900">
+                                        {summary.totalActualPaidQty}
+                                    </span>
+                                </div> */}
+                            </div>
+                        </Card>
+
+                        <Card>
+                            <h3 className="mb-4 text-lg font-semibold text-slate-900">
+                                Financial Summary
+                            </h3>
+
+                            <div className="space-y-3 text-sm">
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Total Cash Collected</span>
+                                    <span className="font-medium text-slate-900">
+                                        ₱{summary.totalCashCollected.toLocaleString()}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Total Expenses</span>
+                                    <span className="font-medium text-slate-900">
+                                        ₱{summary.totalExpenses.toLocaleString()}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Total Salary Paid</span>
+                                    <span className="font-medium text-slate-900">
+                                        ₱{summary.totalPayrollPaid.toLocaleString()}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Debt Created Today</span>
+                                    <span className="font-medium text-slate-900">
+                                        ₱{summary.totalDebtCreatedToday.toLocaleString()}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Debt Payments Today</span>
+                                    <span className="font-medium text-slate-900">
+                                        ₱{summary.totalDebtPaymentsToday.toLocaleString()}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Outstanding Debt</span>
+                                    <span className="font-medium text-slate-900">
+                                        ₱{summary.outstandingDebt.toLocaleString()}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4 border-t border-slate-200 pt-3">
+                                    <span className="font-medium text-slate-700">
+                                        Net Cash Flow
+                                    </span>
+                                    <span
+                                        className={`font-semibold ${
+                                            summary.netCashFlow >= 0
+                                                ? "text-emerald-600"
+                                                : "text-red-600"
+                                        }`}
+                                    >
+                                        ₱{summary.netCashFlow.toLocaleString()}
+                                    </span>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
+                </>
+            )}
+        </div>
+    );
 }
