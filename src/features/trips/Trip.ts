@@ -47,6 +47,8 @@ export type TripFormValues = {
   actualCashCollected: number;
   returnedQty: number;
   replacementQty: number;
+  notes: string;
+  adjustmentReason: string;
 };
 
 // Default values for "create"
@@ -69,4 +71,6 @@ export const emptyTripForm: TripFormValues = {
   actualCashCollected: 0,
   returnedQty: 0,
   replacementQty: 0,
+  notes: "",
+  adjustmentReason: "",
 };

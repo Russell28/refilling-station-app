@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import { type TripFormValues, emptyTripForm } from "./Trip";
 import { createTrip, getTripById, updateTrip } from "./tripsApi";
 import { formatDateForInput, formatTimeForInput } from "../../utils/date";
+import PageHeader from "../../components/ui/PageHeader";
+import Card from "../../components/ui/Card";
+import TextInput from "../../components/ui/TextInput";
+import Button from "../../components/ui/Button";
 
 export default function TripsFormPage() {
     const { id } = useParams(); // detect if we have an "id" param in the URL
@@ -40,6 +44,8 @@ export default function TripsFormPage() {
                     actualCashCollected: data.actualCashCollected ?? 0,
                     returnedQty: data.returnedQty ?? 0,
                     replacementQty: data.replacementQty ?? 0,
+                    notes: data.notes ?? "",
+                    adjustmentReason: data.adjustmentReason ?? "",
                 });
             } catch (err) {
                 console.error(err);
@@ -63,11 +69,10 @@ export default function TripsFormPage() {
 
             if (isEditMode) {
                 await updateTrip(Number(id), form);
-                navigate("/trips");
             } else {
                 await createTrip(form);
-                navigate("/trips");
             }
+            navigate("/trips");
         } catch (err) {
             console.error(err);
             setError("An error occurred while saving the trip. Please try again.");
@@ -89,202 +94,220 @@ export default function TripsFormPage() {
         setForm((prev) => ({ ...prev, [name]: isNaN(numericValue) ? 0 : numericValue })); // Update the specific field that changed, default to 0 if invalid
     }
 
-    if (loading) {
-        return <p>Loading trip...</p>;
-    }
-    if (error) {
-        return <p>{error}</p>;
-    }
-    if (saving) {
-        return <p>Saving trip...</p>;
-    }
     return (
-        <div>
-            <h1>{isEditMode ? "Edit Trip" : "New Trip"}</h1>
+        <div className="space-y-4">
+            <PageHeader
+                title={isEditMode ? "Edit Trip" : "New Trip"}
+                description="Fill in trip, quantity, and payment details."
+            />
 
-            <form onSubmit={handleSubmit}>
-                {/* Trip Details */}
+            {error && (
+                <Card className="border-red-200 bg-red-50">
+                    <p className="text-sm text-red-700">{error}</p>
+                </Card>
+            )}
 
-                <div>
-                    <label>Date</label>
-                    <input type="date"
-                        name="date"
-                        value={form.date}
-                        onChange={handleTextChange}
-                    />
-                </div>
+            {loading && (
+                <Card>
+                    <p className="text-sm text-slate-500">Loading trip...</p>
+                </Card>
+            )}
 
-                <div>
-                    <label>Trip Number</label>
-                    <input type="number"
-                        name="tripNumber"
-                        value={form.tripNumber}
-                        onChange={handleNumberChange}
-                    />
-                </div>
+            {saving && (
+                <Card>
+                    <p className="text-sm text-slate-500">Saving trip...</p>
+                </Card>
+            )}
 
-                <div>
-                    <label>Segment</label>
-                    <input type="text"
-                        name="segment"
-                        value={form.segment}
-                        onChange={handleTextChange}
-                    />
-                </div>
+            {!loading && (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <Card>
+                        <h2 className="mb-4 text-lg font-semibold text-slate-900">
+                            Trip Details
+                        </h2>
 
-                <div>
-                    <label>Source</label>
-                    <input type="text"
-                        name="source"
-                        value={form.source}
-                        onChange={handleTextChange}
-                    />
-                </div>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <TextInput
+                                label="Date"
+                                type="date"
+                                name="date"
+                                value={form.date}
+                                onChange={handleTextChange}
+                            />
 
-                <div>
-                    <label>Trip Type</label>
-                    <input type="text"
-                        name="tripType"
-                        value={form.tripType}
-                        onChange={handleTextChange}
-                    />
-                </div>
+                            <TextInput
+                                label="Trip Number"
+                                type="number"
+                                name="tripNumber"
+                                value={form.tripNumber}
+                                onChange={handleNumberChange}
+                            />
 
-                <div>
-                    <label>Employee Name</label>
-                    <input type="text"
-                        name="employeeName"
-                        value={form.employeeName}
-                        onChange={handleTextChange}
-                    />
-                </div>
+                            <TextInput
+                                label="Employee Name"
+                                type="text"
+                                name="employeeName"
+                                value={form.employeeName}
+                                onChange={handleTextChange}
+                            />
 
-                <div>
-                    <label>Customer Category</label>
-                    <input type="text"
-                        name="customerCategory"
-                        value={form.customerCategory}
-                        onChange={handleTextChange}
-                    />
-                </div>
+                            <TextInput
+                                label="Segment"
+                                type="text"
+                                name="segment"
+                                value={form.segment}
+                                onChange={handleTextChange}
+                            />
 
-                {/* Quantities */}
+                            <TextInput
+                                label="Source"
+                                type="text"
+                                name="source"
+                                value={form.source}
+                                onChange={handleTextChange}
+                            />
 
-                <div>
-                    <label>Collected Qty</label>
-                    <input type="number"
-                        name="collectedQty"
-                        value={form.collectedQty}
-                        onChange={handleNumberChange}
-                    />
-                </div>
+                            <TextInput
+                                label="Trip Type"
+                                type="text"
+                                name="tripType"
+                                value={form.tripType}
+                                onChange={handleTextChange}
+                            />
 
-                <div>
-                    <label>Loaded Qty</label>
-                    <input type="number"
-                        name="loadedQty"
-                        value={form.loadedQty}
-                        onChange={handleNumberChange}
-                    />
-                </div>
+                            <TextInput
+                                label="Customer Category"
+                                type="text"
+                                name="customerCategory"
+                                value={form.customerCategory}
+                                onChange={handleTextChange}
+                            />
+                        </div>
+                    </Card>
 
-                <div>
-                    <label>Delivered Qty</label>
-                    <input type="number"
-                        name="deliveredQty"
-                        value={form.deliveredQty}
-                        onChange={handleNumberChange}
-                    />
-                </div>
+                    <Card>
+                        <h2 className="mb-4 text-lg font-semibold text-slate-900">
+                            Quantities
+                        </h2>
 
-                <div>
-                    <label>Free Qty</label>
-                    <input type="number"
-                        name="freeQty"
-                        value={form.freeQty}
-                        onChange={handleNumberChange}
-                    />
-                </div>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                            <TextInput
+                                label="Collected Qty"
+                                type="number"
+                                name="collectedQty"
+                                value={form.collectedQty}
+                                onChange={handleNumberChange}
+                            />
 
-                <div>
-                    <label>To Be Paid Qty</label>
-                    <input type="number"
-                        name="toBePaidQty"
-                        value={form.toBePaidQty}
-                        onChange={handleNumberChange}
-                    />
-                </div>
+                            <TextInput
+                                label="Loaded Qty"
+                                type="number"
+                                name="loadedQty"
+                                value={form.loadedQty}
+                                onChange={handleNumberChange}
+                            />
 
-                <div>
-                    <label>Actual Paid Qty</label>
-                    <input type="number"
-                        name="actualPaidQty"
-                        value={form.actualPaidQty}
-                        onChange={handleNumberChange}
-                    />
-                </div>
+                            <TextInput
+                                label="Delivered Qty"
+                                type="number"
+                                name="deliveredQty"
+                                value={form.deliveredQty}
+                                onChange={handleNumberChange}
+                            />
 
-                <div>
-                    <label>Returned Qty</label>
-                    <input type="number"
-                        name="returnedQty"
-                        value={form.returnedQty}
-                        onChange={handleNumberChange}
-                    />
-                </div>
+                            <TextInput
+                                label="Free Qty"
+                                type="number"
+                                name="freeQty"
+                                value={form.freeQty}
+                                onChange={handleNumberChange}
+                            />
 
-                <div>
-                    <label>Replacement Qty</label>
-                    <input type="number"
-                        name="replacementQty"
-                        value={form.replacementQty}
-                        onChange={handleNumberChange}
-                    />
-                </div>
+                            <TextInput
+                                label="To Be Paid Qty"
+                                type="number"
+                                name="toBePaidQty"
+                                value={form.toBePaidQty}
+                                onChange={handleNumberChange}
+                            />
 
-                {/* Payment */}
-                <div>
-                    <label>Actual Cash Collected</label>
-                    <input type="number"
-                        name="actualCashCollected"
-                        value={form.actualCashCollected}
-                        onChange={handleNumberChange}
-                    />
-                </div>
+                            <TextInput
+                                label="Actual Paid Qty"
+                                type="number"
+                                name="actualPaidQty"
+                                value={form.actualPaidQty}
+                                onChange={handleNumberChange}
+                            />
 
-                {/* Time */}
+                            <TextInput
+                                label="Returned Qty"
+                                type="number"
+                                name="returnedQty"
+                                value={form.returnedQty}
+                                onChange={handleNumberChange}
+                            />
 
-                <div>
-                    <label>Time Started</label>
-                    <input type="time"
-                        name="timeStarted"
-                        value={form.timeStarted}
-                        onChange={handleTextChange}
-                    />
-                </div>
+                            <TextInput
+                                label="Replacement Qty"
+                                type="number"
+                                name="replacementQty"
+                                value={form.replacementQty}
+                                onChange={handleNumberChange}
+                            />
+                        </div>
+                    </Card>
 
-                <div>
-                    <label>Time Ended</label>
-                    <input type="time"
-                        name="timeEnded"
-                        value={form.timeEnded}
-                        onChange={handleTextChange}
-                    />
-                </div>
+                    <Card>
+                        <h2 className="mb-4 text-lg font-semibold text-slate-900">
+                            Payment and Time
+                        </h2>
 
-                {/* Buttons */}
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                            <TextInput
+                                label="Actual Cash Collected"
+                                type="number"
+                                name="actualCashCollected"
+                                value={form.actualCashCollected}
+                                onChange={handleNumberChange}
+                            />
 
-                <div style={{ marginTop: 20 }}>
-                    <button type="submit">
-                        {isEditMode ? "Update" : "Save"}
-                    </button>
+                            <TextInput
+                                label="Time Started"
+                                type="time"
+                                name="timeStarted"
+                                value={form.timeStarted}
+                                onChange={handleTextChange}
+                            />
 
-                    <button type="button" onClick={handleCancel}>
-                        Cancel
-                    </button>
-                </div>
-            </form>
+                            <TextInput
+                                label="Time Ended"
+                                type="time"
+                                name="timeEnded"
+                                value={form.timeEnded}
+                                onChange={handleTextChange}
+                            />
+
+                            <TextInput
+                                label="Notes"
+                                type="text"
+                                name="notes"
+                                value={form.notes ?? ""}
+                                onChange={handleTextChange}
+                            />
+                        </div>
+                    </Card>
+
+                    <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                        <Button type="button" variant="secondary" onClick={handleCancel}>
+                            Cancel
+                        </Button>
+
+                        <Button type="submit">
+                            {isEditMode ? "Update" : "Save"}
+                        </Button>
+                    </div>
+                </form>
+            )}
         </div>
-
     );
 }

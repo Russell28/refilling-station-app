@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { deleteTrip, getTrips } from "./tripsApi";
 import type { Trip } from "./Trip";
 import { useNavigate } from "react-router-dom";
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
+import PageHeader from "../../components/ui/PageHeader";
 
 export default function TripsPage() {
   const navigate = useNavigate();
@@ -33,7 +36,7 @@ export default function TripsPage() {
       setLoading(true);
       setError(null);
       await deleteTrip(tripId);
-      
+
       const trips = await getTrips();
       setTrips(trips);
     } catch (error) {
@@ -44,100 +47,235 @@ export default function TripsPage() {
   }
 
   return (
-    <section>
-      <h2>Trips</h2>
-      <button onClick={() => navigate("/trips/new")}>New Trip</button>
-      {loading && <p>Loading trips...</p>}
-      {error && <p>{error}</p>}
+    <div className="space-y-4">
+      <PageHeader
+        title="Trips"
+        description="Track deliveries, quantities, and collections."
+        action={
+          <Button
+            className="w-full sm:w-auto"
+            onClick={() => navigate("/trips/new")}
+          >
+            New Trip
+          </Button>
+        }
+      />
 
-      <table style={{ borderCollapse: "collapse", width: "100%" }}>
-        <thead>
-          <tr style={{ backgroundColor: "#f0f0f0" }}>
-            <th colSpan={2} style={{ textAlign: "center" }}>Trip Info</th>
-            <th colSpan={6} style={{ textAlign: "center" }}>Quantities</th>
-            <th colSpan={5} style={{ textAlign: "center" }}>Payments</th>
-            <th colSpan={1} style={{ textAlign: "center" }}>Action</th>
-          </tr>
-          <tr style={{ backgroundColor: "#fafafa" }}>
-            {/* Trip Info */}
-            <th>Date</th>
-            <th>Trip #</th>
-            {/* <th>Segment</th>
-            <th>Employee</th>
-            <th>Source</th>
-            <th>Type</th> */}
-            {/* <th>Start</th>
-            <th>End</th> */}
+      {error && (
+        <Card className="border-red-200 bg-red-50">
+          <p className="text-sm text-red-700">{error}</p>
+        </Card>
+      )}
 
-            {/* Quantities */}
-            <th style={{ textAlign: "right" }}>Collected</th>
-            <th style={{ textAlign: "right" }}>Loaded</th>
-            <th style={{ textAlign: "right" }}>Delivered</th>
-            <th style={{ textAlign: "right" }}>Free</th>
-            <th style={{ textAlign: "right" }}>Returned</th>
-            <th style={{ textAlign: "right" }}>Replacement</th>
+      <Card className="p-0">
+        {loading ? (
+          <div className="p-4">
+            <p className="text-sm text-slate-500">Loading trips...</p>
+          </div>
+        ) : trips.length === 0 ? (
+          <div className="p-4">
+            <p className="text-sm text-slate-500">No trips yet.</p>
+          </div>
+        ) : (
+          <>
+            <div className="hidden overflow-x-auto md:block">
+              <table className="min-w-full text-sm">
+                <thead className="bg-slate-50 text-left text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Date</th>
+                    <th className="px-4 py-3 font-medium">Trip #</th>
+                    <th className="px-4 py-3 font-medium">Employee</th>
+                    <th className="px-4 py-3 font-medium text-right">Delivered</th>
+                    <th className="px-4 py-3 font-medium text-right">To Be Paid</th>
+                    <th className="px-4 py-3 font-medium text-right">Paid Qty</th>
+                    <th className="px-4 py-3 font-medium text-right">Actual Cash</th>
+                    <th className="px-4 py-3 font-medium">Notes</th>
 
-            {/* Payments */}
-            <th style={{ textAlign: "right" }}>To Be Paid</th>
-            <th style={{ textAlign: "right" }}>Paid Qty</th>
-            <th style={{ textAlign: "right" }}>Estimated Cash</th>
-            <th style={{ textAlign: "right" }}>Actual Cash</th>
-            <th>Notes</th>
+                    {/* Uncomment if you want more columns in desktop table */}
+                    {/* <th className="px-4 py-3 font-medium">Segment</th> */}
+                    {/* <th className="px-4 py-3 font-medium">Source</th> */}
+                    {/* <th className="px-4 py-3 font-medium">Trip Type</th> */}
+                    {/* <th className="px-4 py-3 font-medium">Customer Category</th> */}
+                    {/* <th className="px-4 py-3 font-medium text-right">Collected</th> */}
+                    {/* <th className="px-4 py-3 font-medium text-right">Loaded</th> */}
+                    {/* <th className="px-4 py-3 font-medium text-right">Free</th> */}
+                    {/* <th className="px-4 py-3 font-medium text-right">Returned</th> */}
+                    {/* <th className="px-4 py-3 font-medium text-right">Replacement</th> */}
+                    {/* <th className="px-4 py-3 font-medium text-right">Estimated Cash</th> */}
+                    {/* <th className="px-4 py-3 font-medium">Start</th> */}
+                    {/* <th className="px-4 py-3 font-medium">End</th> */}
 
-            {/* Action */}
-            <th>Edit</th>
-          </tr>
-        </thead>
+                    <th className="px-4 py-3 font-medium">Action</th>
+                  </tr>
+                </thead>
 
-        <tbody>
-          {trips.map((trip) => (
-            <tr key={trip.id}>
-              {/* Trip Info */}
-              <td>{new Date(trip.date).toLocaleDateString()}</td>
-              <td>{trip.tripNumber}</td>
-              {/* <td>{trip.segment}</td>
-              <td>{trip.employeeName}</td>
-              <td>{trip.source}</td>
-              <td>{trip.tripType}</td> */}
-              {/* <td>
-                {trip.timeStarted
-                  ? new Date(trip.timeStarted).toLocaleTimeString()
-                  : "-"}
-              </td>
-              <td>
-                {trip.timeEnded
-                  ? new Date(trip.timeEnded).toLocaleTimeString()
-                  : "-"}
-              </td> */}
+                <tbody>
+                  {trips.map((trip) => (
+                    <tr
+                      key={trip.id}
+                      className="border-t border-slate-200"
+                    >
+                      <td className="px-4 py-3">
+                        {new Date(trip.date).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3">{trip.tripNumber}</td>
+                      <td className="px-4 py-3">
+                        {trip.employeeName || "-"}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {trip.deliveredQty}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {trip.toBePaidQty}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {trip.actualPaidQty}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        ₱{trip.actualCashCollected.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3">
+                        {trip.notes || "-"}
+                      </td>
 
-              {/* Quantities */}
-              <td style={{ textAlign: "right" }}>{trip.collectedQty}</td>
-              <td style={{ textAlign: "right" }}>{trip.loadedQty}</td>
-              <td style={{ textAlign: "right" }}>{trip.deliveredQty}</td>
-              <td style={{ textAlign: "right" }}>{trip.freeQty}</td>
-              <td style={{ textAlign: "right" }}>{trip.returnedQty}</td>
-              <td style={{ textAlign: "right" }}>{trip.replacementQty}</td>
+                      {/* Uncomment if you want more columns in desktop table */}
+                      {/* <td className="px-4 py-3">{trip.segment || "-"}</td> */}
+                      {/* <td className="px-4 py-3">{trip.source || "-"}</td> */}
+                      {/* <td className="px-4 py-3">{trip.tripType || "-"}</td> */}
+                      {/* <td className="px-4 py-3">{trip.customerCategory || "-"}</td> */}
+                      {/* <td className="px-4 py-3 text-right">{trip.collectedQty}</td> */}
+                      {/* <td className="px-4 py-3 text-right">{trip.loadedQty}</td> */}
+                      {/* <td className="px-4 py-3 text-right">{trip.freeQty}</td> */}
+                      {/* <td className="px-4 py-3 text-right">{trip.returnedQty}</td> */}
+                      {/* <td className="px-4 py-3 text-right">{trip.replacementQty}</td> */}
+                      {/* <td className="px-4 py-3 text-right">₱{trip.estimatedCash.toLocaleString()}</td> */}
+                      {/* <td className="px-4 py-3">
+                                                {trip.timeStarted
+                                                    ? new Date(trip.timeStarted).toLocaleTimeString()
+                                                    : "-"}
+                                            </td> */}
+                      {/* <td className="px-4 py-3">
+                                                {trip.timeEnded
+                                                    ? new Date(trip.timeEnded).toLocaleTimeString()
+                                                    : "-"}
+                                            </td> */}
 
-              {/* Payments */}
-              <td style={{ textAlign: "right" }}>{trip.toBePaidQty}</td>
-              <td style={{ textAlign: "right" }}>{trip.actualPaidQty}</td>
-              <td style={{ textAlign: "right" }}>
-                {trip.estimatedCash.toFixed(2)}
-              </td>
-              <td style={{ textAlign: "right" }}>
-                {trip.actualCashCollected.toFixed(2)}
-              </td>
-              <td>{trip.notes}</td>
-              <td style={{ textAlign: "center" }}>
-                <button onClick={() => navigate(`/trips/${trip.id}/edit`)}>
-                  Edit
-                </button>
-                <button onClick={() => onDeleteClick(trip.id)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </section>
+                      <td className="px-4 py-3">
+                        <div className="flex gap-2">
+                          <Button
+                            variant="secondary"
+                            onClick={() =>
+                              navigate(`/trips/${trip.id}/edit`)
+                            }
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="danger"
+                            onClick={() =>
+                              onDeleteClick(trip.id)
+                            }
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="space-y-3 p-4 md:hidden">
+              {trips.map((trip) => (
+                <div
+                  key={trip.id}
+                  className="rounded-xl border border-slate-200 p-4"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-medium text-slate-900">
+                        Trip #{trip.tripNumber}
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        {new Date(trip.date).toLocaleDateString()}
+                      </p>
+                    </div>
+
+                    <p className="font-semibold text-slate-900">
+                      ₱{trip.actualCashCollected.toLocaleString()}
+                    </p>
+                  </div>
+
+                  <div className="mt-3 grid grid-cols-1 gap-1 text-sm text-slate-600">
+                    <p>
+                      <span className="font-medium text-slate-700">
+                        Employee:
+                      </span>{" "}
+                      {trip.employeeName || "-"}
+                    </p>
+                    <p>
+                      <span className="font-medium text-slate-700">
+                        Delivered:
+                      </span>{" "}
+                      {trip.deliveredQty}
+                    </p>
+                    <p>
+                      <span className="font-medium text-slate-700">
+                        To Be Paid:
+                      </span>{" "}
+                      {trip.toBePaidQty}
+                    </p>
+                    <p>
+                      <span className="font-medium text-slate-700">
+                        Paid Qty:
+                      </span>{" "}
+                      {trip.actualPaidQty}
+                    </p>
+                    <p>
+                      <span className="font-medium text-slate-700">
+                        Notes:
+                      </span>{" "}
+                      {trip.notes || "-"}
+                    </p>
+
+                    {/* Mobile optional details */}
+                    {/* <p><span className="font-medium text-slate-700">Segment:</span> {trip.segment || "-"}</p> */}
+                    {/* <p><span className="font-medium text-slate-700">Source:</span> {trip.source || "-"}</p> */}
+                    {/* <p><span className="font-medium text-slate-700">Type:</span> {trip.tripType || "-"}</p> */}
+                    {/* <p><span className="font-medium text-slate-700">Category:</span> {trip.customerCategory || "-"}</p> */}
+                    {/* <p><span className="font-medium text-slate-700">Collected:</span> {trip.collectedQty}</p> */}
+                    {/* <p><span className="font-medium text-slate-700">Loaded:</span> {trip.loadedQty}</p> */}
+                    {/* <p><span className="font-medium text-slate-700">Free:</span> {trip.freeQty}</p> */}
+                    {/* <p><span className="font-medium text-slate-700">Returned:</span> {trip.returnedQty}</p> */}
+                    {/* <p><span className="font-medium text-slate-700">Replacement:</span> {trip.replacementQty}</p> */}
+                    {/* <p><span className="font-medium text-slate-700">Estimated Cash:</span> ₱{trip.estimatedCash.toLocaleString()}</p> */}
+                  </div>
+
+                  <div className="mt-4 flex gap-2">
+                    <Button
+                      variant="secondary"
+                      className="flex-1"
+                      onClick={() =>
+                        navigate(`/trips/${trip.id}/edit`)
+                      }
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="danger"
+                      className="flex-1"
+                      onClick={() => onDeleteClick(trip.id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </Card>
+    </div>
   );
 }
