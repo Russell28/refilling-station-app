@@ -1,5 +1,5 @@
-import { useState } from "react"; // User Input 
-import { apiClient } from "../api/client";
+import { useState, useEffect } from "react"; // User Input 
+import { apiClient } from "../../api/client";
 
 type DailySummary = {
   date: string;
@@ -35,6 +35,13 @@ export default function DailySummaryPage() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [summary, setSummary] = useState<DailySummary | null>(null);
+
+    useEffect(() => {
+        const LoadData = async () => {
+            await handleLoadSummary();
+        };
+        LoadData();
+    }, [selectedDate]);
 
     const handleLoadSummary = async () => {
         if (!selectedDate) {

@@ -3,7 +3,7 @@ import AppLayout from "./layouts/AppLayout";
 
 // Feature pages
 import DashboardPage from "../pages/DashboardPage";
-import DailySummaryPage from "../pages/DailySummaryPage";
+import DailySummaryPage from "../features/daily-summary/DailySummaryPage";
 import TripsPage from "../features/trips/TripsPage";
 import TripsFormPage from "../features/trips/TripsFormPage";
 import CustomerDebtPage from "../features/customer-debts/CustomerDebtPage";
