@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { deleteTrip, getTrips } from "./tripsApi";
 import type { Trip } from "./Trip";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import PageHeader from "../../components/ui/PageHeader";
+import { apiClient } from "../../api/client";
 
 export default function TripsPage() {
   const navigate = useNavigate();
@@ -46,19 +47,73 @@ export default function TripsPage() {
     }
   }
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch(
+        `${apiClient.defaults.baseURL}/trips/import`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await res.json();
+
+      const trips = await getTrips();
+      setTrips(trips);
+      alert(`Imported ${data.insertedRows} rows`);
+    } catch (err) {
+      console.error(err);
+      alert("Import failed");
+    }
+  };
+
   return (
     <div className="space-y-4">
       <PageHeader
         title="Trips"
         description="Track deliveries, quantities, and collections."
         action={
-          <Button
-            className="w-full sm:w-auto"
-            onClick={() => navigate("/trips/new")}
-          >
-            New Trip
-          </Button>
+          <div className="flex gap-2">
+
+            <Button
+              variant="secondary"
+              onClick={handleImportClick}
+            >
+              Import CSV
+            </Button>
+
+            <Button
+              onClick={() => navigate("/trips/new")}
+            >
+              New Trip
+            </Button>
+
+          </div>
         }
+      />
+
+      {/* hidden input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv"
+        className="hidden"
+        onChange={handleFileChange}
       />
 
       {error && (
