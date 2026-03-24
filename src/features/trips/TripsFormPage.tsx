@@ -29,23 +29,24 @@ export default function TripsFormPage() {
                     date: formatDateForInput(data.date),
                     tripNumber: data.tripNumber ?? 0,
                     segment: data.segment ?? "",
+                    timeStarted: formatTimeForInput(data.timeStarted),
+                    timeEnded: formatTimeForInput(data.timeEnded),
                     source: data.source ?? "",
                     tripType: data.tripType ?? "",
                     employeeName: data.employeeName ?? "",
                     customerCategory: data.customerCategory ?? "",
-                    timeStarted: formatTimeForInput(data.timeStarted),
-                    timeEnded: formatTimeForInput(data.timeEnded),
+                    
                     collectedQty: data.collectedQty ?? 0,
                     loadedQty: data.loadedQty ?? 0,
                     deliveredQty: data.deliveredQty ?? 0,
                     freeQty: data.freeQty ?? 0,
-                    toBePaidQty: data.toBePaidQty ?? 0,
                     actualPaidQty: data.actualPaidQty ?? 0,
-                    actualCashCollected: data.actualCashCollected ?? 0,
                     returnedQty: data.returnedQty ?? 0,
                     replacementQty: data.replacementQty ?? 0,
+
+                    actualCashCollected: data.actualCashCollected ?? 0,
+
                     notes: data.notes ?? "",
-                    adjustmentReason: data.adjustmentReason ?? "",
                 });
             } catch (err) {
                 console.error(err);
@@ -220,14 +221,6 @@ export default function TripsFormPage() {
                                 type="number"
                                 name="freeQty"
                                 value={form.freeQty}
-                                onChange={handleNumberChange}
-                            />
-
-                            <TextInput
-                                label="To Be Paid Qty"
-                                type="number"
-                                name="toBePaidQty"
-                                value={form.toBePaidQty}
                                 onChange={handleNumberChange}
                             />
 

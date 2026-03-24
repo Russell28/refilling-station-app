@@ -140,8 +140,9 @@ export default function TripsPage() {
                     <th className="px-4 py-3 font-medium">Date</th>
                     <th className="px-4 py-3 font-medium">Trip #</th>
                     <th className="px-4 py-3 font-medium">Employee</th>
+                    <th className="px-4 py-3 font-medium text-right">Collected</th>
                     <th className="px-4 py-3 font-medium text-right">Delivered</th>
-                    <th className="px-4 py-3 font-medium text-right">To Be Paid</th>
+                    <th className="px-4 py-3 font-medium text-right">Free Qty</th>
                     <th className="px-4 py-3 font-medium text-right">Paid Qty</th>
                     <th className="px-4 py-3 font-medium text-right">Actual Cash</th>
                     <th className="px-4 py-3 font-medium">Notes</th>
@@ -173,15 +174,20 @@ export default function TripsPage() {
                       <td className="px-4 py-3">
                         {new Date(trip.date).toLocaleDateString()}
                       </td>
-                      <td className="px-4 py-3">{trip.tripNumber}</td>
+                      <td className="px-4 py-3">
+                        {`${trip.tripNumber}${trip.segment}`} 
+                      </td>
                       <td className="px-4 py-3">
                         {trip.employeeName || "-"}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {trip.collectedQty}
                       </td>
                       <td className="px-4 py-3 text-right">
                         {trip.deliveredQty}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        {trip.toBePaidQty}
+                        {trip.freeQty}
                       </td>
                       <td className="px-4 py-3 text-right">
                         {trip.actualPaidQty}
@@ -250,7 +256,7 @@ export default function TripsPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-medium text-slate-900">
-                        Trip #{trip.tripNumber}
+                        Trip #{trip.tripNumber}{trip.segment}
                       </p>
                       <p className="text-sm text-slate-500">
                         {new Date(trip.date).toLocaleDateString()}
@@ -271,15 +277,15 @@ export default function TripsPage() {
                     </p>
                     <p>
                       <span className="font-medium text-slate-700">
-                        Delivered:
+                        Collected:
                       </span>{" "}
-                      {trip.deliveredQty}
+                      {trip.collectedQty}
                     </p>
                     <p>
                       <span className="font-medium text-slate-700">
-                        To Be Paid:
+                        Delivered:
                       </span>{" "}
-                      {trip.toBePaidQty}
+                      {trip.deliveredQty}
                     </p>
                     <p>
                       <span className="font-medium text-slate-700">
