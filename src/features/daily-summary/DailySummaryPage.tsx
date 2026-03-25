@@ -4,25 +4,27 @@ import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import PageHeader from "../../components/ui/PageHeader";
 import TextInput from "../../components/ui/TextInput";
+import { formatDateForInput } from "../../utils/date"
 
 type DailySummary = {
-  date: string;
-  tripCount: number;
-  totalCollectedQty: number;
-  totalLoadedQty: number;
-  totalDeliveredQty: number;
-  totalFreeQty: number;
-  totalToBePaidQty: number;
-  totalActualPaidQty: number;
-  totalReturnedQty: number;
-  totalReplacementQty: number;
-  totalCashCollected: number;
-  totalExpenses: number;
-  totalPayrollPaid: number;
-  totalDebtCreatedToday: number;
-  totalDebtPaymentsToday: number;
-  outstandingDebt: number;
-  netCashFlow: number;
+    date: string;
+    tripCount: number;
+    backlogStartQty: number;
+    totalCollectedQty: number;
+    totalLoadedQty: number;
+    totalDeliveredQty: number;
+    backlogEndQty: number;
+    totalFreeQty: number;
+    totalActualPaidQty: number;
+    totalReturnedQty: number;
+    totalReplacementQty: number;
+    totalCashCollected: number;
+    totalExpenses: number;
+    totalPayrollPaid: number;
+    totalDebtCreatedToday: number;
+    totalDebtPaymentsToday: number;
+    outstandingDebt: number;
+    netCashFlow: number;
 };
 
 function getTodayLocalDate() {
@@ -157,7 +159,8 @@ export default function DailySummaryPage() {
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Date</span>
                                     <span className="font-medium text-slate-900">
-                                        {summary.date}
+                                        {formatDateForInput(summary.date)}{" "}
+                                        ({new Date(summary.date).toLocaleDateString("en-US", { weekday: "short" })})
                                     </span>
                                 </div>
 
@@ -165,6 +168,13 @@ export default function DailySummaryPage() {
                                     <span className="text-slate-500">Trip Count</span>
                                     <span className="font-medium text-slate-900">
                                         {summary.tripCount}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Backlog Start</span>
+                                    <span className="font-medium text-slate-900">
+                                        {summary.backlogStartQty}
                                     </span>
                                 </div>
 
@@ -179,6 +189,13 @@ export default function DailySummaryPage() {
                                     <span className="text-slate-500">Total Delivered Qty</span>
                                     <span className="font-medium text-slate-900">
                                         {summary.totalDeliveredQty}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-slate-500">Backlog End</span>
+                                    <span className="font-semibold text-blue-600">
+                                        {summary.backlogEndQty}
                                     </span>
                                 </div>
 
@@ -280,11 +297,10 @@ export default function DailySummaryPage() {
                                         Net Cash Flow
                                     </span>
                                     <span
-                                        className={`font-semibold ${
-                                            summary.netCashFlow >= 0
+                                        className={`font-semibold ${summary.netCashFlow >= 0
                                                 ? "text-emerald-600"
                                                 : "text-red-600"
-                                        }`}
+                                            }`}
                                     >
                                         ₱{summary.netCashFlow.toLocaleString()}
                                     </span>
