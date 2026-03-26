@@ -5,26 +5,22 @@ export type Trip = {
   tripNumber: number;
   timeStarted?: string;      // DateTime? -> optional string
   timeEnded?: string;        // DateTime? -> optional string
-  source: string;
-  tripType: string;
   employeeName: string;
-  customerCategory: string;
+  source?: string;
+  tripType?: string;
+  customerCategory?: string;
 
   // Quantities
   collectedQty: number;
   loadedQty: number;
   deliveredQty: number;
   freeQty: number;
-  actualPaidQty: number;
   returnedQty: number;
   replacementQty: number;
  
   // Payments
   actualCashCollected: number;
   isRemitted: boolean;
-  
-  //Notes
-  relatedTripId?: number;    // nullable in backend
   notes: string;
 };
 
@@ -32,22 +28,20 @@ export type TripFormValues = {
   date: string;
   tripNumber: number;
   timeStarted: string;
+  employeeName: string;
   timeEnded: string;
   source: string;
   tripType: string;
-  employeeName: string;
   customerCategory: string;
 
   collectedQty: number;
   loadedQty: number;
   deliveredQty: number;
   freeQty: number;
-  actualPaidQty: number;
   returnedQty: number;
   replacementQty: number;
 
   actualCashCollected: number;
-
   notes: string;
 };
 
@@ -66,11 +60,9 @@ export const emptyTripForm: TripFormValues = {
   loadedQty: 0,
   deliveredQty: 0,
   freeQty: 0,
-  actualPaidQty: 0,
   returnedQty: 0,
   replacementQty: 0,
 
   actualCashCollected: 0,
-
   notes: "",
 };

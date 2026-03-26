@@ -30,16 +30,15 @@ export default function TripsFormPage() {
                     tripNumber: data.tripNumber ?? 0,
                     timeStarted: formatTimeForInput(data.timeStarted),
                     timeEnded: formatTimeForInput(data.timeEnded),
+                    employeeName: data.employeeName ?? "",
                     source: data.source ?? "",
                     tripType: data.tripType ?? "",
-                    employeeName: data.employeeName ?? "",
                     customerCategory: data.customerCategory ?? "",
                     
                     collectedQty: data.collectedQty ?? 0,
                     loadedQty: data.loadedQty ?? 0,
                     deliveredQty: data.deliveredQty ?? 0,
                     freeQty: data.freeQty ?? 0,
-                    actualPaidQty: data.actualPaidQty ?? 0,
                     returnedQty: data.returnedQty ?? 0,
                     replacementQty: data.replacementQty ?? 0,
 
@@ -212,14 +211,6 @@ export default function TripsFormPage() {
                                 type="number"
                                 name="freeQty"
                                 value={form.freeQty}
-                                onChange={handleNumberChange}
-                            />
-
-                            <TextInput
-                                label="Actual Paid Qty"
-                                type="number"
-                                name="actualPaidQty"
-                                value={form.actualPaidQty}
                                 onChange={handleNumberChange}
                             />
 

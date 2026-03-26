@@ -186,9 +186,6 @@ export default function TripsPage() {
                         {trip.freeQty}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        {trip.actualPaidQty}
-                      </td>
-                      <td className="px-4 py-3 text-right">
                         ₱{trip.actualCashCollected.toLocaleString()}
                       </td>
                       <td className="px-4 py-3">
@@ -281,12 +278,6 @@ export default function TripsPage() {
                         Delivered:
                       </span>{" "}
                       {trip.deliveredQty}
-                    </p>
-                    <p>
-                      <span className="font-medium text-slate-700">
-                        Paid Qty:
-                      </span>{" "}
-                      {trip.actualPaidQty}
                     </p>
                     <p>
                       <span className="font-medium text-slate-700">
