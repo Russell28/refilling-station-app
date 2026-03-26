@@ -3,7 +3,6 @@ export type Trip = {
   // Trip Info
   date: string;              // maps to DateTime Date
   tripNumber: number;
-  segment: string;
   timeStarted?: string;      // DateTime? -> optional string
   timeEnded?: string;        // DateTime? -> optional string
   source: string;
@@ -32,7 +31,6 @@ export type Trip = {
 export type TripFormValues = {
   date: string;
   tripNumber: number;
-  segment: string;
   timeStarted: string;
   timeEnded: string;
   source: string;
@@ -57,7 +55,6 @@ export type TripFormValues = {
 export const emptyTripForm: TripFormValues = {
   date: "",
   tripNumber: 0,
-  segment: "",
   timeStarted: "",
   timeEnded: "",
   source: "",

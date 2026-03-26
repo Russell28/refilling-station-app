@@ -148,7 +148,6 @@ export default function TripsPage() {
                     <th className="px-4 py-3 font-medium">Notes</th>
 
                     {/* Uncomment if you want more columns in desktop table */}
-                    {/* <th className="px-4 py-3 font-medium">Segment</th> */}
                     {/* <th className="px-4 py-3 font-medium">Source</th> */}
                     {/* <th className="px-4 py-3 font-medium">Trip Type</th> */}
                     {/* <th className="px-4 py-3 font-medium">Customer Category</th> */}
@@ -175,9 +174,6 @@ export default function TripsPage() {
                         {new Date(trip.date).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3">
-                        {`${trip.tripNumber}${trip.segment}`} 
-                      </td>
-                      <td className="px-4 py-3">
                         {trip.employeeName || "-"}
                       </td>
                       <td className="px-4 py-3 text-right">
@@ -200,7 +196,6 @@ export default function TripsPage() {
                       </td>
 
                       {/* Uncomment if you want more columns in desktop table */}
-                      {/* <td className="px-4 py-3">{trip.segment || "-"}</td> */}
                       {/* <td className="px-4 py-3">{trip.source || "-"}</td> */}
                       {/* <td className="px-4 py-3">{trip.tripType || "-"}</td> */}
                       {/* <td className="px-4 py-3">{trip.customerCategory || "-"}</td> */}
@@ -256,7 +251,7 @@ export default function TripsPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-medium text-slate-900">
-                        Trip #{trip.tripNumber}{trip.segment}
+                        Trip #{trip.tripNumber}
                       </p>
                       <p className="text-sm text-slate-500">
                         {new Date(trip.date).toLocaleDateString()}
@@ -301,7 +296,6 @@ export default function TripsPage() {
                     </p>
 
                     {/* Mobile optional details */}
-                    {/* <p><span className="font-medium text-slate-700">Segment:</span> {trip.segment || "-"}</p> */}
                     {/* <p><span className="font-medium text-slate-700">Source:</span> {trip.source || "-"}</p> */}
                     {/* <p><span className="font-medium text-slate-700">Type:</span> {trip.tripType || "-"}</p> */}
                     {/* <p><span className="font-medium text-slate-700">Category:</span> {trip.customerCategory || "-"}</p> */}

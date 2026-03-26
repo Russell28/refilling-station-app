@@ -28,7 +28,6 @@ export default function TripsFormPage() {
                 setForm({
                     date: formatDateForInput(data.date),
                     tripNumber: data.tripNumber ?? 0,
-                    segment: data.segment ?? "",
                     timeStarted: formatTimeForInput(data.timeStarted),
                     timeEnded: formatTimeForInput(data.timeEnded),
                     source: data.source ?? "",
@@ -149,14 +148,6 @@ export default function TripsFormPage() {
                                 type="text"
                                 name="employeeName"
                                 value={form.employeeName}
-                                onChange={handleTextChange}
-                            />
-
-                            <TextInput
-                                label="Segment"
-                                type="text"
-                                name="segment"
-                                value={form.segment}
                                 onChange={handleTextChange}
                             />
 
