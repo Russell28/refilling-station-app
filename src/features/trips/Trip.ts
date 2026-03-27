@@ -26,7 +26,7 @@ export type Trip = {
 
 export type TripFormValues = {
   date: string;
-  tripNumber: number;
+  tripNumber: string;
   timeStarted: string;
   employeeName: string;
   timeEnded: string;
@@ -34,21 +34,22 @@ export type TripFormValues = {
   tripType: string;
   customerCategory: string;
 
-  collectedQty: number;
-  loadedQty: number;
-  deliveredQty: number;
-  freeQty: number;
-  returnedQty: number;
-  replacementQty: number;
+  collectedQty: string;
+  loadedQty: string;
+  deliveredQty: string;
+  freeQty: string;
+  returnedQty: string;
+  replacementQty: string;
 
-  actualCashCollected: number;
+  actualCashCollected: string;
+  isRemitted: boolean;
   notes: string;
 };
 
 // Default values for "create"
 export const emptyTripForm: TripFormValues = {
   date: "",
-  tripNumber: 0,
+  tripNumber: "",
   timeStarted: "",
   timeEnded: "",
   source: "",
@@ -56,13 +57,64 @@ export const emptyTripForm: TripFormValues = {
   employeeName: "",
   customerCategory: "",
   
-  collectedQty: 0,
-  loadedQty: 0,
-  deliveredQty: 0,
-  freeQty: 0,
-  returnedQty: 0,
-  replacementQty: 0,
+  collectedQty: "0",
+  loadedQty: "0",
+  deliveredQty: "0",
+  freeQty: "0",
+  returnedQty: "0",
+  replacementQty: "0",
 
-  actualCashCollected: 0,
+  actualCashCollected: "0",
+  isRemitted: false,
   notes: "",
 };
+
+export type CreateTripRequest = {
+    date: string;
+    tripNumber: number;
+
+    timeStarted: string | null;
+    timeEnded: string | null;
+
+    employeeName: string;
+    source: string | null;
+    tripType: string | null;
+    customerCategory: string | null;
+
+    collectedQty: number;
+    loadedQty: number;
+    deliveredQty: number;
+    freeQty: number;
+    returnedQty: number;
+    replacementQty: number;
+
+    actualCashCollected: number;
+    notes: string | null;
+};
+
+export type UpdateTripRequest = {
+    date: string;
+    tripNumber: number;
+
+    timeStarted: string | null;
+    timeEnded: string | null;
+
+    employeeName: string;
+    source: string | null;
+    tripType: string | null;
+    customerCategory: string | null;
+
+    collectedQty: number;
+    loadedQty: number;
+    deliveredQty: number;
+    freeQty: number;
+    returnedQty: number;
+    replacementQty: number;
+
+    actualCashCollected: number;
+    isRemitted: boolean;
+    notes: string | null;
+};
+
+
+export type TripFormErrors = Partial<Record<keyof TripFormValues, string>>

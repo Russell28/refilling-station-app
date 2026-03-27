@@ -1,5 +1,5 @@
 import { apiClient } from "../../api/client";
-import type { Trip, TripFormValues } from "./Trip";
+import type { CreateTripRequest, Trip, UpdateTripRequest } from "./Trip";
 
 export async function getTrips(): Promise<Trip[]> {
     const response = await apiClient.get("/trips");
@@ -11,7 +11,7 @@ export async function getTripById(id: number): Promise<Trip> {
     return response.data;
 }
 
-export async function createTrip(payload: TripFormValues): Promise<Trip> {
+export async function createTrip(payload: CreateTripRequest): Promise<Trip> {
     const apiPayload = {
         ...payload,
         date: payload.date ? new Date(payload.date).toISOString() : null,
@@ -27,7 +27,7 @@ export async function createTrip(payload: TripFormValues): Promise<Trip> {
     return response.data;
 }
 
-export async function updateTrip(id: number, payload: TripFormValues): Promise<Trip> {
+export async function updateTrip(id: number, payload: UpdateTripRequest): Promise<Trip> {
     const apiPayload = {
         ...payload,
         date: payload.date ? new Date(payload.date).toISOString() : null,
