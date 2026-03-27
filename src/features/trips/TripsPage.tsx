@@ -143,7 +143,6 @@ export default function TripsPage() {
                     <th className="px-4 py-3 font-medium text-right">Collected</th>
                     <th className="px-4 py-3 font-medium text-right">Delivered</th>
                     <th className="px-4 py-3 font-medium text-right">Free Qty</th>
-                    <th className="px-4 py-3 font-medium text-right">Paid Qty</th>
                     <th className="px-4 py-3 font-medium text-right">Actual Cash</th>
                     <th className="px-4 py-3 font-medium">Notes</th>
 
@@ -172,6 +171,9 @@ export default function TripsPage() {
                     >
                       <td className="px-4 py-3">
                         {new Date(trip.date).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3">
+                        {trip.tripNumber || "-"}
                       </td>
                       <td className="px-4 py-3">
                         {trip.employeeName || "-"}
