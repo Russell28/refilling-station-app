@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { Payroll, PayrollFormValues } from "./Payroll";
 import { createPayroll, deletePayroll, getPayrolls, updatePayroll } from "./payrollApi";
 import { formatDateForInput } from "../../utils/date";
@@ -6,6 +6,7 @@ import PayrollEntryForm from "./PayrollEntryForm";
 import Card from "../../components/ui/Card";
 import PageHeader from "../../components/ui/PageHeader";
 import Button from "../../components/ui/Button";
+import { apiClient } from "../../api/client";
 
 export default function PayrollsPage() {
     const [payrolls, setPayrolls] = useState<Payroll[]>([]);
@@ -90,6 +91,42 @@ export default function PayrollsPage() {
         }
     }
 
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    const handleImportClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const res = await fetch(
+                `${apiClient.defaults.baseURL}/payroll-entries/import`,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            );
+
+            const data = await res.json();
+
+            const payrolls = await getPayrolls();
+            setPayrolls(payrolls);
+            alert(`Imported ${data.insertedRows} rows`);
+        } catch (err) {
+            console.error(err);
+            alert("Import failed");
+        }
+    };
+
+
     if (loading) {
         return <div>Loading payrolls...</div>;
     }
@@ -104,10 +141,28 @@ export default function PayrollsPage() {
                 title="Payroll"
                 description="Track employee salary, advances, and cash paid."
                 action={
-                    <Button className="w-full sm:w-auto" onClick={onAddClick}>
-                        New Payroll Entry
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button
+                            variant="secondary"
+                            onClick={handleImportClick}
+                        >
+                            Import CSV
+                        </Button>
+
+                        <Button className="w-full sm:w-auto" onClick={onAddClick}>
+                            New Payroll Entry
+                        </Button>
+                    </div>
                 }
+            />
+
+            {/* hidden input */}
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv"
+                className="hidden"
+                onChange={handleFileChange}
             />
 
             {error && (
