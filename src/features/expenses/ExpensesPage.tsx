@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { Expense, ExpenseFormValues } from "./Expense";
 import { createExpense, deleteExpense, getExpenses, updateExpense } from "./expenseApi";
 import { formatDateForInput } from "../../utils/date";
@@ -6,6 +6,7 @@ import ExpenseForm from "./ExpenseForm";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import PageHeader from "../../components/ui/PageHeader";
+import { apiClient } from "../../api/client";
 
 export default function ExpensesPage() {
     const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -93,16 +94,69 @@ export default function ExpensesPage() {
         }
     }
 
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    const handleImportClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const res = await fetch(
+                `${apiClient.defaults.baseURL}/expenses/import`,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            );
+
+            const data = await res.json();
+
+            const expenses = await getExpenses();
+            setExpenses(expenses);
+            alert(`Imported ${data.insertedRows} rows`);
+        } catch (err) {
+            console.error(err);
+            alert("Import failed");
+        }
+    };
+
     return (
         <div className="space-y-4">
             <PageHeader
                 title="Expenses"
                 description="Track daily and operational expenses."
                 action={
-                    <Button className="w-full sm:w-auto" onClick={onAddClick}>
-                        New Expense
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button
+                            variant="secondary"
+                            onClick={handleImportClick}
+                        >
+                            Import CSV
+                        </Button>
+
+                        <Button className="w-full sm:w-auto" onClick={onAddClick}>
+                            New Expense
+                        </Button>
+                    </div>
                 }
+            />
+
+            {/* hidden input */}
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv"
+                className="hidden"
+                onChange={handleFileChange}
             />
 
             {error && (
