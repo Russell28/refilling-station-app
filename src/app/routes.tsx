@@ -2,7 +2,7 @@ import type { RouteObject } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 
 // Feature pages
-import DashboardPage from "../pages/DashboardPage";
+import DashboardPage from "../features/dashboard/DashboardPage";
 import DailySummaryPage from "../features/daily-summary/DailySummaryPage";
 import TripsPage from "../features/trips/TripsPage";
 import TripsFormPage from "../features/trips/TripsFormPage";
