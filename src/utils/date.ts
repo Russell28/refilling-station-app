@@ -21,6 +21,14 @@ export function getToday() {
     return new Date();
 }
 
+export function getCurrentMonthInputValue() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+
+    return `${year}-${month}`;
+}
+
 export function formatTimeForInput(value?: string | null) {
   if (!value) return "";
 

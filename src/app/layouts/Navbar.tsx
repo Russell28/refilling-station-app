@@ -7,6 +7,7 @@ const navItems = [
     { to: "/expenses", label: "Expenses" },
     { to: "/payrolls", label: "Payrolls" },
     { to: "/daily-summary", label: "Daily Summary" },
+    { to: "/monthly-summary", label: "Monthly Summary" },
 
 ];
 

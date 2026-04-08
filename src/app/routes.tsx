@@ -9,6 +9,7 @@ import TripsFormPage from "../features/trips/TripsFormPage";
 import CustomerDebtPage from "../features/customer-debts/CustomerDebtPage";
 import ExpensesPage from "../features/expenses/ExpensesPage";
 import PayrollsPage from "../features/payrolls/PayrollsPage";
+import MonthlySummaryPage from "../features/monthly-summary/MonthlySummaryPage";
 
 export const routes: RouteObject[] = [
     {
@@ -22,6 +23,7 @@ export const routes: RouteObject[] = [
             { path: "/debt-entries", element: <CustomerDebtPage /> },
             { path: "/expenses", element: <ExpensesPage /> },
             { path: "/payrolls", element: <PayrollsPage /> },
+            { path: "/monthly-summary", element: <MonthlySummaryPage /> },
         ],
 
     }
