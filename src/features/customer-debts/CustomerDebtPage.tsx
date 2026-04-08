@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CustomerDebt, CustomerDebtFormValues } from "./CustomerDebt";
 import { createCustomerDebt, deleteCustomerDebt, getCustomerDebts, updateCustomerDebt } from "./customerDebtsApi";
 import CustomerDebtForm from "./CustomerDebtForm";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import PageHeader from "../../components/ui/PageHeader";
+import { apiClient } from "../../api/client";
 
 export default function CustomerDebtPage() {
     const [customerDebts, setCustomerDebts] = useState<CustomerDebt[]>([]);
@@ -89,6 +90,41 @@ export default function CustomerDebtPage() {
         }
     }
 
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    const handleImportClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const res = await fetch(
+                `${apiClient.defaults.baseURL}/debt-entries/import`,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            );
+
+            const data = await res.json();
+
+            const debts = await getCustomerDebts();
+            setCustomerDebts(debts);
+            alert(`Imported ${data.insertedRows} rows`);
+        } catch (err) {
+            console.error(err);
+            alert("Import failed");
+        }
+    };
+
     if (loading) {
         return <p>Loading customer debts...</p>;
     }
@@ -101,10 +137,27 @@ export default function CustomerDebtPage() {
                 title="Customer Debt Entries"
                 description="Track unpaid balances and customer debt records."
                 action={
-                    <Button className="w-full sm:w-auto" onClick={onAddClick}>
-                        New Debt
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button
+                            variant="secondary"
+                            onClick={handleImportClick}
+                        >
+                            Import CSV
+                        </Button>
+                        <Button className="w-full sm:w-auto" onClick={onAddClick}>
+                            New Debt
+                        </Button>
+                    </div>
                 }
+            />
+
+            {/* hidden input */}
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv"
+                className="hidden"
+                onChange={handleFileChange}
             />
 
             {error && (
