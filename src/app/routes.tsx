@@ -14,9 +14,12 @@ import LoginPage from "../features/auth/pages/LoginPage";
 
 export const routes: RouteObject[] = [
     {
+        path: "/login",
+        element: <LoginPage />,
+    },
+    {
         element: <AppLayout />, // persistent layout
         children: [
-            { path: "/login", element: <LoginPage /> },
             { path: "/", element: <DashboardPage /> },
             { path: "/daily-summary", element: <DailySummaryPage /> },
             { path: "/trips", element: <TripsPage /> },
