@@ -21,15 +21,21 @@ export const routes: RouteObject[] = [
     {
         element: <ProtectedRoute />, // Redirects to login if not authenticated
         children: [
-            { path: "/", element: <DashboardPage /> },
-            { path: "/daily-summary", element: <DailySummaryPage /> },
-            { path: "/trips", element: <TripsPage /> },
-            { path: "/trips/new", element: <TripsFormPage /> },
-            { path: "/trips/:id/edit", element: <TripsFormPage /> },
-            { path: "/debt-entries", element: <CustomerDebtPage /> },
-            { path: "/expenses", element: <ExpensesPage /> },
-            { path: "/payrolls", element: <PayrollsPage /> },
-            { path: "/monthly-summary", element: <MonthlySummaryPage /> },
+            {
+                element: <AppLayout />, // Main layout for authenticated routes
+                children: [
+                    { path: "/", element: <DashboardPage /> },
+                    { path: "/daily-summary", element: <DailySummaryPage /> },
+                    { path: "/trips", element: <TripsPage /> },
+                    { path: "/trips/new", element: <TripsFormPage /> },
+                    { path: "/trips/:id/edit", element: <TripsFormPage /> },
+                    { path: "/debt-entries", element: <CustomerDebtPage /> },
+                    { path: "/expenses", element: <ExpensesPage /> },
+                    { path: "/payrolls", element: <PayrollsPage /> },
+                    { path: "/monthly-summary", element: <MonthlySummaryPage /> },
+                ]
+            }
+
         ],
 
     }
