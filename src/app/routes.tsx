@@ -10,11 +10,13 @@ import CustomerDebtPage from "../features/customer-debts/CustomerDebtPage";
 import ExpensesPage from "../features/expenses/ExpensesPage";
 import PayrollsPage from "../features/payrolls/PayrollsPage";
 import MonthlySummaryPage from "../features/monthly-summary/MonthlySummaryPage";
+import LoginPage from "../features/auth/pages/LoginPage";
 
 export const routes: RouteObject[] = [
     {
         element: <AppLayout />, // persistent layout
         children: [
+            { path: "/login", element: <LoginPage /> },
             { path: "/", element: <DashboardPage /> },
             { path: "/daily-summary", element: <DailySummaryPage /> },
             { path: "/trips", element: <TripsPage /> },
