@@ -11,6 +11,7 @@ import ExpensesPage from "../features/expenses/ExpensesPage";
 import PayrollsPage from "../features/payrolls/PayrollsPage";
 import MonthlySummaryPage from "../features/monthly-summary/MonthlySummaryPage";
 import LoginPage from "../features/auth/pages/LoginPage";
+import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 
 export const routes: RouteObject[] = [
     {
@@ -18,7 +19,7 @@ export const routes: RouteObject[] = [
         element: <LoginPage />,
     },
     {
-        element: <AppLayout />, // persistent layout
+        element: <ProtectedRoute />, // Redirects to login if not authenticated
         children: [
             { path: "/", element: <DashboardPage /> },
             { path: "/daily-summary", element: <DailySummaryPage /> },
