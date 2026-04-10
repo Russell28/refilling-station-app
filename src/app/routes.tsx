@@ -12,6 +12,7 @@ import PayrollsPage from "../features/payrolls/PayrollsPage";
 import MonthlySummaryPage from "../features/monthly-summary/MonthlySummaryPage";
 import LoginPage from "../features/auth/pages/LoginPage";
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
+import AdminRoute from "../features/auth/components/AdminRoute";
 
 export const routes: RouteObject[] = [
     {
@@ -24,15 +25,20 @@ export const routes: RouteObject[] = [
             {
                 element: <AppLayout />, // Main layout for authenticated routes
                 children: [
-                    { path: "/", element: <DashboardPage /> },
+                    {
+                        element: <AdminRoute />, // Only allows admin users to access these routes
+                        children: [
+                            { path: "/", element: <DashboardPage /> },
+                            { path: "/payrolls", element: <PayrollsPage /> },
+                            { path: "/monthly-summary", element: <MonthlySummaryPage /> },
+                        ]
+                    },
                     { path: "/daily-summary", element: <DailySummaryPage /> },
                     { path: "/trips", element: <TripsPage /> },
                     { path: "/trips/new", element: <TripsFormPage /> },
                     { path: "/trips/:id/edit", element: <TripsFormPage /> },
                     { path: "/debt-entries", element: <CustomerDebtPage /> },
                     { path: "/expenses", element: <ExpensesPage /> },
-                    { path: "/payrolls", element: <PayrollsPage /> },
-                    { path: "/monthly-summary", element: <MonthlySummaryPage /> },
                 ]
             }
 
