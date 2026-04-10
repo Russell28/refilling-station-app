@@ -1,13 +1,17 @@
 import { useState } from "react";
 import type { LoginRequest } from "../types/auth";
 import { login } from "../api/authApi";
-import { saveAuth } from "../utils/authStorage";
-import { useNavigate } from "react-router";
+import { isAuthenticated, saveAuth } from "../utils/authStorage";
+import { Navigate, useNavigate } from "react-router";
 import Card from "../../../components/ui/Card";
 import Button from "../../../components/ui/Button";
 import TextInput from "../../../components/ui/TextInput";
 
 export default function LoginPage() {
+    if (isAuthenticated()) { // If already logged in, redirect to dashboard
+        return <Navigate to="/" replace />;
+    }
+
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
