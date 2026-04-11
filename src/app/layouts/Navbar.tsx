@@ -2,19 +2,20 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { clearAuth, getStoredUser } from "../../features/auth/utils/authStorage";
 
 const navItems = [
-    { to: "/", label: "Dashboard" },
-    { to: "/trips", label: "Trips" },
-    { to: "/debt-entries", label: "Customer Debts" },
-    { to: "/expenses", label: "Expenses" },
-    { to: "/payrolls", label: "Payrolls" },
+    { to: "/", label: "Dashboard", adminOnly: true },
     { to: "/daily-summary", label: "Daily Summary" },
-    { to: "/monthly-summary", label: "Monthly Summary" },
+    { to: "/trips", label: "Trips" },
+    { to: "/expenses", label: "Expenses" },
+    { to: "/debt-entries", label: "Debts" },
+    { to: "/payrolls", label: "Payrolls", adminOnly: true },
+    { to: "/monthly-summary", label: "Monthly Summary", adminOnly: true },
 
 ];
 
 export default function Navbar() {
     const navigate = useNavigate(); // Get navigate function for programmatic navigation
     const user = getStoredUser(); // Get current user info for display in navbar
+    const isAdmin = user?.role === "Admin"; // Check if the user has admin role
 
     function handleLogout() {
         clearAuth(); // Clear auth info from localStorage
@@ -34,7 +35,9 @@ export default function Navbar() {
                 </div>
 
                 <nav className="flex flex-wrap gap-2">
-                    {navItems.map((item) => (
+                    {navItems
+                    .filter(item => !item.adminOnly || isAdmin)
+                    .map((item) => (
                         <NavLink
                             key={item.to}
                             to={item.to}
