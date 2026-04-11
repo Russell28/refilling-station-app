@@ -48,7 +48,7 @@ export type TripFormValues = {
 
 // Default values for "create"
 export const emptyTripForm: TripFormValues = {
-  date: "",
+  date: new Date().toISOString().split("T")[0],
   tripNumber: "",
   timeStarted: "",
   timeEnded: "",
