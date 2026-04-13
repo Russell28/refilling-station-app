@@ -6,6 +6,7 @@ import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import PageHeader from "../../components/ui/PageHeader";
 import { apiClient } from "../../api/client";
+import { getToken } from "../auth/utils/authStorage";
 
 export default function TripsPage() {
   const navigate = useNavigate();
@@ -68,6 +69,9 @@ export default function TripsPage() {
         {
           method: "POST",
           body: formData,
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
         }
       );
 

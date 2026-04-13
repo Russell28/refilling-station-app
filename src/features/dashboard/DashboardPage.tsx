@@ -32,6 +32,7 @@ export default function DashboardPage() {
     const [dashboard, setDashboard] = useState<DashboardResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [employeeFilter, setEmployeeFilter] = useState("");
 
     async function loadDashboard() {
         setLoading(true);
@@ -296,39 +297,58 @@ export default function DashboardPage() {
                                 Payroll Breakdown
                             </h3>
 
-                            {dashboard.payrollBreakdown.length === 0 ? (
-                                <p className="text-sm text-slate-500">
-                                    No payroll records found.
-                                </p>
-                            ) : (
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full text-sm">
-                                        <thead className="bg-slate-50 text-left text-slate-600">
-                                            <tr>
-                                                <TableHeader>Employee</TableHeader>
-                                                <TableHeader>Earned</TableHeader>
-                                                <TableHeader>Paid</TableHeader>
-                                                <TableHeader>Balance</TableHeader>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {dashboard.payrollBreakdown.map((item) => (
-                                                <tr
-                                                    key={item.employeeName}
-                                                    className="border-t border-slate-200"
-                                                >
-                                                    <TableCell>{item.employeeName}</TableCell>
-                                                    <TableCell>
-                                                        {formatCurrency(item.salaryEarned)}
-                                                    </TableCell>
-                                                    <TableCell>{formatCurrency(item.cashPaid)}</TableCell>
-                                                    <TableCell>{formatCurrency(item.balance)}</TableCell>
+                            <div className="mb-4">
+                                <TextInput
+                                    label="Filter by Employee"
+                                    type="text"
+                                    value={employeeFilter}
+                                    onChange={(e) => setEmployeeFilter(e.target.value)}
+                                    placeholder="Enter employee name..."
+                                />
+                            </div>
+
+                            {(() => {
+                                const filtered = dashboard.payrollBreakdown.filter((item) =>
+                                    item.employeeName
+                                        .toLowerCase()
+                                        .includes(employeeFilter.toLowerCase())
+                                );
+                                return filtered.length === 0 ? (
+                                    <p className="text-sm text-slate-500">
+                                        {dashboard.payrollBreakdown.length === 0
+                                            ? "No payroll records found."
+                                            : "No matching employees."}
+                                    </p>
+                                ) : (
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full text-sm">
+                                            <thead className="bg-slate-50 text-left text-slate-600">
+                                                <tr>
+                                                    <TableHeader>Employee</TableHeader>
+                                                    <TableHeader>Earned</TableHeader>
+                                                    <TableHeader>Paid</TableHeader>
+                                                    <TableHeader>Balance</TableHeader>
                                                 </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            )}
+                                            </thead>
+                                            <tbody>
+                                                {filtered.map((item) => (
+                                                    <tr
+                                                        key={item.employeeName}
+                                                        className="border-t border-slate-200"
+                                                    >
+                                                        <TableCell>{item.employeeName}</TableCell>
+                                                        <TableCell>
+                                                            {formatCurrency(item.salaryEarned)}
+                                                        </TableCell>
+                                                        <TableCell>{formatCurrency(item.cashPaid)}</TableCell>
+                                                        <TableCell>{formatCurrency(item.balance)}</TableCell>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                );
+                            })()}
                         </Card>
                     </div>
                 </>

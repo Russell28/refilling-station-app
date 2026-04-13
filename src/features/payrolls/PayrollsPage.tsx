@@ -7,6 +7,7 @@ import Card from "../../components/ui/Card";
 import PageHeader from "../../components/ui/PageHeader";
 import Button from "../../components/ui/Button";
 import { apiClient } from "../../api/client";
+import { getToken } from "../auth/utils/authStorage";
 
 export default function PayrollsPage() {
     const [payrolls, setPayrolls] = useState<Payroll[]>([]);
@@ -112,6 +113,9 @@ export default function PayrollsPage() {
                 {
                     method: "POST",
                     body: formData,
+                    headers: {
+                        Authorization: `Bearer ${getToken()}`,
+                    },
                 }
             );
 

@@ -7,6 +7,7 @@ import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import PageHeader from "../../components/ui/PageHeader";
 import { apiClient } from "../../api/client";
+import { getToken } from "../auth/utils/authStorage";
 
 export default function ExpensesPage() {
     const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -115,6 +116,9 @@ export default function ExpensesPage() {
                 {
                     method: "POST",
                     body: formData,
+                    headers: {
+                        Authorization: `Bearer ${getToken()}`,
+                    },
                 }
             );
 
