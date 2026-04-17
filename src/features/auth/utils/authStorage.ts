@@ -40,3 +40,8 @@ export function getStoredUser(): AuthUser | null {
 export function isAuthenticated(): boolean {
     return !!getToken();
 }
+
+export function isAdmin(): boolean {
+    const user = getStoredUser();
+    return user?.role === "Admin";
+}

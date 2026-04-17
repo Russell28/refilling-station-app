@@ -6,7 +6,8 @@ import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import PageHeader from "../../components/ui/PageHeader";
 import { apiClient } from "../../api/client";
-import { getToken } from "../auth/utils/authStorage";
+import { getToken, isAdmin } from "../auth/utils/authStorage";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 export default function TripsPage() {
   const navigate = useNavigate();
@@ -93,13 +94,14 @@ export default function TripsPage() {
         description="Track deliveries, quantities, and collections."
         action={
           <div className="flex gap-2">
-
-            <Button
-              variant="secondary"
-              onClick={handleImportClick}
-            >
-              Import CSV
-            </Button>
+            {isAdmin() && (
+              <Button
+                variant="secondary"
+                onClick={handleImportClick}
+              >
+                Import CSV
+              </Button>
+            )}
 
             <Button
               onClick={() => navigate("/trips/new")}
@@ -306,20 +308,24 @@ export default function TripsPage() {
 
                   <div className="mt-4 flex gap-2">
                     <Button
-                      variant="secondary"
-                      className="flex-1"
+                      variant="warning"
+                      className="p-3 rounded-full bg-green-600 text-white flex items-center justify-center 
+                                  hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400
+                                  sm:p-2 sm:rounded-md"
                       onClick={() =>
                         navigate(`/trips/${trip.id}/edit`)
                       }
                     >
-                      Edit
+                      <FaEdit className="w-4 h-4 sm:w-4 sm:h-4" />
                     </Button>
                     <Button
                       variant="danger"
-                      className="flex-1"
+                      className="p-3 rounded-full bg-red-600 text-white flex items-center justify-center 
+                                  hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-400
+                                  sm:p-2 sm:rounded-md"
                       onClick={() => onDeleteClick(trip.id)}
                     >
-                      Delete
+                      <FaTrashAlt className="w-4 h-4 sm:w-4 sm:h-4" />
                     </Button>
                   </div>
                 </div>

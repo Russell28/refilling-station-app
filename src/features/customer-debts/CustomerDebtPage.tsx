@@ -6,7 +6,7 @@ import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import PageHeader from "../../components/ui/PageHeader";
 import { apiClient } from "../../api/client";
-import { getToken } from "../auth/utils/authStorage";
+import { getToken, isAdmin } from "../auth/utils/authStorage";
 
 export default function CustomerDebtPage() {
     const [customerDebts, setCustomerDebts] = useState<CustomerDebt[]>([]);
@@ -142,12 +142,15 @@ export default function CustomerDebtPage() {
                 description="Track unpaid balances and customer debt records."
                 action={
                     <div className="flex gap-2">
-                        <Button
-                            variant="secondary"
-                            onClick={handleImportClick}
-                        >
-                            Import CSV
-                        </Button>
+                        {isAdmin() && (
+                            <Button
+                                variant="secondary"
+                                onClick={handleImportClick}
+                            >
+                                Import CSV
+                            </Button>
+                        )}
+
                         <Button onClick={onAddClick}>
                             New Debt
                         </Button>

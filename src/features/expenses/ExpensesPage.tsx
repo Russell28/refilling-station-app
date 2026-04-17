@@ -7,7 +7,7 @@ import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import PageHeader from "../../components/ui/PageHeader";
 import { apiClient } from "../../api/client";
-import { getToken } from "../auth/utils/authStorage";
+import { getToken, isAdmin } from "../auth/utils/authStorage";
 
 export default function ExpensesPage() {
     const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -140,12 +140,14 @@ export default function ExpensesPage() {
                 description="Track daily and operational expenses."
                 action={
                     <div>
-                        <Button
-                            variant="secondary"
-                            onClick={handleImportClick}
-                        >
-                            Import CSV
-                        </Button>
+                        {isAdmin() && (
+                            <Button
+                                variant="secondary"
+                                onClick={handleImportClick}
+                            >
+                                Import CSV
+                            </Button>
+                        )}
 
                         <Button onClick={onAddClick}>
                             New Expense

@@ -4,6 +4,7 @@ import Card from "../../components/ui/Card";
 import PageHeader from "../../components/ui/PageHeader";
 import TextInput from "../../components/ui/TextInput";
 import { formatDateForInput } from "../../utils/date"
+import { isAdmin } from "../auth/utils/authStorage";
 
 type DailySummary = {
     date: string;
@@ -96,10 +97,11 @@ export default function DailySummaryPage() {
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
                     <div className="w-full sm:max-w-xs">
                         <TextInput
-                            label="Select Date"
+                            label={isAdmin() ? "Select Date" : "Date"}
                             type="date"
                             value={selectedDate}
                             onChange={(e) => setSelectedDate(e.target.value)}
+                            readOnly={!isAdmin()} 
                         />
                     </div>
 
@@ -142,10 +144,12 @@ export default function DailySummaryPage() {
                             label="Total Expenses"
                             value={`₱${summary.totalExpenses.toLocaleString()}`}
                         />
-                        <SummaryMetricCard
-                            label="Total Salary Paid"
-                            value={`₱${summary.totalPayrollPaid.toLocaleString()}`}
-                        />
+                        {isAdmin() && (
+                            <SummaryMetricCard
+                                label="Total Salary Paid"
+                                value={`₱${summary.totalPayrollPaid.toLocaleString()}`}
+                            />
+                        )}
                     </div>
 
                     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -263,12 +267,14 @@ export default function DailySummaryPage() {
                                     </span>
                                 </div>
 
-                                <div className="flex justify-between gap-4">
-                                    <span className="text-slate-500">Total Salary Paid</span>
-                                    <span className="font-medium text-slate-900">
-                                        ₱{summary.totalPayrollPaid.toLocaleString()}
-                                    </span>
-                                </div>
+                                {isAdmin() && (
+                                    <div className="flex justify-between gap-4">
+                                        <span className="text-slate-500">Total Salary Paid</span>
+                                        <span className="font-medium text-slate-900">
+                                            ₱{summary.totalPayrollPaid.toLocaleString()}
+                                        </span>
+                                    </div>
+                                )}
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Debt Created Today</span>
@@ -297,8 +303,8 @@ export default function DailySummaryPage() {
                                     </span>
                                     <span
                                         className={`font-semibold ${summary.netCashFlow >= 0
-                                                ? "text-emerald-600"
-                                                : "text-red-600"
+                                            ? "text-emerald-600"
+                                            : "text-red-600"
                                             }`}
                                     >
                                         ₱{summary.netCashFlow.toLocaleString()}
