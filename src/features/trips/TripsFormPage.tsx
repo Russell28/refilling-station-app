@@ -8,13 +8,16 @@ import type {
     TripFormErrors,
 } from "./Trip";
 import { emptyTripForm } from "./Trip";
-import { createTrip, getTripById, updateTrip } from "./tripsApi";
+import { createTrip, getNextTripNumber, getTripById, updateTrip } from "./tripsApi";
 import { formatDateForInput, formatTimeForInput } from "../../utils/date";
 import PageHeader from "../../components/ui/PageHeader";
 import Card from "../../components/ui/Card";
 import TextInput from "../../components/ui/TextInput";
 import Button from "../../components/ui/Button";
 import normalizeServerErrors from "../../utils/normalizeServerErrors"
+import Dropdown from "../../components/ui/Dropdown";
+import { EMPLOYEES } from "../employees/constants";
+import { CUSTOMER_CATEGORIES } from "../customer-categories/constants";
 
 type ServerErrors = Partial<Record<keyof TripFormValues, string[]>>;
 
@@ -23,6 +26,7 @@ export default function TripsFormPage() {
     const navigate = useNavigate();
 
     const [form, setForm] = useState<TripFormValues>(emptyTripForm);
+    const [estimatedCash, setEstimatedCash] = useState(0);
     const [errors, setErrors] = useState<TripFormErrors>({});
     const [serverErrors, setServerErrors] = useState<ServerErrors>({});
 
@@ -32,9 +36,26 @@ export default function TripsFormPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!isEditMode) return;
-
         setLoading(true);
+
+        if (!isEditMode) {
+            async function loadNextTripNumber(selectedDate?: string) {
+                try {
+                    const nextTripNumber = await getNextTripNumber(selectedDate);
+                    setForm((prev) => ({
+                        ...prev,
+                        tripNumber: nextTripNumber.toString(),
+                    }));
+                } catch (err) {
+                    console.error("Failed to load next trip number:", err);
+                } finally {
+                    setLoading(false);
+                }
+            }
+
+            loadNextTripNumber(form.date);
+            return;
+        }
 
         async function loadTrip() {
             try {
@@ -54,6 +75,16 @@ export default function TripsFormPage() {
         loadTrip();
     }, [id, isEditMode]);
 
+    useEffect(() => {
+        computeEstimatedCash();
+    }, [
+        form.loadedQty,
+        form.deliveredQty,
+        form.freeQty,
+        form.replacementQty,
+        form.customerCategory,
+    ]);
+
     function mapTripToFormValues(trip: Trip): TripFormValues {
         return {
             date: formatDateForInput(trip.date),
@@ -66,17 +97,22 @@ export default function TripsFormPage() {
             tripType: trip.tripType ?? "",
             customerCategory: trip.customerCategory ?? "",
 
-            collectedQty: trip.collectedQty.toString(),
-            loadedQty: trip.loadedQty.toString(),
-            deliveredQty: trip.deliveredQty.toString(),
-            freeQty: trip.freeQty.toString(),
-            returnedQty: trip.returnedQty.toString(),
-            replacementQty: trip.replacementQty.toString(),
+            collectedQty: numToStringOrBlank(trip.collectedQty),
+            loadedQty: numToStringOrBlank(trip.loadedQty),
+            deliveredQty: numToStringOrBlank(trip.deliveredQty),
+            freeQty: numToStringOrBlank(trip.freeQty),
+            returnedQty: numToStringOrBlank(trip.returnedQty),
+            replacementQty: numToStringOrBlank(trip.replacementQty),
 
-            actualCashCollected: trip.actualCashCollected.toString(),
+            actualCashCollected: numToStringOrBlank(trip.actualCashCollected),
             isRemitted: trip.isRemitted ?? false,
             notes: trip.notes ?? "",
         };
+    }
+    
+    function numToStringOrBlank(value: number | null | undefined): string {
+        if (!value || value === 0) return "";
+        return value.toString();
     }
 
     function mapFormToCreateRequest(values: TripFormValues): CreateTripRequest {
@@ -157,14 +193,14 @@ export default function TripsFormPage() {
             | "replacementQty"
             | "actualCashCollected"
         > = [
-            "collectedQty",
-            "loadedQty",
-            "deliveredQty",
-            "freeQty",
-            "returnedQty",
-            "replacementQty",
-            "actualCashCollected",
-        ];
+                "collectedQty",
+                "loadedQty",
+                "deliveredQty",
+                "freeQty",
+                "returnedQty",
+                "replacementQty",
+                "actualCashCollected",
+            ];
 
         for (const field of numericFields) {
             const rawValue = values[field];
@@ -254,7 +290,7 @@ export default function TripsFormPage() {
     }
 
     function handleInputChange(
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) {
         const { name, value, type } = e.target;
         const checked =
@@ -276,6 +312,28 @@ export default function TripsFormPage() {
         }));
 
         setError(null);
+    }
+
+    function computeEstimatedCash(): void {
+        const loaded = Number(form.loadedQty) || 0;
+        const delivered = Number(form.deliveredQty) || 0;
+        const free = Number(form.freeQty) || 0;
+        const replacement = Number(form.replacementQty) || 0;
+        const customerCategory = form.customerCategory;
+
+        let toBePaidQty = 0;
+        if (loaded > 0 && delivered == 0) {
+            toBePaidQty = loaded - free - replacement;
+        } else if (delivered > 0) {
+            toBePaidQty = delivered - free - replacement;
+        }
+
+        const categoryPrice = CUSTOMER_CATEGORIES.find(
+            (cat) => cat.name === customerCategory
+        )?.price ?? 0;
+
+        const estimatedCash = toBePaidQty * categoryPrice;
+        setEstimatedCash(estimatedCash);
     }
 
     return (
@@ -336,6 +394,21 @@ export default function TripsFormPage() {
                             </div>
 
                             <div>
+                                <Dropdown
+                                    label="Employee Name"
+                                    name="employeeName"
+                                    options={EMPLOYEES}
+                                    value={form.employeeName}
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("employeeName") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("employeeName")}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* <div>
                                 <TextInput
                                     label="Employee Name"
                                     type="text"
@@ -348,9 +421,9 @@ export default function TripsFormPage() {
                                         {getFieldError("employeeName")}
                                     </p>
                                 )}
-                            </div>
+                            </div> */}
 
-                            <div>
+                            {/* <div>
                                 <TextInput
                                     label="Source"
                                     type="text"
@@ -363,9 +436,9 @@ export default function TripsFormPage() {
                                         {getFieldError("source")}
                                     </p>
                                 )}
-                            </div>
+                            </div> */}
 
-                            <div>
+                            {/* <div>
                                 <TextInput
                                     label="Trip Type"
                                     type="text"
@@ -378,13 +451,13 @@ export default function TripsFormPage() {
                                         {getFieldError("tripType")}
                                     </p>
                                 )}
-                            </div>
+                            </div> */}
 
                             <div>
-                                <TextInput
+                                <Dropdown
                                     label="Customer Category"
-                                    type="text"
                                     name="customerCategory"
+                                    options={CUSTOMER_CATEGORIES}
                                     value={form.customerCategory}
                                     onChange={handleInputChange}
                                 />
@@ -497,7 +570,7 @@ export default function TripsFormPage() {
 
                     <Card>
                         <h2 className="mb-4 text-lg font-semibold text-slate-900">
-                            Payment and Time
+                            Payment
                         </h2>
 
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -516,7 +589,7 @@ export default function TripsFormPage() {
                                 )}
                             </div>
 
-                            <div>
+                            {/* <div>
                                 <TextInput
                                     label="Time Started"
                                     type="time"
@@ -538,6 +611,21 @@ export default function TripsFormPage() {
                                     name="timeEnded"
                                     value={form.timeEnded}
                                     onChange={handleInputChange}
+                                />
+                                {getFieldError("timeEnded") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("timeEnded")}
+                                    </p>
+                                )}
+                            </div> */}
+
+                            <div>
+                                <TextInput
+                                    label="Estimated Cash"
+                                    type="number"
+                                    name="estimatedCash"
+                                    value={estimatedCash}
+                                    disabled
                                 />
                                 {getFieldError("timeEnded") && (
                                     <p className="mt-1 text-sm text-red-600">
@@ -591,8 +679,8 @@ export default function TripsFormPage() {
                             {saving
                                 ? "Saving..."
                                 : isEditMode
-                                ? "Update"
-                                : "Save"}
+                                    ? "Update"
+                                    : "Save"}
                         </Button>
                     </div>
                 </form>

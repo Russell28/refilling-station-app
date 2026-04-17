@@ -46,3 +46,11 @@ export async function updateTrip(id: number, payload: UpdateTripRequest): Promis
 export async function deleteTrip(id: number): Promise<void> {
     await apiClient.delete(`/trips/${id}`);
 }
+
+export async function getNextTripNumber(date?:string): Promise<number> {
+    const targetDate = date ?? new Date().toISOString().split("T")[0];
+    const response = await apiClient.get("/trips/next-trip-number", {
+        params: { date: targetDate }
+    });
+    return response.data.nextTripNo;
+}

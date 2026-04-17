@@ -1,3 +1,6 @@
+import { CUSTOMER_CATEGORIES } from "../customer-categories/constants";
+import { EMPLOYEES } from "../employees/constants";
+
 export type Trip = {
   id: number;
   // Trip Info
@@ -54,17 +57,17 @@ export const emptyTripForm: TripFormValues = {
   timeEnded: "",
   source: "",
   tripType: "",
-  employeeName: "",
-  customerCategory: "",
+  employeeName: EMPLOYEES.length > 0 ? EMPLOYEES[0].name : "",
+  customerCategory: CUSTOMER_CATEGORIES.length > 0 ? CUSTOMER_CATEGORIES[0].name : "",
   
-  collectedQty: "0",
-  loadedQty: "0",
-  deliveredQty: "0",
-  freeQty: "0",
-  returnedQty: "0",
-  replacementQty: "0",
+  collectedQty: "",
+  loadedQty: "",
+  deliveredQty: "",
+  freeQty: "",
+  returnedQty: "",
+  replacementQty: "",
 
-  actualCashCollected: "0",
+  actualCashCollected: "",
   isRemitted: false,
   notes: "",
 };
