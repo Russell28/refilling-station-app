@@ -153,7 +153,7 @@ export default function PayrollsPage() {
                             Import CSV
                         </Button>
 
-                        <Button className="w-full sm:w-auto" onClick={onAddClick}>
+                        <Button onClick={onAddClick}>
                             New Payroll Entry
                         </Button>
                     </div>

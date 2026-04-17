@@ -148,7 +148,7 @@ export default function CustomerDebtPage() {
                         >
                             Import CSV
                         </Button>
-                        <Button className="w-full sm:w-auto" onClick={onAddClick}>
+                        <Button onClick={onAddClick}>
                             New Debt
                         </Button>
                     </div>

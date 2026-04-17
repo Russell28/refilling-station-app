@@ -139,7 +139,7 @@ export default function ExpensesPage() {
                 title="Expenses"
                 description="Track daily and operational expenses."
                 action={
-                    <div className="flex gap-2">
+                    <div>
                         <Button
                             variant="secondary"
                             onClick={handleImportClick}
@@ -147,7 +147,7 @@ export default function ExpensesPage() {
                             Import CSV
                         </Button>
 
-                        <Button className="w-full sm:w-auto" onClick={onAddClick}>
+                        <Button onClick={onAddClick}>
                             New Expense
                         </Button>
                     </div>
