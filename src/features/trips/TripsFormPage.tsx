@@ -16,8 +16,8 @@ import TextInput from "../../components/ui/TextInput";
 import Button from "../../components/ui/Button";
 import normalizeServerErrors from "../../utils/normalizeServerErrors"
 import Dropdown from "../../components/ui/Dropdown";
-import { EMPLOYEES } from "../employees/constants";
-import { CUSTOMER_CATEGORIES } from "../customer-categories/constants";
+import { EMPLOYEES } from "../constants/constants";
+import { CUSTOMER_CATEGORIES } from "../constants/constants";
 
 type ServerErrors = Partial<Record<keyof TripFormValues, string[]>>;
 

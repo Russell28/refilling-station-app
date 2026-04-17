@@ -1,5 +1,5 @@
-import { CUSTOMER_CATEGORIES } from "../customer-categories/constants";
-import { EMPLOYEES } from "../employees/constants";
+import { CUSTOMER_CATEGORIES } from "../constants/constants";
+import { EMPLOYEES } from "../constants/constants";
 
 export type Trip = {
   id: number;
