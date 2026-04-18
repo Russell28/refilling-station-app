@@ -4,6 +4,8 @@ import { formatDateForInput } from "../../utils/date";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import TextInput from "../../components/ui/TextInput";
+import Dropdown from "../../components/ui/Dropdown";
+import { EXPENSE_CATEGORIES } from "../constants/constants";
 
 type ExpenseFormProps = {
     expense: Expense | null;
@@ -37,21 +39,12 @@ export default function ExpenseForm({
 
     }, [expense]);
 
-    function handleTextChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleTextChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         const { name, value } = e.target;
 
         setExpenseFormValues((prev) => ({
             ...prev,
             [name]: value,
-        }));
-    }
-
-    function handleNumberChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const { name, value } = e.target;
-
-        setExpenseFormValues((prev) => ({
-            ...prev,
-            [name]: value === "" ? 0 : Number(value),
         }));
     }
 
@@ -81,14 +74,22 @@ export default function ExpenseForm({
                         onChange={handleTextChange}
                     />
 
-                    <TextInput
+                    <Dropdown
+                        label="Category"
+                        name="expenseCategory"
+                        options={EXPENSE_CATEGORIES}
+                        value={expenseFormValues.expenseCategory}
+                        onChange={handleTextChange}
+                    />
+                    
+                    {/* <TextInput
                         label="Category"
                         type="text"
                         name="expenseCategory"
                         value={expenseFormValues.expenseCategory}
                         onChange={handleTextChange}
                         placeholder="Enter expense category"
-                    />
+                    /> */}
 
                     <TextInput
                         label="Amount"
@@ -96,7 +97,7 @@ export default function ExpenseForm({
                         name="amount"
                         step="1"
                         value={expenseFormValues.amount}
-                        onChange={handleNumberChange}
+                        onChange={handleTextChange}
                         placeholder="0"
                     />
                 </div>
