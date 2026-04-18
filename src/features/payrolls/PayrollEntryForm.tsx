@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
-import { type Payroll, type PayrollFormValues, emptyPayrollFormValues } from "./Payroll";
+import { type CreateUpdatePayrollRequest, type Payroll, type PayrollFormValues, emptyPayrollFormValues } from "./Payroll";
 import { formatDateForInput } from "../../utils/date";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import TextInput from "../../components/ui/TextInput";
+import { EMPLOYEES } from "../constants/constants";
+import Dropdown from "../../components/ui/Dropdown";
+
 
 type PayrollEntryFormProps = {
     selectedPayroll: Payroll | null;
-    onSubmit: (formValues: PayrollFormValues) => Promise<void>;
+    onSubmit: (createRequest: CreateUpdatePayrollRequest) => Promise<void>;
     onCancel: () => void;
 };
 
@@ -15,11 +18,23 @@ function mapPayrollToFormValues(payroll: Payroll): PayrollFormValues {
     return {
         date: payroll.date,
         employeeName: payroll.employeeName,
-        salaryAmount: payroll.salaryAmount,
-        advanceGiven: payroll.advanceGiven,
-        advanceDeduction: payroll.advanceDeduction,
-        cashPaid: payroll.cashPaid,
+        salaryAmount: payroll.salaryAmount.toString(),
+        advanceGiven: payroll.advanceGiven.toString(),
+        advanceDeduction: payroll.advanceDeduction.toString(),
+        cashPaid: payroll.cashPaid.toString(),
         notes: payroll.notes ?? "",
+    };
+}
+
+function mapFormValuesToCreate(values: PayrollFormValues): CreateUpdatePayrollRequest {
+    return {
+        date: values.date,
+        employeeName: values.employeeName,
+        salaryAmount: Number(values.salaryAmount || 0),
+        advanceGiven: Number(values.advanceGiven || 0),
+        advanceDeduction: Number(values.advanceDeduction || 0),
+        cashPaid: Number(values.cashPaid || 0),
+        notes: values.notes,
     };
 }
 
@@ -38,7 +53,7 @@ export default function PayrollEntryForm({
         }
     }, [selectedPayroll]);
 
-    function handleTextChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleInputChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         const { name, value } = e.target;
 
         setFormValues((prev) => ({
@@ -47,18 +62,19 @@ export default function PayrollEntryForm({
         }));
     }
 
-    function handleNumberChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const { name, value } = e.target;
+    // function handleNumberChange(e: React.ChangeEvent<HTMLInputElement>) {
+    //     const { name, value } = e.target;
 
-        setFormValues((prev) => ({
-            ...prev,
-            [name]: value === "" ? 0 : Number(value),
-        }));
-    }
+    //     setFormValues((prev) => ({
+    //         ...prev,
+    //         [name]: value === "" ? 0 : Number(value),
+    //     }));
+    // }
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
-        onSubmit(formValues);
+
+        onSubmit(mapFormValuesToCreate(formValues));
     }
 
     return (
@@ -79,25 +95,32 @@ export default function PayrollEntryForm({
                         type="date"
                         name="date"
                         value={formatDateForInput(formValues.date)}
-                        onChange={handleTextChange}
+                        onChange={handleInputChange}
                     />
 
-                    <TextInput
+                    <Dropdown
+                        label="Employee Name"
+                        name="employeeName"
+                        options={EMPLOYEES}
+                        value={formValues.employeeName}
+                        onChange={handleInputChange}
+                    />
+
+                    {/* <TextInput
                         label="Employee Name"
                         type="text"
                         name="employeeName"
                         value={formValues.employeeName}
-                        onChange={handleTextChange}
+                        onChange={handleInputChange}
                         placeholder="Enter employee name"
-                    />
+                    /> */}
 
                     <TextInput
                         label="Salary"
                         type="number"
                         name="salaryAmount"
                         value={formValues.salaryAmount}
-                        onChange={handleNumberChange}
-                        placeholder="0"
+                        onChange={handleInputChange}
                     />
 
                     <TextInput
@@ -105,8 +128,7 @@ export default function PayrollEntryForm({
                         type="number"
                         name="advanceGiven"
                         value={formValues.advanceGiven}
-                        onChange={handleNumberChange}
-                        placeholder="0"
+                        onChange={handleInputChange}
                     />
 
                     <TextInput
@@ -114,8 +136,7 @@ export default function PayrollEntryForm({
                         type="number"
                         name="advanceDeduction"
                         value={formValues.advanceDeduction}
-                        onChange={handleNumberChange}
-                        placeholder="0"
+                        onChange={handleInputChange}
                     />
 
                     <TextInput
@@ -123,8 +144,7 @@ export default function PayrollEntryForm({
                         type="number"
                         name="cashPaid"
                         value={formValues.cashPaid}
-                        onChange={handleNumberChange}
-                        placeholder="0"
+                        onChange={handleInputChange}
                     />
                 </div>
 
@@ -136,7 +156,7 @@ export default function PayrollEntryForm({
                         type="text"
                         name="notes"
                         value={formValues.notes}
-                        onChange={handleTextChange}
+                        onChange={handleInputChange}
                         placeholder="Optional notes"
                         className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-slate-900"
                     />

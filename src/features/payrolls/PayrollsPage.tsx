@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import type { Payroll, PayrollFormValues } from "./Payroll";
+import type { CreateUpdatePayrollRequest, Payroll } from "./Payroll";
 import { createPayroll, deletePayroll, getPayrolls, updatePayroll } from "./payrollApi";
 import { formatDateForInput } from "../../utils/date";
 import PayrollEntryForm from "./PayrollEntryForm";
@@ -51,7 +51,7 @@ export default function PayrollsPage() {
         setIsFormOpen(false);
     }
 
-    async function handleSubmit(formValues: PayrollFormValues) {
+    async function handleSubmit(formValues: CreateUpdatePayrollRequest) {
         try {
             setSaving(true);
             setFormError(null);
