@@ -47,21 +47,21 @@ export default function CustomerDebtForm({
         }));
     }
 
-    function handleNumberChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const { name, value } = e.target;
+    // function handleNumberChange(e: React.ChangeEvent<HTMLInputElement>) {
+    //     const { name, value } = e.target;
 
-        setForm((prev) => ({
-            ...prev,
-            [name]:
-                name === "relatedTripId"
-                    ? value === ""
-                        ? undefined
-                        : Number(value)
-                    : value === ""
-                        ? 0
-                        : Number(value),
-        }));
-    }
+    //     setForm((prev) => ({
+    //         ...prev,
+    //         [name]:
+    //             name === "relatedTripId"
+    //                 ? value === ""
+    //                     ? undefined
+    //                     : Number(value)
+    //                 : value === ""
+    //                     ? 0
+    //                     : Number(value),
+    //     }));
+    // }
 
     function mapValuesToCreate(values: CustomerDebtFormValues): CreateUpdateCustomerDebtRequest {
         return {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { CreateUpdateCustomerDebtRequest, CustomerDebt, CustomerDebtFormValues } from "./CustomerDebt";
+import type { CreateUpdateCustomerDebtRequest, CustomerDebt } from "./CustomerDebt";
 import { createCustomerDebt, deleteCustomerDebt, getCustomerDebts, updateCustomerDebt } from "./customerDebtsApi";
 import CustomerDebtForm from "./CustomerDebtForm";
 import Card from "../../components/ui/Card";
