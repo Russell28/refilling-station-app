@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import type { Expense, ExpenseFormValues } from "./Expense";
+import type { CreateUpdateExpenseRequest, Expense } from "./Expense";
 import { createExpense, deleteExpense, getExpenses, updateExpense } from "./expenseApi";
 import { formatDateForInput } from "../../utils/date";
 import ExpenseForm from "./ExpenseForm";
@@ -72,7 +72,7 @@ export default function ExpensesPage() {
         }
     }
 
-    async function handleSubmit(formValues: ExpenseFormValues) {
+    async function handleSubmit(formValues: CreateUpdateExpenseRequest) {
         try {
             setSaving(true);
             setFormError(null);

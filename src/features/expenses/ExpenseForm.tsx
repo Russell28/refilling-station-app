@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { emptyExpenseFormValues, type Expense, type ExpenseFormValues } from "./Expense";
+import { emptyExpenseFormValues, type CreateUpdateExpenseRequest, type Expense, type ExpenseFormValues } from "./Expense";
 import { formatDateForInput } from "../../utils/date";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
@@ -9,7 +9,7 @@ import { EXPENSE_CATEGORIES } from "../constants/constants";
 
 type ExpenseFormProps = {
     expense: Expense | null;
-    onSubmit: (values: ExpenseFormValues) => void;
+    onSubmit: (values: CreateUpdateExpenseRequest) => void;
     onCancel: () => void;
 }
 
@@ -17,11 +17,10 @@ function mapExpenseToFormValues(expense: Expense | null): ExpenseFormValues {
     return {
         date: expense ? expense.date : "",
         expenseCategory: expense ? expense.expenseCategory : "",
-        amount: expense ? expense.amount : 0,
+        amount: expense ? expense.amount.toString() : "",
         notes: expense ? expense.notes : ""
     };
 }
-
 
 export default function ExpenseForm({
     expense,
@@ -50,8 +49,18 @@ export default function ExpenseForm({
 
     function handleSubmit(e: React.SubmitEvent) {
         e.preventDefault();
-        onSubmit(expenseFormValues);
+        onSubmit(mapValuesToCreate(expenseFormValues));
     }
+
+    function mapValuesToCreate(values: ExpenseFormValues): CreateUpdateExpenseRequest {
+        return {
+            date: values.date,
+            expenseCategory: values.expenseCategory,
+            amount: Number(values.amount) || 0,
+            notes: values.notes
+        };
+    }
+
 
     return (
         <Card className="border-slate-300">
@@ -98,7 +107,6 @@ export default function ExpenseForm({
                         step="1"
                         value={expenseFormValues.amount}
                         onChange={handleTextChange}
-                        placeholder="0"
                     />
                 </div>
 

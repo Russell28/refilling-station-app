@@ -1,12 +1,12 @@
 import { apiClient } from "../../api/client";
-import type { Expense, ExpenseFormValues } from "./Expense";
+import type { CreateUpdateExpenseRequest, Expense } from "./Expense";
 
 export async function getExpenses() : Promise<Expense[]> {
     const response = await apiClient.get("/expenses");
     return response.data;
 }
 
-export async function createExpense(payload: ExpenseFormValues): Promise<Expense> {
+export async function createExpense(payload: CreateUpdateExpenseRequest): Promise<Expense> {
     const apiPayload = {
         ...payload,
         date: payload.date ? new Date(payload.date).toISOString() : null,
@@ -15,7 +15,7 @@ export async function createExpense(payload: ExpenseFormValues): Promise<Expense
     return response.data;
 }
 
-export async function updateExpense(id: number, payload: ExpenseFormValues): Promise<Expense> {
+export async function updateExpense(id: number, payload: CreateUpdateExpenseRequest): Promise<Expense> {
     const apiPayload = {
         ...payload,
         date: payload.date ? new Date(payload.date).toISOString() : null,
