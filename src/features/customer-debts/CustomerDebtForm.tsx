@@ -1,23 +1,25 @@
 import { useEffect, useState } from "react";
-import  { type CustomerDebt, type CustomerDebtFormValues, emptyForm } from "./CustomerDebt";
+import { type CreateUpdateCustomerDebtRequest, type CustomerDebt, type CustomerDebtFormValues, emptyForm } from "./CustomerDebt";
 import { formatDateForInput } from "../../utils/date";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import TextInput from "../../components/ui/TextInput";
+import { CUSTOMERS } from "../constants/constants";
+import Dropdown from "../../components/ui/Dropdown";
 
 type DebtFormProps = {
     debt: CustomerDebt | null;
-    onSubmit: (values: CustomerDebtFormValues) => void;
+    onSubmit: (values: CreateUpdateCustomerDebtRequest) => void;
     onCancel: () => void;
 };
 
 function mapDebtToFormValues(debt: CustomerDebt | null): CustomerDebtFormValues {
     return {
-        date: debt?.date ?? "",
-        customerName: debt?.customerName ?? "",
-        amount: debt?.amount ?? 0,
-        relatedTripId: debt?.relatedTripId ?? undefined,
-        notes: debt?.notes ?? "",
+        date: debt ? debt.date : "",
+        customerName: debt ? debt.customerName : "",
+        amount: debt ? debt.amount.toString() : "",
+        relatedTripId: debt ? debt.relatedTripId?.toString() : undefined,
+        notes: debt ? debt.notes : "",
     };
 }
 
@@ -29,10 +31,14 @@ export default function CustomerDebtForm({
     const [form, setForm] = useState<CustomerDebtFormValues>(emptyForm);
 
     useEffect(() => {
-        setForm(mapDebtToFormValues(debt));
+        if(debt) {
+            setForm(mapDebtToFormValues(debt));
+        } else {
+            setForm(emptyForm);
+        }
     }, [debt]);
 
-    function handleTextChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleTextChange(e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) {
         const { name, value } = e.target;
 
         setForm((prev) => ({
@@ -52,14 +58,24 @@ export default function CustomerDebtForm({
                         ? undefined
                         : Number(value)
                     : value === ""
-                      ? 0
-                      : Number(value),
+                        ? 0
+                        : Number(value),
         }));
+    }
+
+    function mapValuesToCreate(values: CustomerDebtFormValues): CreateUpdateCustomerDebtRequest {
+        return {
+            date: values.date,
+            customerName: values.customerName,
+            amount: Number(values.amount) || 0,
+            relatedTripId: values.relatedTripId ? Number(values.relatedTripId) : undefined,
+            notes: values.notes
+        };
     }
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        onSubmit(form);
+        onSubmit(mapValuesToCreate(form));
     }
 
     return (
@@ -83,32 +99,39 @@ export default function CustomerDebtForm({
                         onChange={handleTextChange}
                     />
 
-                    <TextInput
+                    <Dropdown
+                        label="Customer Name"
+                        name="customerName"
+                        options={CUSTOMERS}
+                        value={form.customerName}
+                        onChange={handleTextChange}
+                    />
+                    {/* <TextInput
                         label="Customer Name"
                         type="text"
                         name="customerName"
                         value={form.customerName}
                         onChange={handleTextChange}
                         placeholder="Enter customer name"
-                    />
+                    /> */}
 
                     <TextInput
                         label="Amount"
                         type="number"
                         name="amount"
                         value={form.amount}
-                        onChange={handleNumberChange}
-                        placeholder="0"
+                        onChange={handleTextChange}
+                        // placeholder="0"
                     />
 
-                    <TextInput
+                    {/* <TextInput
                         label="Related Trip ID"
                         type="number"
                         name="relatedTripId"
                         value={form.relatedTripId ?? ""}
                         onChange={handleNumberChange}
                         placeholder="Optional"
-                    />
+                    /> */}
                 </div>
 
                 <label className="block">

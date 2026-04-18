@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { CustomerDebt, CustomerDebtFormValues } from "./CustomerDebt";
+import type { CreateUpdateCustomerDebtRequest, CustomerDebt, CustomerDebtFormValues } from "./CustomerDebt";
 import { createCustomerDebt, deleteCustomerDebt, getCustomerDebts, updateCustomerDebt } from "./customerDebtsApi";
 import CustomerDebtForm from "./CustomerDebtForm";
 import Card from "../../components/ui/Card";
@@ -48,7 +48,7 @@ export default function CustomerDebtPage() {
         setIsFormOpen(false);
     }
 
-    async function handleSubmit(formValues: CustomerDebtFormValues) {
+    async function handleSubmit(formValues: CreateUpdateCustomerDebtRequest) {
         try {
             setSaving(true);
             if (selectedDebt) {
@@ -68,7 +68,6 @@ export default function CustomerDebtPage() {
         } finally {
             setSaving(false);
         }
-
     }
 
     async function onDeleteClick(id: number) {
