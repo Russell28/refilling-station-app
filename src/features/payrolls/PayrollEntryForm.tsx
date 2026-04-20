@@ -16,11 +16,10 @@ type PayrollEntryFormProps = {
 
 function mapPayrollToFormValues(payroll: Payroll): PayrollFormValues {
     return {
-        date: payroll.date,
+        earnedDate: payroll.earnedDate,
+        paidDate: payroll?.paidDate ?? "", // Use empty string if paidDate is null or undefined
         employeeName: payroll.employeeName,
         salaryAmount: payroll.salaryAmount.toString(),
-        advanceGiven: payroll.advanceGiven.toString(),
-        advanceDeduction: payroll.advanceDeduction.toString(),
         cashPaid: payroll.cashPaid.toString(),
         notes: payroll.notes ?? "",
     };
@@ -28,11 +27,10 @@ function mapPayrollToFormValues(payroll: Payroll): PayrollFormValues {
 
 function mapFormValuesToCreate(values: PayrollFormValues): CreateUpdatePayrollRequest {
     return {
-        date: values.date,
+        earnedDate: values.earnedDate,
+        paidDate: values.paidDate,
         employeeName: values.employeeName,
         salaryAmount: Number(values.salaryAmount || 0),
-        advanceGiven: Number(values.advanceGiven || 0),
-        advanceDeduction: Number(values.advanceDeduction || 0),
         cashPaid: Number(values.cashPaid || 0),
         notes: values.notes,
     };
@@ -91,10 +89,18 @@ export default function PayrollEntryForm({
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <TextInput
-                        label="Date"
+                        label="Earned Date"
                         type="date"
-                        name="date"
-                        value={formatDateForInput(formValues.date)}
+                        name="earnedDate"
+                        value={formatDateForInput(formValues.earnedDate)}
+                        onChange={handleInputChange}
+                    />
+
+                    <TextInput
+                        label="Paid Date"
+                        type="date"
+                        name="paidDate"
+                        value={formatDateForInput(formValues.paidDate)}
                         onChange={handleInputChange}
                     />
 
@@ -120,22 +126,6 @@ export default function PayrollEntryForm({
                         type="number"
                         name="salaryAmount"
                         value={formValues.salaryAmount}
-                        onChange={handleInputChange}
-                    />
-
-                    <TextInput
-                        label="Advance Given"
-                        type="number"
-                        name="advanceGiven"
-                        value={formValues.advanceGiven}
-                        onChange={handleInputChange}
-                    />
-
-                    <TextInput
-                        label="Advance Deduction"
-                        type="number"
-                        name="advanceDeduction"
-                        value={formValues.advanceDeduction}
                         onChange={handleInputChange}
                     />
 

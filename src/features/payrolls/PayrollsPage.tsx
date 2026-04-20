@@ -210,12 +210,11 @@ export default function PayrollsPage() {
                             <table className="min-w-full text-sm">
                                 <thead className="bg-slate-50 text-left text-slate-500">
                                     <tr>
-                                        <th className="px-4 py-3 font-medium">Date</th>
+                                        <th className="px-4 py-3 font-medium">Earned Date</th>
                                         <th className="px-4 py-3 font-medium">Employee</th>
                                         <th className="px-4 py-3 font-medium">Salary</th>
-                                        <th className="px-4 py-3 font-medium">Advance Given</th>
-                                        <th className="px-4 py-3 font-medium">Advance Deduction</th>
                                         <th className="px-4 py-3 font-medium">Cash Paid</th>
+                                        <th className="px-4 py-3 font-medium">Paid Date</th>
                                         <th className="px-4 py-3 font-medium">Notes</th>
                                         <th className="px-4 py-3 font-medium">Action</th>
                                     </tr>
@@ -227,7 +226,7 @@ export default function PayrollsPage() {
                                             className="border-t border-slate-200"
                                         >
                                             <td className="px-4 py-3">
-                                                {formatDateForInput(payroll.date)}
+                                                {formatDateForInput(payroll.earnedDate)}
                                             </td>
                                             <td className="px-4 py-3">
                                                 {payroll.employeeName}
@@ -236,13 +235,10 @@ export default function PayrollsPage() {
                                                 ₱{payroll.salaryAmount.toLocaleString()}
                                             </td>
                                             <td className="px-4 py-3">
-                                                ₱{payroll.advanceGiven.toLocaleString()}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                ₱{payroll.advanceDeduction.toLocaleString()}
-                                            </td>
-                                            <td className="px-4 py-3">
                                                 ₱{payroll.cashPaid.toLocaleString()}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                {formatDateForInput(payroll.paidDate)}
                                             </td>
                                             <td className="px-4 py-3">
                                                 {payroll.notes || "-"}
@@ -281,31 +277,24 @@ export default function PayrollsPage() {
                                                 {payroll.employeeName}
                                             </p>
                                             <p className="text-sm text-slate-500">
-                                                {formatDateForInput(payroll.date)}
+                                                {formatDateForInput(payroll.earnedDate)}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold text-slate-900">
+                                                ₱{payroll.cashPaid.toLocaleString()}
+                                            </p>
+                                            <p className="text-sm text-slate-500">
+                                                {formatDateForInput(payroll.paidDate)}
                                             </p>
                                         </div>
 
-                                        <p className="font-semibold text-slate-900">
-                                            ₱{payroll.cashPaid.toLocaleString()}
-                                        </p>
                                     </div>
 
                                     <div className="mt-3 grid grid-cols-1 gap-1 text-sm text-slate-600">
                                         <p>
                                             <span className="font-medium text-slate-700">Salary:</span>{" "}
                                             ₱{payroll.salaryAmount.toLocaleString()}
-                                        </p>
-                                        <p>
-                                            <span className="font-medium text-slate-700">Advance Given:</span>{" "}
-                                            ₱{payroll.advanceGiven.toLocaleString()}
-                                        </p>
-                                        <p>
-                                            <span className="font-medium text-slate-700">Advance Deduction:</span>{" "}
-                                            ₱{payroll.advanceDeduction.toLocaleString()}
-                                        </p>
-                                        <p>
-                                            <span className="font-medium text-slate-700">Cash Paid:</span>{" "}
-                                            ₱{payroll.cashPaid.toLocaleString()}
                                         </p>
                                         <p>
                                             <span className="font-medium text-slate-700">Notes:</span>{" "}

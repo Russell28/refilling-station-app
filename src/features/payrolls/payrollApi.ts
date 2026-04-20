@@ -9,7 +9,8 @@ export async function getPayrolls(): Promise<Payroll[]> {
 export async function createPayroll(payload: CreateUpdatePayrollRequest): Promise<Payroll> {
     const apiPayload = {
         ...payload,
-        date: payload.date ? new Date(payload.date).toISOString() : null,
+        earnedDate: payload.earnedDate ? new Date(payload.earnedDate).toISOString() : null,
+        paidDate: payload.paidDate ? new Date(payload.paidDate).toISOString() : null,
     };
 
     const response = await apiClient.post("/payroll-entries", apiPayload);
@@ -19,7 +20,8 @@ export async function createPayroll(payload: CreateUpdatePayrollRequest): Promis
 export async function updatePayroll(id: number, payload: CreateUpdatePayrollRequest): Promise<Payroll> {
     const apiPayload = {
         ...payload,
-        date: payload.date ? new Date(payload.date).toISOString() : null,
+        earnedDate: payload.earnedDate ? new Date(payload.earnedDate).toISOString() : null,
+        paidDate: payload.paidDate ? new Date(payload.paidDate).toISOString() : null,
     };
     const response = await apiClient.put(`/payroll-entries/${id}`, apiPayload);
     return response.data;

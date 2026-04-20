@@ -2,41 +2,37 @@ import { EMPLOYEES } from "../constants/constants";
 
 export type Payroll = {
     id: number;
-    date: string; // ISO date string (e.g. "2024-06-30")
+    earnedDate: string; // ISO date string (e.g. "2024-06-30")
+    paidDate: string | null; // ISO date string (e.g. "2024-07-01")
     employeeName: string;
     salaryAmount: number;
-    advanceGiven: number;
-    advanceDeduction: number;
     cashPaid: number;
-    notes?: string;
+    notes: string | null;
 };
 
 export type PayrollFormValues = {
-    date: string;
+    earnedDate: string;
+    paidDate: string;
     employeeName: string;
     salaryAmount: string;
-    advanceGiven: string;
-    advanceDeduction: string;
     cashPaid: string;
     notes?: string;
 };
 
 export const emptyPayrollFormValues: PayrollFormValues = {
-    date: new Date().toISOString().split("T")[0], // Default to today's date in YYYY-MM-DD format
+    earnedDate: new Date().toISOString().split("T")[0], // Default to today's date in YYYY-MM-DD format
+    paidDate: "", 
     employeeName: EMPLOYEES.length > 0 ? EMPLOYEES[0].name : '', // Default to first employee if available otherwise empty string
     salaryAmount: '',
-    advanceGiven: '',
-    advanceDeduction: '',
     cashPaid: '',
     notes: ''
 };
 
 export type CreateUpdatePayrollRequest = {
-    date: string;
+    earnedDate: string;
+    paidDate: string | null;
     employeeName: string;
     salaryAmount: number;
-    advanceGiven: number;
-    advanceDeduction: number;
     cashPaid: number;
     notes?: string;
 };
