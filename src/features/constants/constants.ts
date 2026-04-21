@@ -53,5 +53,13 @@ export const CUSTOMERS = [
   { id: 25, name: 'Tining' },
   { id: 26, name: 'Vilma' },
   { id: 27, name: 'Waray' },
-  { id: 28, name: 'Other - Add name on notes' }
-];
+  { id: 28, name: 'Pio' },
+  { id: 29, name: 'Bong' },
+  { id: 30, name: 'RMC' },
+  { id: 999, name: 'Other - Add name on notes' },
+].sort((a, b) => {
+  // Always push "Other" to the bottom
+  if (a.name.startsWith('Other')) return 1;
+  if (b.name.startsWith('Other')) return -1;
+  return a.name.localeCompare(b.name);
+});
