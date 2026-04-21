@@ -1,31 +1,11 @@
 import { useState, useEffect } from "react";
-import { apiClient } from "../../api/client";
 import Card from "../../components/ui/Card";
 import PageHeader from "../../components/ui/PageHeader";
 import TextInput from "../../components/ui/TextInput";
 import { formatDateForInput } from "../../utils/date"
 import { isAdmin } from "../auth/utils/authStorage";
-
-type DailySummary = {
-    date: string;
-    tripCount: number;
-    backlogStartQty: number;
-    totalCollectedQty: number;
-    totalLoadedQty: number;
-    totalDeliveredQty: number;
-    backlogEndQty: number;
-    totalFreeQty: number;
-    totalActualPaidQty: number;
-    totalReturnedQty: number;
-    totalReplacementQty: number;
-    totalCashCollected: number;
-    totalExpenses: number;
-    totalPayrollPaid: number;
-    totalDebtCreatedToday: number;
-    totalDebtPaymentsToday: number;
-    outstandingDebt: number;
-    netCashFlow: number;
-};
+import type { DailySummaryResponse } from "./DailySummary";
+import { getDailySummary } from "./dailySummaryApi";
 
 function getTodayLocalDate() {
     const today = new Date();
@@ -55,16 +35,31 @@ function SummaryMetricCard({
     );
 }
 
+function formatCurrency(amount: number): string {
+    return new Intl.NumberFormat("en-PH", {
+        style: "currency",
+        currency: "PHP",
+    }).format(amount);
+}
+
+function TableHeader({ children }: { children: React.ReactNode }) {
+    return <th className="px-4 py-2 font-semibold">{children}</th>;
+}
+
+function TableCell({ children }: { children: React.ReactNode }) {
+    return <td className="px-4 py-2">{children}</td>;
+}
+
 export default function DailySummaryPage() {
     const [selectedDate, setSelectedDate] = useState(getTodayLocalDate()); // Initialize with today's date
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const [summary, setSummary] = useState<DailySummary | null>(null);
+    const [dailySummary, setDailySummary] = useState<DailySummaryResponse | null>(null);
 
     async function handleLoadSummary() {
         if (!selectedDate) {
             setError("Please select a date.");
-            setSummary(null);
+            setDailySummary(null);
             return;
         }
 
@@ -72,11 +67,11 @@ export default function DailySummaryPage() {
             setLoading(true);
             setError(null);
 
-            const response = await apiClient.get(`/daily-summary/${selectedDate}`);
-            setSummary(response.data);
+            const response = await getDailySummary(selectedDate);
+            setDailySummary(response);
         } catch (error) {
             setError("Failed to load daily summary.");
-            setSummary(null);
+            setDailySummary(null);
         } finally {
             setLoading(false);
         }
@@ -124,30 +119,30 @@ export default function DailySummaryPage() {
                 </Card>
             )}
 
-            {summary && !loading && (
+            {dailySummary && !loading && (
                 <>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                         <SummaryMetricCard
                             label="Net Cash Flow"
-                            value={`₱${summary.netCashFlow.toLocaleString()}`}
+                            value={`₱${dailySummary.summary.netCashFlow.toLocaleString()}`}
                             valueClassName={
-                                summary.netCashFlow >= 0
+                                dailySummary.summary.netCashFlow >= 0
                                     ? "text-emerald-600"
                                     : "text-red-600"
                             }
                         />
                         <SummaryMetricCard
                             label="Total Cash Collected"
-                            value={`₱${summary.totalCashCollected.toLocaleString()}`}
+                            value={`₱${dailySummary.summary.totalCashCollected.toLocaleString()}`}
                         />
                         <SummaryMetricCard
                             label="Total Expenses"
-                            value={`₱${summary.totalExpenses.toLocaleString()}`}
+                            value={`₱${dailySummary.summary.totalExpenses.toLocaleString()}`}
                         />
                         {isAdmin() && (
                             <SummaryMetricCard
                                 label="Total Salary Paid"
-                                value={`₱${summary.totalPayrollPaid.toLocaleString()}`}
+                                value={`₱${dailySummary.summary.totalPayrollPaid.toLocaleString()}`}
                             />
                         )}
                     </div>
@@ -162,64 +157,64 @@ export default function DailySummaryPage() {
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Date</span>
                                     <span className="font-medium text-slate-900">
-                                        {formatDateForInput(summary.date)}{" "}
-                                        ({new Date(summary.date).toLocaleDateString("en-US", { weekday: "short" })})
+                                        {formatDateForInput(dailySummary.summary.date)}{" "}
+                                        ({new Date(dailySummary.summary.date).toLocaleDateString("en-US", { weekday: "short" })})
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Trip Count</span>
                                     <span className="font-medium text-slate-900">
-                                        {summary.tripCount}
+                                        {dailySummary.summary.tripCount}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Backlog Start</span>
                                     <span className="font-medium text-slate-900">
-                                        {summary.backlogStartQty}
+                                        {dailySummary.summary.backlogStartQty}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Collected Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {summary.totalCollectedQty}
+                                        {dailySummary.summary.totalCollectedQty}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Delivered Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {summary.totalDeliveredQty}
+                                        {dailySummary.summary.totalDeliveredQty}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Backlog End</span>
                                     <span className="font-semibold text-blue-600">
-                                        {summary.backlogEndQty}
+                                        {dailySummary.summary.backlogEndQty}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Free Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {summary.totalFreeQty}
+                                        {dailySummary.summary.totalFreeQty}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Returned Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {summary.totalReturnedQty}
+                                        {dailySummary.summary.totalReturnedQty}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Replacement Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {summary.totalReplacementQty}
+                                        {dailySummary.summary.totalReplacementQty}
                                     </span>
                                 </div>
 
@@ -227,21 +222,21 @@ export default function DailySummaryPage() {
                                 {/* <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Loaded Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {summary.totalLoadedQty}
+                                        {dailySummary.summary.totalLoadedQty}
                                     </span>
                                 </div> */}
 
                                 {/* <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total To Be Paid Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {summary.totalToBePaidQty}
+                                        {dailySummary.summary.totalToBePaidQty}
                                     </span>
                                 </div> */}
 
                                 {/* <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Actual Paid Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {summary.totalActualPaidQty}
+                                        {dailySummary.summary.totalActualPaidQty}
                                     </span>
                                 </div> */}
                             </div>
@@ -256,14 +251,14 @@ export default function DailySummaryPage() {
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Cash Collected</span>
                                     <span className="font-medium text-slate-900">
-                                        ₱{summary.totalCashCollected.toLocaleString()}
+                                        ₱{dailySummary.summary.totalCashCollected.toLocaleString()}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Expenses</span>
                                     <span className="font-medium text-slate-900">
-                                        ₱{summary.totalExpenses.toLocaleString()}
+                                        ₱{dailySummary.summary.totalExpenses.toLocaleString()}
                                     </span>
                                 </div>
 
@@ -271,7 +266,7 @@ export default function DailySummaryPage() {
                                     <div className="flex justify-between gap-4">
                                         <span className="text-slate-500">Total Salary Paid</span>
                                         <span className="font-medium text-slate-900">
-                                            ₱{summary.totalPayrollPaid.toLocaleString()}
+                                            ₱{dailySummary.summary.totalPayrollPaid.toLocaleString()}
                                         </span>
                                     </div>
                                 )}
@@ -279,21 +274,21 @@ export default function DailySummaryPage() {
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Debt Created Today</span>
                                     <span className="font-medium text-slate-900">
-                                        ₱{summary.totalDebtCreatedToday.toLocaleString()}
+                                        ₱{dailySummary.summary.totalDebtCreatedToday.toLocaleString()}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Debt Payments Today</span>
                                     <span className="font-medium text-slate-900">
-                                        ₱{summary.totalDebtPaymentsToday.toLocaleString()}
+                                        ₱{dailySummary.summary.totalDebtPaymentsToday.toLocaleString()}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Outstanding Debt</span>
                                     <span className="font-medium text-slate-900">
-                                        ₱{summary.outstandingDebt.toLocaleString()}
+                                        ₱{dailySummary.summary.outstandingDebt.toLocaleString()}
                                     </span>
                                 </div>
 
@@ -302,17 +297,61 @@ export default function DailySummaryPage() {
                                         Net Cash Flow
                                     </span>
                                     <span
-                                        className={`font-semibold ${summary.netCashFlow >= 0
+                                        className={`font-semibold ${dailySummary.summary.netCashFlow >= 0
                                             ? "text-emerald-600"
                                             : "text-red-600"
                                             }`}
                                     >
-                                        ₱{summary.netCashFlow.toLocaleString()}
+                                        ₱{dailySummary.summary.netCashFlow.toLocaleString()}
                                     </span>
                                 </div>
                             </div>
                         </Card>
                     </div>
+
+                    <Card>
+                        <h3 className="mb-4 text-lg font-semibold text-slate-900">
+                            Debt Breakdown
+                        </h3>
+
+                        {dailySummary.debtBreakdown.length === 0 ? (
+                            <p className="text-sm text-slate-500">
+                                No debt records found for this date.
+                            </p>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full text-sm">
+                                    <thead className="bg-slate-50 text-left text-slate-600">
+                                        <tr>
+                                            <TableHeader>Date</TableHeader>
+                                            <TableHeader>Customer</TableHeader>
+                                            {/* <TableHeader>Debt Created</TableHeader>
+                                            <TableHeader>Debt Payments</TableHeader> */}
+                                            <TableHeader>Balance</TableHeader>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {dailySummary.debtBreakdown.map((item) => (
+                                            <tr
+                                                key={item.customerName}
+                                                className="border-t border-slate-200"
+                                            >
+                                                <TableCell>{formatDateForInput(item.latestTransactionDate)}</TableCell>
+                                                <TableCell>{item.customerName}</TableCell>
+                                                {/* <TableCell>
+                                                    {formatCurrency(item.debtCreated)}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {formatCurrency(item.debtPayments)}
+                                                </TableCell> */}
+                                                <TableCell>{formatCurrency(item.balance)}</TableCell>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </Card>
                 </>
             )}
         </div>
