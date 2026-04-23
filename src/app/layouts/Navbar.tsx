@@ -5,6 +5,7 @@ const navItems = [
     { to: "/", label: "Dashboard", adminOnly: true },
     { to: "/daily-summary", label: "Daily Summary" },
     { to: "/trips", label: "Trips" },
+    { to: "/customers", label: "Customers" },
     { to: "/expenses", label: "Expenses" },
     { to: "/debt-entries", label: "Debts" },
     { to: "/payrolls", label: "Payrolls", adminOnly: true },
