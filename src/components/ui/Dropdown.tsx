@@ -3,13 +3,15 @@ import React from "react";
 
 interface DropdownProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label: string;
-  options: { id: number; name: string }[];
+  options: { id: number; name: string;[key: string]: any }[];
+  valueField?: "id" | "name"; // defaults to "id"
   className?: string;
 }
 
 export default function Dropdown({
   label,
   options,
+  valueField = "name",
   className = "",
   ...props
 }: DropdownProps) {
@@ -25,7 +27,7 @@ export default function Dropdown({
       >
         {/* <option value="">Select an option</option> */}
         {options.map((opt) => (
-          <option key={opt.id} value={opt.name}>
+          <option key={opt[valueField]} value={opt[valueField]}>
             {opt.name}
           </option>
         ))}

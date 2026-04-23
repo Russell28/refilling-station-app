@@ -7,6 +7,7 @@ import Button from "../../components/ui/Button";
 import PageHeader from "../../components/ui/PageHeader";
 import { apiClient } from "../../api/client";
 import { getToken, isAdmin } from "../auth/utils/authStorage";
+import { CustomerProvider } from "../customers/CustomerContext";
 
 export default function CustomerDebtPage() {
     const [customerDebts, setCustomerDebts] = useState<CustomerDebt[]>([]);
@@ -185,11 +186,14 @@ export default function CustomerDebtPage() {
             )}
 
             {isFormOpen && (
-                <CustomerDebtForm
-                    debt={selectedDebt}
-                    onSubmit={handleSubmit}
-                    onCancel={onCancelClick}
-                />
+                <CustomerProvider>
+                    {/* This provider is needed to ensure the form has access to the customer list for the dropdown */}
+                    <CustomerDebtForm
+                        debt={selectedDebt}
+                        onSubmit={handleSubmit}
+                        onCancel={onCancelClick}
+                    />
+                </CustomerProvider>
             )}
 
             <Card className="p-0">

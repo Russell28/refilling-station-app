@@ -4,8 +4,8 @@ import { formatDateForInput } from "../../utils/date";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import TextInput from "../../components/ui/TextInput";
-import { CUSTOMERS } from "../constants/constants";
 import Dropdown from "../../components/ui/Dropdown";
+import { useCustomers } from "../customers/CustomerContext";
 
 type DebtFormProps = {
     debt: CustomerDebt | null;
@@ -16,7 +16,8 @@ type DebtFormProps = {
 function mapDebtToFormValues(debt: CustomerDebt | null): CustomerDebtFormValues {
     return {
         date: debt ? debt.date : "",
-        customerName: debt ? debt.customerName : "",
+        // customerName: debt ? debt.customerName : "",
+        customerId: debt ? debt.customerId.toString() : "",
         amount: debt ? debt.amount.toString() : "",
         relatedTripId: debt ? debt.relatedTripId?.toString() : undefined,
         notes: debt ? debt.notes : "",
@@ -29,14 +30,19 @@ export default function CustomerDebtForm({
     onCancel,
 }: DebtFormProps) {
     const [form, setForm] = useState<CustomerDebtFormValues>(emptyForm);
+    const customers = useCustomers();
 
     useEffect(() => {
         if(debt) {
             setForm(mapDebtToFormValues(debt));
         } else {
-            setForm(emptyForm);
+            // Set default to first customer if available
+            setForm({
+                ...emptyForm,
+                customerId: customers.length > 0 ? customers[0].id.toString() : ""
+            });
         }
-    }, [debt]);
+    }, [debt, customers]);
 
     function handleTextChange(e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) {
         const { name, value } = e.target;
@@ -66,7 +72,7 @@ export default function CustomerDebtForm({
     function mapValuesToCreate(values: CustomerDebtFormValues): CreateUpdateCustomerDebtRequest {
         return {
             date: values.date,
-            customerName: values.customerName,
+            customerId: Number(values.customerId),
             amount: Number(values.amount) || 0,
             relatedTripId: values.relatedTripId ? Number(values.relatedTripId) : undefined,
             notes: values.notes
@@ -101,9 +107,10 @@ export default function CustomerDebtForm({
 
                     <Dropdown
                         label="Customer Name"
-                        name="customerName"
-                        options={CUSTOMERS}
-                        value={form.customerName}
+                        name="customerId"
+                        options={customers}
+                        value={form.customerId}
+                        valueField="id"
                         onChange={handleTextChange}
                     />
                     {/* <TextInput
