@@ -289,6 +289,12 @@ export default function TripsPage() {
                     </p>
                     <p>
                       <span className="font-medium text-slate-700">
+                        Free:
+                      </span>{" "}
+                      {trip.freeQty}
+                    </p>
+                    <p>
+                      <span className="font-medium text-slate-700">
                         Notes:
                       </span>{" "}
                       {trip.notes || "-"}
@@ -300,7 +306,6 @@ export default function TripsPage() {
                     {/* <p><span className="font-medium text-slate-700">Category:</span> {trip.customerCategory || "-"}</p> */}
                     {/* <p><span className="font-medium text-slate-700">Collected:</span> {trip.collectedQty}</p> */}
                     {/* <p><span className="font-medium text-slate-700">Loaded:</span> {trip.loadedQty}</p> */}
-                    {/* <p><span className="font-medium text-slate-700">Free:</span> {trip.freeQty}</p> */}
                     {/* <p><span className="font-medium text-slate-700">Returned:</span> {trip.returnedQty}</p> */}
                     {/* <p><span className="font-medium text-slate-700">Replacement:</span> {trip.replacementQty}</p> */}
                     {/* <p><span className="font-medium text-slate-700">Estimated Cash:</span> ₱{trip.estimatedCash.toLocaleString()}</p> */}

@@ -1,5 +1,4 @@
 import { CUSTOMER_CATEGORIES } from "../constants/constants";
-import { EMPLOYEES } from "../constants/constants";
 
 export type Trip = {
   id: number;
@@ -8,6 +7,7 @@ export type Trip = {
   tripNumber: number;
   timeStarted?: string;      // DateTime? -> optional string
   timeEnded?: string;        // DateTime? -> optional string
+  employeeId: string;
   employeeName: string;
   source?: string;
   tripType?: string;
@@ -31,7 +31,7 @@ export type TripFormValues = {
   date: string;
   tripNumber: string;
   timeStarted: string;
-  employeeName: string;
+  employeeId: string;
   timeEnded: string;
   source: string;
   tripType: string;
@@ -57,7 +57,7 @@ export const emptyTripForm: TripFormValues = {
   timeEnded: "",
   source: "",
   tripType: "",
-  employeeName: EMPLOYEES.length > 0 ? EMPLOYEES[0].name : "",
+  employeeId: "",
   customerCategory: CUSTOMER_CATEGORIES.length > 0 ? CUSTOMER_CATEGORIES[0].name : "",
   
   collectedQty: "",
@@ -79,7 +79,7 @@ export type CreateTripRequest = {
     timeStarted: string | null;
     timeEnded: string | null;
 
-    employeeName: string;
+    employeeId: number;
     source: string | null;
     tripType: string | null;
     customerCategory: string | null;
@@ -102,7 +102,7 @@ export type UpdateTripRequest = {
     timeStarted: string | null;
     timeEnded: string | null;
 
-    employeeName: string;
+    employeeId: number;
     source: string | null;
     tripType: string | null;
     customerCategory: string | null;
