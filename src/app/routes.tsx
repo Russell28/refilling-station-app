@@ -5,7 +5,7 @@ import AppLayout from "./layouts/AppLayout";
 import DashboardPage from "../features/dashboard/DashboardPage";
 import DailySummaryPage from "../features/daily-summary/DailySummaryPage";
 import TripsPage from "../features/trips/TripsPage";
-import TripsFormPage from "../features/trips/TripsFormPage";
+import TripsFormPageWithProvider from "../features/trips/TripsFormPageWithProvider";
 import CustomerDebtPage from "../features/customer-debts/CustomerDebtPage";
 import CustomersPage from "../features/customers/CustomersPage";
 import ExpensesPage from "../features/expenses/ExpensesPage";
@@ -36,8 +36,8 @@ export const routes: RouteObject[] = [
                     },
                     { path: "/daily-summary", element: <DailySummaryPage /> },
                     { path: "/trips", element: <TripsPage /> },
-                    { path: "/trips/new", element: <TripsFormPage /> },
-                    { path: "/trips/:id/edit", element: <TripsFormPage /> },
+                    { path: "/trips/new", element: <TripsFormPageWithProvider /> },
+                    { path: "/trips/:id/edit", element: <TripsFormPageWithProvider /> },
                     { path: "/customers", element: <CustomersPage /> },
                     { path: "/debt-entries", element: <CustomerDebtPage /> },
                     { path: "/expenses", element: <ExpensesPage /> },
