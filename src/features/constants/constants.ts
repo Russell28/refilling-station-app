@@ -1,8 +1,3 @@
-export const EMPLOYEES = [
-    { id: 1, name: 'Fred' },
-    { id: 2, name: 'Jomar V.' }
-]
-
 export const CUSTOMER_CATEGORIES = [
     { id: 1, name: 'Store', price: 25 },
     { id: 2, name: 'House', price: 30 },

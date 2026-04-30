@@ -4,8 +4,9 @@ import { formatDateForInput } from "../../utils/date";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import TextInput from "../../components/ui/TextInput";
-import { EMPLOYEES } from "../constants/constants";
+import { useEmployees } from "../employees/EmployeeContext";
 import Dropdown from "../../components/ui/Dropdown";
+
 
 
 type PayrollEntryFormProps = {
@@ -18,7 +19,7 @@ function mapPayrollToFormValues(payroll: Payroll): PayrollFormValues {
     return {
         earnedDate: payroll.earnedDate,
         paidDate: payroll?.paidDate ?? "", // Use empty string if paidDate is null or undefined
-        employeeName: payroll.employeeName,
+        employeeId: payroll.employeeId.toString(),
         salaryAmount: payroll.salaryAmount.toString(),
         cashPaid: payroll.cashPaid.toString(),
         notes: payroll.notes ?? "",
@@ -29,7 +30,7 @@ function mapFormValuesToCreate(values: PayrollFormValues): CreateUpdatePayrollRe
     return {
         earnedDate: values.earnedDate,
         paidDate: values.paidDate,
-        employeeName: values.employeeName,
+        employeeId: Number(values.employeeId),
         salaryAmount: Number(values.salaryAmount || 0),
         cashPaid: Number(values.cashPaid || 0),
         notes: values.notes,
@@ -42,14 +43,18 @@ export default function PayrollEntryForm({
     onCancel,
 }: PayrollEntryFormProps) {
     const [formValues, setFormValues] = useState<PayrollFormValues>(emptyPayrollFormValues);
+    const employees = useEmployees();
 
     useEffect(() => {
         if (selectedPayroll) {
             setFormValues(mapPayrollToFormValues(selectedPayroll));
         } else {
-            setFormValues(emptyPayrollFormValues);
+            setFormValues({
+                ...emptyPayrollFormValues,
+                employeeId: employees.length > 0 ? employees[0].id.toString() : '',
+            });
         }
-    }, [selectedPayroll]);
+    }, [selectedPayroll, employees]);
 
     function handleInputChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         const { name, value } = e.target;
@@ -105,10 +110,11 @@ export default function PayrollEntryForm({
                     />
 
                     <Dropdown
-                        label="Employee Name"
-                        name="employeeName"
-                        options={EMPLOYEES}
-                        value={formValues.employeeName}
+                        label="Employee"
+                        name="employeeId"
+                        options={employees}
+                        value={formValues.employeeId}
+                        valueField="id"
                         onChange={handleInputChange}
                     />
 

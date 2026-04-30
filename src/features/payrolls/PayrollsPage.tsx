@@ -8,6 +8,7 @@ import PageHeader from "../../components/ui/PageHeader";
 import Button from "../../components/ui/Button";
 import { apiClient } from "../../api/client";
 import { getToken } from "../auth/utils/authStorage";
+import { EmployeeProvider } from "../employees/EmployeeContext";
 
 export default function PayrollsPage() {
     const [payrolls, setPayrolls] = useState<Payroll[]>([]);
@@ -188,11 +189,13 @@ export default function PayrollsPage() {
             )}
 
             {isFormOpen && (
-                <PayrollEntryForm
-                    selectedPayroll={selectedPayroll}
-                    onSubmit={handleSubmit}
-                    onCancel={handleCancel}
-                />
+                <EmployeeProvider>
+                    <PayrollEntryForm
+                        selectedPayroll={selectedPayroll}
+                        onSubmit={handleSubmit}
+                        onCancel={handleCancel}
+                    />
+                </EmployeeProvider>
             )}
 
             <Card className="p-0">
