@@ -5,7 +5,7 @@ import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import TextInput from "../../components/ui/TextInput";
 import Dropdown from "../../components/ui/Dropdown";
-import { EXPENSE_CATEGORIES } from "../constants/constants";
+import { useExpenseCategories } from "../expense-category/ExpenseCategoryContext";
 
 type ExpenseFormProps = {
     expense: Expense | null;
@@ -16,7 +16,7 @@ type ExpenseFormProps = {
 function mapExpenseToFormValues(expense: Expense | null): ExpenseFormValues {
     return {
         date: expense ? expense.date : "",
-        expenseCategory: expense ? expense.expenseCategory : "",
+        expenseCategoryId: expense ? expense.expenseCategoryId.toString() : "",
         amount: expense ? expense.amount.toString() : "",
         notes: expense ? expense.notes : ""
     };
@@ -28,15 +28,19 @@ export default function ExpenseForm({
     onCancel
 }: ExpenseFormProps) {
     const [expenseFormValues, setExpenseFormValues] = useState<ExpenseFormValues>(emptyExpenseFormValues);
+    const expenseCategories = useExpenseCategories();
 
     useEffect(() => {
         if (expense) {
             setExpenseFormValues(mapExpenseToFormValues(expense));
         } else {
-            setExpenseFormValues(emptyExpenseFormValues);
+            setExpenseFormValues({
+                ...emptyExpenseFormValues,
+                expenseCategoryId: expenseCategories.length > 0 ? expenseCategories[0].id.toString() : '',
+            });
         }
 
-    }, [expense]);
+    }, [expense, expenseCategories]);
 
     function handleTextChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         const { name, value } = e.target;
@@ -55,7 +59,7 @@ export default function ExpenseForm({
     function mapValuesToCreate(values: ExpenseFormValues): CreateUpdateExpenseRequest {
         return {
             date: values.date,
-            expenseCategory: values.expenseCategory,
+            expenseCategoryId: Number(values.expenseCategoryId),
             amount: Number(values.amount) || 0,
             notes: values.notes
         };
@@ -85,9 +89,10 @@ export default function ExpenseForm({
 
                     <Dropdown
                         label="Category"
-                        name="expenseCategory"
-                        options={EXPENSE_CATEGORIES}
-                        value={expenseFormValues.expenseCategory}
+                        name="expenseCategoryId"
+                        options={expenseCategories}
+                        value={expenseFormValues.expenseCategoryId}
+                        valueField="id"
                         onChange={handleTextChange}
                     />
                     

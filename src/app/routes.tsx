@@ -8,7 +8,7 @@ import TripsPage from "../features/trips/TripsPage";
 import TripsFormPageWithProvider from "../features/trips/TripsFormPageWithProvider";
 import CustomerDebtPage from "../features/customer-debts/CustomerDebtPage";
 import CustomersPage from "../features/customers/CustomersPage";
-import ExpensesPage from "../features/expenses/ExpensesPage";
+import ExpensesPageWithProvider from "../features/expenses/ExpensesPageWithProvider";
 import PayrollsPage from "../features/payrolls/PayrollsPage";
 import MonthlySummaryPage from "../features/monthly-summary/MonthlySummaryPage";
 import LoginPage from "../features/auth/pages/LoginPage";
@@ -40,7 +40,7 @@ export const routes: RouteObject[] = [
                     { path: "/trips/:id/edit", element: <TripsFormPageWithProvider /> },
                     { path: "/customers", element: <CustomersPage /> },
                     { path: "/debt-entries", element: <CustomerDebtPage /> },
-                    { path: "/expenses", element: <ExpensesPage /> },
+                    { path: "/expenses", element: <ExpensesPageWithProvider /> },
                 ]
             }
 
