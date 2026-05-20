@@ -2,7 +2,7 @@ import { apiClient } from "../../api/client";
 import type { CreateUpdatePayrollRequest, Payroll } from "./Payroll";
 
 export async function getPayrolls(): Promise<Payroll[]> {
-    const response = await apiClient.get("/payroll-entries");
+    const response = await apiClient.get("/payrolls");
     return response.data;
 }
 
@@ -13,7 +13,7 @@ export async function createPayroll(payload: CreateUpdatePayrollRequest): Promis
         paidDate: payload.paidDate ? new Date(payload.paidDate).toISOString() : null,
     };
 
-    const response = await apiClient.post("/payroll-entries", apiPayload);
+    const response = await apiClient.post("/payrolls", apiPayload);
     return response.data;
 }
 
@@ -23,10 +23,10 @@ export async function updatePayroll(id: number, payload: CreateUpdatePayrollRequ
         earnedDate: payload.earnedDate ? new Date(payload.earnedDate).toISOString() : null,
         paidDate: payload.paidDate ? new Date(payload.paidDate).toISOString() : null,
     };
-    const response = await apiClient.put(`/payroll-entries/${id}`, apiPayload);
+    const response = await apiClient.put(`/payrolls/${id}`, apiPayload);
     return response.data;
 }
 
 export async function deletePayroll(id: number): Promise<void> {
-    await apiClient.delete(`/payroll-entries/${id}`);
+    await apiClient.delete(`/payrolls/${id}`);
 }

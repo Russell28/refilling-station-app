@@ -24,3 +24,8 @@ export async function updateCustomer(id: number, payload: CreateUpdateCustomerRe
 export async function deleteCustomer(id: number): Promise<void> {
   await apiClient.delete(`/customers/${id}`);
 }
+
+export async function getCustomerList(): Promise<CustomerListItem[]> {
+    const response = await apiClient.get<CustomerListItem[]>("/customers/list");
+    return response.data;
+}

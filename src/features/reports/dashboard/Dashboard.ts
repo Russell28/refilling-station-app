@@ -1,3 +1,5 @@
+import type { ExpenseBreakdown, DebtBreakdown, PayrollBreakdown } from "../breakdowns";
+
 export type Dashboard = {
     totalTrips: number;
     backlogStartQty: number;
@@ -35,29 +37,12 @@ export type DailyReport = {
     backlogEndQty: number;
 };
 
-export type ExpenseBreakdownItem = {
-    category: string;
-    amount: number;
-}
 
-export type DebtBreakdownItem = {
-    customerName: string;
-    debtCreated: number;
-    debtPayments: number;
-    balance: number;
-}
-
-export type PayrollBreakdownItem  = {
-    employeeName: string;
-    salaryEarned: number;
-    cashPaid: number;
-    balance: number;
-}
 
 export type DashboardResponse = {
     summary: Dashboard;
     dailyReports: DailyReport[];
-    expenseBreakdown: ExpenseBreakdownItem[];
-    debtBreakdown: DebtBreakdownItem[];
-    payrollBreakdown: PayrollBreakdownItem[];
+    expenseBreakdown: ExpenseBreakdown;
+    debtBreakdown: DebtBreakdown;
+    payrollBreakdown: PayrollBreakdown;
 }

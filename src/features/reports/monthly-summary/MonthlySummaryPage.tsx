@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { getMonthlySummary } from "./monthlySummaryApi";
-import Card from "../../components/ui/Card";
-import PageHeader from "../../components/ui/PageHeader";
-import TextInput from "../../components/ui/TextInput";
-import Button from "../../components/ui/Button";
+import Card from "../../../components/ui/Card";
+import PageHeader from "../../../components/ui/PageHeader";
+import TextInput from "../../../components/ui/TextInput";
+import Button from "../../../components/ui/Button";
 import type { MonthlySummaryResponse } from "./MonthlySummary";
-import { getCurrentMonthInputValue } from "../../utils/date";
+import { getCurrentMonthInputValue } from "../../../utils/date";
 import { saveMonthlySummary } from "./monthlySummaryApi";
 import { useMemo } from "react";
 
@@ -17,7 +17,7 @@ function formatCurrency(amount: number) {
 }
 
 export default function MonthlySummaryPage() {
-    const [month, setMonth] = useState(getCurrentMonthInputValue());
+    const [monthYear, setMonthYear] = useState(getCurrentMonthInputValue());
     const [summary, setSummary] = useState<MonthlySummaryResponse | null>(null);
 
     const [managerShare, setManagerShare] = useState("0");
@@ -29,7 +29,7 @@ export default function MonthlySummaryPage() {
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    async function loadSummary(selectedMonth = month) {
+    async function loadSummary(selectedMonth = monthYear) {
         try {
             setLoading(true);
             setError(null);
@@ -60,7 +60,7 @@ export default function MonthlySummaryPage() {
     }, []);
 
     async function handleGenerate() {
-        await loadSummary(month);
+        await loadSummary(monthYear);
     }
 
     async function handleSave() {
@@ -76,15 +76,14 @@ export default function MonthlySummaryPage() {
             const managerShareValue = Number(managerShare) || 0;
             const ownerShareValue = Number(ownerShare) || 0;
 
-            const result = await saveMonthlySummary({
-                month,
+            await saveMonthlySummary({
+                monthYear,
                 managerShare: managerShareValue,
                 ownerShare: ownerShareValue,
                 notes,
             });
 
-            setSuccessMessage(result.message);
-            await loadSummary(month);
+            await loadSummary(monthYear);
         } catch (err) {
             console.error("Failed to save monthly summary.", err);
             setError("Failed to save monthly summary.");
@@ -101,7 +100,7 @@ export default function MonthlySummaryPage() {
         const managerShareValue = Number(managerShare) || 0;
         const ownerShareValue = Number(ownerShare) || 0;
 
-        return summary.netProfit - managerShareValue - ownerShareValue;
+        return summary.summaryTotals.netCashFlow - managerShareValue - ownerShareValue;
     }, [summary, managerShare, ownerShare]);
 
     return (
@@ -116,8 +115,8 @@ export default function MonthlySummaryPage() {
                     <TextInput
                         label="Month"
                         type="month"
-                        value={month}
-                        onChange={(e) => setMonth(e.target.value)}
+                        value={monthYear}
+                        onChange={(e) => setMonthYear(e.target.value)}
                     />
 
                     <div className="md:col-span-2 flex items-end">
@@ -159,22 +158,51 @@ export default function MonthlySummaryPage() {
                             Computed Summary
                         </h3>
 
-                        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                        <h4 className="mt-4 mb-2 text-sm font-medium text-slate-700">Cash & Expenses</h4>
+                        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                             <SummaryCard
                                 label="Cash Collected"
-                                value={formatCurrency(summary.totalCashCollected)}
+                                value={formatCurrency(summary.summaryTotals.grossTotal)}
                             />
                             <SummaryCard
                                 label="Expenses"
-                                value={formatCurrency(summary.totalExpenses)}
+                                value={formatCurrency(summary.summaryTotals.expenseTotal)}
                             />
+                            <SummaryCard
+                                label="Debt Total"
+                                value={formatCurrency(summary.summaryTotals.debtTotal)}
+                            />
+                        </div>
+
+                        <h4 className="mt-6 mb-2 text-sm font-medium text-slate-700">Payroll</h4>
+                        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 mt-6">
                             <SummaryCard
                                 label="Payroll Earned"
-                                value={formatCurrency(summary.totalPayrollEarned)}
+                                value={formatCurrency(summary.summaryTotals.payrollEarnedTotal)}
                             />
                             <SummaryCard
-                                label="Net Profit"
-                                value={formatCurrency(summary.netProfit)}
+                                label="Payroll Paid"
+                                value={formatCurrency(summary.summaryTotals.payrollPaidTotal)}
+                            />
+                            <SummaryCard
+                                label="Payroll Owed"
+                                value={formatCurrency(summary.summaryTotals.payrollOwedTotal)}
+                            />
+                        </div>
+
+                        <h4 className="mt-6 mb-2 text-sm font-medium text-slate-700">Net Results</h4>
+                        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 mt-6">
+                            <SummaryCard
+                                label="Net Cashflow"
+                                value={formatCurrency(summary.summaryTotals.netCashFlow)}
+                            />
+                            <SummaryCard
+                                label="Net Before Payroll"
+                                value={formatCurrency(summary.summaryTotals.netBeforePayroll)}
+                            />
+                            <SummaryCard
+                                label="Net After Payroll"
+                                value={formatCurrency(summary.summaryTotals.netAfterPayroll)}
                             />
                         </div>
                     </section>

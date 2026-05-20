@@ -2,7 +2,7 @@ import { apiClient } from "../../api/client";
 import type { CreateUpdateCustomerDebtRequest, CustomerDebt } from "./CustomerDebt";
 
 export async function getCustomerDebts(): Promise<CustomerDebt[]> {
-    const response = await apiClient.get("/debt-entries");
+    const response = await apiClient.get("/customer-debts");
     return response.data;
 }
 
@@ -12,7 +12,7 @@ export async function createCustomerDebt(payload: CreateUpdateCustomerDebtReques
         date: payload.date ? new Date(payload.date).toISOString() : null,
     };
 
-    const response = await apiClient.post("/debt-entries", apiPayload);
+    const response = await apiClient.post("/customer-debts", apiPayload);
     return response.data;
 }
 
@@ -22,10 +22,10 @@ export async function updateCustomerDebt(id: number, payload: CreateUpdateCustom
         date: payload.date ? new Date(payload.date).toISOString() : null,
     };
 
-    const response = await apiClient.put(`/debt-entries/${id}`, apiPayload);
+    const response = await apiClient.put(`/customer-debts/${id}`, apiPayload);
     return response.data;
 }
 
 export async function deleteCustomerDebt(id: number): Promise<void> {
-    await apiClient.delete(`/debt-entries/${id}`);
+    await apiClient.delete(`/customer-debts/${id}`);
 }
