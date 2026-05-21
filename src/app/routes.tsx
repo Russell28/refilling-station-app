@@ -2,15 +2,15 @@ import type { RouteObject } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 
 // Feature pages
-import DashboardPage from "../features/dashboard/DashboardPage";
-import DailySummaryPage from "../features/daily-summary/DailySummaryPage";
+import DashboardPage from "../features/reports/dashboard/DashboardPage";
+import DailySummaryPage from "../features/reports/daily-summary/DailySummaryPage";
 import TripsPage from "../features/trips/TripsPage";
 import TripsFormPageWithProvider from "../features/trips/TripsFormPageWithProvider";
 import CustomerDebtPage from "../features/customer-debts/CustomerDebtPage";
 import CustomersPage from "../features/customers/CustomersPage";
 import ExpensesPageWithProvider from "../features/expenses/ExpensesPageWithProvider";
 import PayrollsPage from "../features/payrolls/PayrollsPage";
-import MonthlySummaryPage from "../features/monthly-summary/MonthlySummaryPage";
+import MonthlySummaryPage from "../features/reports/monthly-summary/MonthlySummaryPage";
 import LoginPage from "../features/auth/pages/LoginPage";
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 import AdminRoute from "../features/auth/components/AdminRoute";

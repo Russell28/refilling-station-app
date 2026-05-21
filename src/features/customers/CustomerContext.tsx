@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { CustomerListItem } from "./Customer";
-import { getCustomers } from "./customerApi";
+import { getCustomerList } from "./customerApi";
 
 const CustomerContext = createContext<CustomerListItem[]>([]);
 export function CustomerProvider({ children }: { children: React.ReactNode }) {
@@ -9,7 +9,7 @@ export function CustomerProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const loadCustomers = async () => {
             try {
-                const data = await getCustomers();
+                const data = await getCustomerList();
                 setCustomers(data);
             } catch (error) {
                 console.error("Failed to load customers:", error);

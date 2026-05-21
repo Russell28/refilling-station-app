@@ -49,8 +49,6 @@ export async function deleteTrip(id: number): Promise<void> {
 
 export async function getNextTripNumber(date?:string): Promise<number> {
     const targetDate = date ?? new Date().toISOString().split("T")[0];
-    const response = await apiClient.get("/trips/next-trip-number", {
-        params: { date: targetDate }
-    });
+    const response = await apiClient.get(`/trips/next-trip-number/${targetDate}`);
     return response.data.nextTripNo;
 }

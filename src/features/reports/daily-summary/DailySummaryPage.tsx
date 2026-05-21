@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import Card from "../../components/ui/Card";
-import PageHeader from "../../components/ui/PageHeader";
-import TextInput from "../../components/ui/TextInput";
-import { formatDateForInput } from "../../utils/date"
-import { isAdmin } from "../auth/utils/authStorage";
-import type { DailySummaryResponse } from "./DailySummary";
+import Card from "../../../components/ui/Card";
+import PageHeader from "../../../components/ui/PageHeader";
+import TextInput from "../../../components/ui/TextInput";
+import { formatDateForInput } from "../../../utils/date"
+import { isAdmin } from "../../auth/utils/authStorage";
+import type { DailySummaryResult } from "./DailySummary";
 import { getDailySummary } from "./dailySummaryApi";
 
 function getTodayLocalDate() {
@@ -54,7 +54,7 @@ export default function DailySummaryPage() {
     const [selectedDate, setSelectedDate] = useState(getTodayLocalDate()); // Initialize with today's date
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const [dailySummary, setDailySummary] = useState<DailySummaryResponse | null>(null);
+    const [dailySummary, setDailySummary] = useState<DailySummaryResult | null>(null);
 
     async function handleLoadSummary() {
         if (!selectedDate) {
@@ -96,7 +96,7 @@ export default function DailySummaryPage() {
                             type="date"
                             value={selectedDate}
                             onChange={(e) => setSelectedDate(e.target.value)}
-                            readOnly={!isAdmin()} 
+                            readOnly={!isAdmin()}
                         />
                     </div>
 
@@ -121,31 +121,64 @@ export default function DailySummaryPage() {
 
             {dailySummary && !loading && (
                 <>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                        <SummaryMetricCard
-                            label="Net Cash Flow"
-                            value={`₱${dailySummary.summary.netCashFlow.toLocaleString()}`}
-                            valueClassName={
-                                dailySummary.summary.netCashFlow >= 0
-                                    ? "text-emerald-600"
-                                    : "text-red-600"
-                            }
-                        />
-                        <SummaryMetricCard
-                            label="Total Cash Collected"
-                            value={`₱${dailySummary.summary.totalCashCollected.toLocaleString()}`}
-                        />
-                        <SummaryMetricCard
-                            label="Total Expenses"
-                            value={`₱${dailySummary.summary.totalExpenses.toLocaleString()}`}
-                        />
-                        {isAdmin() && (
+                    {/* CASH FLOW OVERVIEW */}
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-slate-900">Cash Flow Overview</h3>
+
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                             <SummaryMetricCard
-                                label="Total Salary Paid"
-                                value={`₱${dailySummary.summary.totalPayrollPaid.toLocaleString()}`}
+                                label="Cash After Expenses"
+                                value={`₱${dailySummary.summary.cashAfterExpense.toLocaleString()}`}
+                                valueClassName={
+                                    dailySummary.summary.cashAfterExpense >= 0
+                                        ? "text-emerald-600"
+                                        : "text-red-600"
+                                }
                             />
-                        )}
+
+                            <SummaryMetricCard
+                                label="Total Cash Collected"
+                                value={`₱${dailySummary.summary.totalCashCollected.toLocaleString()}`}
+                            />
+
+                            <SummaryMetricCard
+                                label="Total Expenses"
+                                value={`₱${dailySummary.summary.totalExpenses.toLocaleString()}`}
+                            />
+                        </div>
                     </div>
+
+
+                    {/* PAYROLL OVERVIEW (ADMIN ONLY) */}
+                    {"payrollBreakdown" in dailySummary && (
+                        <div className="space-y-4 mt-8">
+                            <h3 className="text-lg font-semibold text-slate-900">Payroll Overview</h3>
+
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                                <SummaryMetricCard
+                                    label="Cash After Payroll"
+                                    value={`₱${dailySummary.summary.cashAfterPayroll.toLocaleString()}`}
+                                    valueClassName={
+                                        dailySummary.summary.cashAfterPayroll >= 0
+                                            ? "text-emerald-600"
+                                            : "text-red-600"
+                                    }
+                                />
+
+                                <SummaryMetricCard
+                                    label="Total Salary Earned"
+                                    value={`₱${dailySummary.summary.totalPayrollEarned.toLocaleString()}`}
+                                />
+
+                                <SummaryMetricCard
+                                    label="Total Salary Paid"
+                                    value={`₱${dailySummary.summary.totalPayrollPaid.toLocaleString()}`}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+
 
                     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                         <Card>
@@ -217,28 +250,6 @@ export default function DailySummaryPage() {
                                         {dailySummary.summary.totalReplacementQty}
                                     </span>
                                 </div>
-
-                                {/* Optional extra trip metrics */}
-                                {/* <div className="flex justify-between gap-4">
-                                    <span className="text-slate-500">Total Loaded Qty</span>
-                                    <span className="font-medium text-slate-900">
-                                        {dailySummary.summary.totalLoadedQty}
-                                    </span>
-                                </div> */}
-
-                                {/* <div className="flex justify-between gap-4">
-                                    <span className="text-slate-500">Total To Be Paid Qty</span>
-                                    <span className="font-medium text-slate-900">
-                                        {dailySummary.summary.totalToBePaidQty}
-                                    </span>
-                                </div> */}
-
-                                {/* <div className="flex justify-between gap-4">
-                                    <span className="text-slate-500">Total Actual Paid Qty</span>
-                                    <span className="font-medium text-slate-900">
-                                        {dailySummary.summary.totalActualPaidQty}
-                                    </span>
-                                </div> */}
                             </div>
                         </Card>
 
@@ -262,7 +273,7 @@ export default function DailySummaryPage() {
                                     </span>
                                 </div>
 
-                                {isAdmin() && (
+                                {"payrollBreakdown" in dailySummary && (
                                     <div className="flex justify-between gap-4">
                                         <span className="text-slate-500">Total Salary Paid</span>
                                         <span className="font-medium text-slate-900">
@@ -294,15 +305,15 @@ export default function DailySummaryPage() {
 
                                 <div className="flex justify-between gap-4 border-t border-slate-200 pt-3">
                                     <span className="font-medium text-slate-700">
-                                        Net Cash Flow
+                                        Cash After Expenses
                                     </span>
                                     <span
-                                        className={`font-semibold ${dailySummary.summary.netCashFlow >= 0
+                                        className={`font-semibold ${dailySummary.summary.cashAfterExpense >= 0
                                             ? "text-emerald-600"
                                             : "text-red-600"
                                             }`}
                                     >
-                                        ₱{dailySummary.summary.netCashFlow.toLocaleString()}
+                                        ₱{dailySummary.summary.cashAfterExpense.toLocaleString()}
                                     </span>
                                 </div>
                             </div>
@@ -310,11 +321,17 @@ export default function DailySummaryPage() {
                     </div>
 
                     <Card>
-                        <h3 className="mb-4 text-lg font-semibold text-slate-900">
-                            Debt Breakdown
-                        </h3>
+                        <div className="mb-4 flex items-center justify-between">
+                            <h3 className="text-lg font-semibold text-slate-900">
+                                Debt Breakdown
+                            </h3>
 
-                        {dailySummary.debtBreakdown.length === 0 ? (
+                            <span className="text-sm font-medium text-slate-700">
+                                Total: ₱{dailySummary.debtBreakdown.totalDebt.toLocaleString()}
+                            </span>
+                        </div>
+
+                        {dailySummary.debtBreakdown.items.length === 0 ? (
                             <p className="text-sm text-slate-500">
                                 No debt records found for this date.
                             </p>
@@ -325,25 +342,17 @@ export default function DailySummaryPage() {
                                         <tr>
                                             <TableHeader>Date</TableHeader>
                                             <TableHeader>Customer</TableHeader>
-                                            {/* <TableHeader>Debt Created</TableHeader>
-                                            <TableHeader>Debt Payments</TableHeader> */}
                                             <TableHeader>Balance</TableHeader>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {dailySummary.debtBreakdown.map((item) => (
+                                        {dailySummary.debtBreakdown.items.map((item) => (
                                             <tr
-                                                key={item.customerName}
+                                                key={item.customerId}
                                                 className="border-t border-slate-200"
                                             >
                                                 <TableCell>{formatDateForInput(item.latestTransactionDate)}</TableCell>
                                                 <TableCell>{item.customerName}</TableCell>
-                                                {/* <TableCell>
-                                                    {formatCurrency(item.debtCreated)}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {formatCurrency(item.debtPayments)}
-                                                </TableCell> */}
                                                 <TableCell>{formatCurrency(item.balance)}</TableCell>
                                             </tr>
                                         ))}
@@ -352,6 +361,94 @@ export default function DailySummaryPage() {
                             </div>
                         )}
                     </Card>
+
+                    <Card>
+                        <div className="mb-4 flex items-center justify-between">
+                            <h3 className="text-lg font-semibold text-slate-900">
+                                Expense Breakdown
+                            </h3>
+
+                            <span className="text-sm font-medium text-slate-700">
+                                Total: ₱{dailySummary.expenseBreakdown.totalExpense.toLocaleString()}
+                            </span>
+                        </div>
+
+                        {dailySummary.expenseBreakdown.items.length === 0 ? (
+                            <p className="text-sm text-slate-500">
+                                No expense records found for this date.
+                            </p>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full text-sm">
+                                    <thead className="bg-slate-50 text-left text-slate-600">
+                                        <tr>
+                                            <TableHeader>Category</TableHeader>
+                                            <TableHeader>Amount</TableHeader>
+                                            <TableHeader>Notes</TableHeader>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {dailySummary.expenseBreakdown.items.map((item) => (
+                                            <tr
+                                                key={item.expenseCategoryId}
+                                                className="border-t border-slate-200"
+                                            >
+                                                <TableCell>{item.categoryName}</TableCell>
+                                                <TableCell>{formatCurrency(item.amount)}</TableCell>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </Card>
+
+                    {"payrollBreakdown" in dailySummary && (
+                        <Card>
+                            <div className="mb-4 flex items-center justify-between">
+                                <h3 className="text-lg font-semibold text-slate-900">
+                                    Payroll Breakdown
+                                </h3>
+                                <span className="text-sm font-medium text-slate-700">
+                                    Total Owed: ₱{dailySummary.payrollBreakdown.totalOwed.toLocaleString()}
+                                </span>
+                            </div>
+
+                            {dailySummary.payrollBreakdown.items.length === 0 ? (
+                                <p className="text-sm text-slate-500">
+                                    No payroll records found for this date.
+                                </p>
+                            ) : (
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full text-sm">
+                                        <thead className="bg-slate-50 text-left text-slate-600">
+                                            <tr>
+                                                <TableHeader>Employee</TableHeader>
+                                                <TableHeader>Earned</TableHeader>
+                                                <TableHeader>Paid</TableHeader>
+                                                <TableHeader>Balance</TableHeader>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {dailySummary.payrollBreakdown.items.map((item) => (
+                                                <tr
+                                                    key={item.employeeId}
+                                                    className="border-t border-slate-200"
+                                                >
+                                                    <TableCell>{item.employeeName}</TableCell>
+                                                    <TableCell>{formatCurrency(item.earned)}</TableCell>
+                                                    <TableCell>{formatCurrency(item.paid)}</TableCell>
+                                                    <TableCell>{formatCurrency(item.owed)}</TableCell>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </Card>
+                    )}
+
                 </>
             )}
         </div>

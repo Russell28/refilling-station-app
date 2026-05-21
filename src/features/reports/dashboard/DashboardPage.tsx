@@ -3,13 +3,13 @@ import {
     formatDateForInput,
     getFirstDayOfCurrentMonth,
     getToday
-} from "../../utils/date";
+} from "../../../utils/date";
 import type { DashboardResponse } from "./Dashboard";
 import { getDashboard } from "./dashboardApi";
-import Card from "../../components/ui/Card";
-import Button from "../../components/ui/Button";
-import PageHeader from "../../components/ui/PageHeader";
-import TextInput from "../../components/ui/TextInput";
+import Card from "../../../components/ui/Card";
+import Button from "../../../components/ui/Button";
+import PageHeader from "../../../components/ui/PageHeader";
+import TextInput from "../../../components/ui/TextInput";
 
 function formatCurrency(amount: number): string {
     return new Intl.NumberFormat("en-PH", {
@@ -221,7 +221,7 @@ export default function DashboardPage() {
                                 Expense Breakdown
                             </h3>
 
-                            {dashboard.expenseBreakdown.length === 0 ? (
+                            {dashboard.expenseBreakdown.items.length === 0 ? (
                                 <p className="text-sm text-slate-500">
                                     No expenses found for selected range.
                                 </p>
@@ -235,12 +235,12 @@ export default function DashboardPage() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {dashboard.expenseBreakdown.map((item) => (
+                                            {dashboard.expenseBreakdown.items.map((item) => (
                                                 <tr
-                                                    key={item.category}
+                                                    key={item.expenseCategoryId}
                                                     className="border-t border-slate-200"
                                                 >
-                                                    <TableCell>{item.category}</TableCell>
+                                                    <TableCell>{item.categoryName}</TableCell>
                                                     <TableCell>{formatCurrency(item.amount)}</TableCell>
                                                 </tr>
                                             ))}
@@ -255,7 +255,7 @@ export default function DashboardPage() {
                                 Debt Breakdown
                             </h3>
 
-                            {dashboard.debtBreakdown.length === 0 ? (
+                            {dashboard.debtBreakdown.items.length === 0 ? (
                                 <p className="text-sm text-slate-500">
                                     No debt records found.
                                 </p>
@@ -271,7 +271,7 @@ export default function DashboardPage() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {dashboard.debtBreakdown.map((item) => (
+                                            {dashboard.debtBreakdown.items.map((item) => (
                                                 <tr
                                                     key={item.customerName}
                                                     className="border-t border-slate-200"
@@ -281,7 +281,7 @@ export default function DashboardPage() {
                                                         {formatCurrency(item.debtCreated)}
                                                     </TableCell>
                                                     <TableCell>
-                                                        {formatCurrency(item.debtPayments)}
+                                                        {formatCurrency(item.debtPayment)}
                                                     </TableCell>
                                                     <TableCell>{formatCurrency(item.balance)}</TableCell>
                                                 </tr>
@@ -308,14 +308,14 @@ export default function DashboardPage() {
                             </div>
 
                             {(() => {
-                                const filtered = dashboard.payrollBreakdown.filter((item) =>
+                                const filtered = dashboard.payrollBreakdown.items.filter((item) =>
                                     item.employeeName
                                         .toLowerCase()
                                         .includes(employeeFilter.toLowerCase())
                                 );
                                 return filtered.length === 0 ? (
                                     <p className="text-sm text-slate-500">
-                                        {dashboard.payrollBreakdown.length === 0
+                                        {dashboard.payrollBreakdown.items.length === 0
                                             ? "No payroll records found."
                                             : "No matching employees."}
                                     </p>
@@ -333,15 +333,15 @@ export default function DashboardPage() {
                                             <tbody>
                                                 {filtered.map((item) => (
                                                     <tr
-                                                        key={item.employeeName}
+                                                        key={item.employeeId}
                                                         className="border-t border-slate-200"
                                                     >
                                                         <TableCell>{item.employeeName}</TableCell>
                                                         <TableCell>
-                                                            {formatCurrency(item.salaryEarned)}
+                                                            {formatCurrency(item.earned)}
                                                         </TableCell>
-                                                        <TableCell>{formatCurrency(item.cashPaid)}</TableCell>
-                                                        <TableCell>{formatCurrency(item.balance)}</TableCell>
+                                                        <TableCell>{formatCurrency(item.paid)}</TableCell>
+                                                        <TableCell>{formatCurrency(item.owed)}</TableCell>
                                                     </tr>
                                                 ))}
                                             </tbody>
