@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import type { CreateUpdateExpenseRequest, Expense } from "./Expense";
-import { createExpense, deleteExpense, getExpenses, updateExpense } from "./expenseApi";
+import type { Expense, ExpenseFormValues } from "./Expense";
+import { deleteExpense, getExpenses } from "./expenseApi";
 import { formatDateForInput } from "../../utils/date";
 import ExpenseForm from "./ExpenseForm";
 import Card from "../../components/ui/Card";
@@ -8,48 +8,49 @@ import Button from "../../components/ui/Button";
 import PageHeader from "../../components/ui/PageHeader";
 import { apiClient } from "../../api/client";
 import { getToken, isAdmin } from "../auth/utils/authStorage";
+import { useFormErrors } from "../../hooks/useFormErrors";
+import type { ErrorResponse } from "../../types/ErrorResponse";
+import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
 
 export default function ExpensesPage() {
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const { generalErrors, applyErrors, clearErrors } = useFormErrors<ExpenseFormValues>()
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [selectedRecord, setSelectedRecord] = useState<Expense | null>(null);
-    const [formError, setFormError] = useState<string | null>(null);
-    const [saving, setSaving] = useState(false);
+    const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
 
     useEffect(() => {
-        const loadExpenses = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const expenses = await getExpenses();
-                setExpenses(expenses);
-
-            } catch (err) {
-                console.error("Error loading expenses:", err);
-                setError("Failed to load expenses.");
-            } finally {
-                setLoading(false);
-            }
-        };
         loadExpenses();
     }, []); // [] run once on first load
 
+    async function loadExpenses() {
+        clearErrors();
+
+        try {
+            setLoading(true);
+            const expenses = await getExpenses();
+            setExpenses(expenses);
+        } catch (err) {
+            console.error("Error loading expenses:", err);
+            applyErrors(err as ErrorResponse);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     function onAddClick() {
+        setSelectedExpense(null); // clear any selected record when adding new
         setIsFormOpen(true);
-        setSelectedRecord(null); // clear any selected record when adding new
     }
 
     function onEditClick(expense: Expense) {
-        setSelectedRecord(expense);
+        setSelectedExpense(expense);
         setIsFormOpen(true);
     }
 
     function onCancel() {
-        setSelectedRecord(null);
+        setSelectedExpense(null);
         setIsFormOpen(false);
-        setFormError(null);
     }
 
     async function onDeleteClick(id: number) {
@@ -57,42 +58,25 @@ export default function ExpensesPage() {
         if (!confirmed) {
             return;
         }
+
+        clearErrors();
+
         try {
             setLoading(true);
-            setError(null);
             await deleteExpense(id);
-
             // refresh list after delete
-            const expenses = await getExpenses();
-            setExpenses(expenses);
+            await loadExpenses();
         } catch (err) {
-            setError("Failed to delete expense.");
+            applyErrors(err as ErrorResponse);
         } finally {
             setLoading(false);
         }
     }
 
-    async function handleSubmit(formValues: CreateUpdateExpenseRequest) {
-        try {
-            setSaving(true);
-            setFormError(null);
-            if (selectedRecord) {
-                await updateExpense(selectedRecord.id, formValues);
-            } else {
-                await createExpense(formValues);
-            }
-
-            // refresh list after create
-            const expenses = await getExpenses();
-            setExpenses(expenses);
-            setIsFormOpen(false);
-            setSelectedRecord(null);
-
-        } catch (err) {
-            setFormError("Failed to create expense.");
-        } finally {
-            setSaving(false);
-        }
+    function onSuccess() {
+        setIsFormOpen(false);
+        setSelectedExpense(null);
+        loadExpenses();
     }
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -124,8 +108,7 @@ export default function ExpensesPage() {
 
             const data = await res.json();
 
-            const expenses = await getExpenses();
-            setExpenses(expenses);
+            await loadExpenses();
             alert(`Imported ${data.insertedRows} rows`);
         } catch (err) {
             console.error(err);
@@ -165,30 +148,16 @@ export default function ExpensesPage() {
                 onChange={handleFileChange}
             />
 
-            {error && (
-                <Card className="border-red-200 bg-red-50">
-                    <p className="text-sm text-red-700">{error}</p>
-                </Card>
-            )}
-
-            {formError && (
-                <Card className="border-red-200 bg-red-50">
-                    <p className="text-sm text-red-700">{formError}</p>
-                </Card>
-            )}
-
-            {saving && (
-                <Card>
-                    <p className="text-sm text-slate-500">Saving...</p>
-                </Card>
-            )}
-
             {isFormOpen && (
                 <ExpenseForm
-                    expense={selectedRecord}
-                    onSubmit={handleSubmit}
+                    expense={selectedExpense}
+                    onSuccess={onSuccess}
                     onCancel={onCancel}
                 />
+            )}
+
+            {generalErrors.length > 0 && (
+                <ServerErrorAlert errors={generalErrors} />
             )}
 
             <Card className="p-0">

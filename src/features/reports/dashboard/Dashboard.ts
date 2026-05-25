@@ -1,45 +1,53 @@
 import type { ExpenseBreakdown, DebtBreakdown, PayrollBreakdown } from "../breakdowns";
 
-export type Dashboard = {
-    totalTrips: number;
+export interface Dashboard {
     backlogStartQty: number;
-    totalCollectedQty: number;
-    totalLoadedQty: number;
-    totalDeliveredQty: number;
     backlogEndQty: number;
 
-    totalCashCollected: number;
-    totalExpenses: number;
-    totalPayrollPaid: number;
-    netCashFlow: number;
+    totalTrips: number;
+    totalCollectedQty: number;
+    totalDeliveredQty: number;
 
+    totalExpense: number;
+    
+    totalPayrollEarned: number;
+    totalPayrollPaid: number;
+    outstandingPayroll: number;
+    
     totalDebtCreated: number;
     totalDebtPayments: number;
     outstandingDebt: number;
-
-    totalSalaryEarned: number;
-    payrollPaid: number;
-    payrollOwed: number;
-    outstandingPayroll: number;
+    
+    totalCashCollected: number;
+    netAfterExpense: number;
+    netAfterPayroll: number;
 }
-
-export type DailyReport = {
+export interface DailyReport {
     date: string;
-    tripCount: number;
-    collectedQty: number;
-    deliveredQty: number;
-    cashCollected: number;
-    expenses: number;
-    payrollPaid: number;
-    debtCreated: number;
-    debtPayments: number;
-    netCashFlow: number;
+
+    backlogStartQty: number;
     backlogEndQty: number;
+
+    tripCount: number;
+    
+    totalCollectedQty: number;
+    totalDeliveredQty: number;
+    totalFreeQty: number;
+
+    totalExpenses: number;
+
+    totalPayrollEarned: number;
+    totalPayrollPaid: number;
+
+    totalDebtCreated: number;
+    totalDebtPayment: number;
+
+    totalCashCollected: number;
+    cashAfterExpense: number;
+    cashAfterPayroll: number;
 };
 
-
-
-export type DashboardResponse = {
+export interface DashboardResponse {
     summary: Dashboard;
     dailyReports: DailyReport[];
     expenseBreakdown: ExpenseBreakdown;

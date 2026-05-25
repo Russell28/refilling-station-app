@@ -6,14 +6,14 @@ import DashboardPage from "../features/reports/dashboard/DashboardPage";
 import DailySummaryPage from "../features/reports/daily-summary/DailySummaryPage";
 import TripsPage from "../features/trips/TripsPage";
 import TripsFormPageWithProvider from "../features/trips/TripsFormPageWithProvider";
-import CustomerDebtPage from "../features/customer-debts/CustomerDebtPage";
 import CustomersPage from "../features/customers/CustomersPage";
 import ExpensesPageWithProvider from "../features/expenses/ExpensesPageWithProvider";
-import PayrollsPage from "../features/payrolls/PayrollsPage";
 import MonthlySummaryPage from "../features/reports/monthly-summary/MonthlySummaryPage";
 import LoginPage from "../features/auth/pages/LoginPage";
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 import AdminRoute from "../features/auth/components/AdminRoute";
+import CustomerDebtPageWithProvider from "../features/customer-debts/CustomerDebtPageWithProvider";
+import PayrollsPageWithProvider from "../features/payrolls/PayrollsPageWithProvider";
 
 export const routes: RouteObject[] = [
     {
@@ -30,7 +30,7 @@ export const routes: RouteObject[] = [
                         element: <AdminRoute />, // Only allows admin users to access these routes
                         children: [
                             { path: "/", element: <DashboardPage /> },
-                            { path: "/payrolls", element: <PayrollsPage /> },
+                            { path: "/payrolls", element: <PayrollsPageWithProvider /> },
                             { path: "/monthly-summary", element: <MonthlySummaryPage /> },
                         ]
                     },
@@ -39,7 +39,7 @@ export const routes: RouteObject[] = [
                     { path: "/trips/new", element: <TripsFormPageWithProvider /> },
                     { path: "/trips/:id/edit", element: <TripsFormPageWithProvider /> },
                     { path: "/customers", element: <CustomersPage /> },
-                    { path: "/debt-entries", element: <CustomerDebtPage /> },
+                    { path: "/customer-debts", element: <CustomerDebtPageWithProvider /> },
                     { path: "/expenses", element: <ExpensesPageWithProvider /> },
                 ]
             }
