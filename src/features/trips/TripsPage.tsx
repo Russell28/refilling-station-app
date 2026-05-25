@@ -8,27 +8,32 @@ import PageHeader from "../../components/ui/PageHeader";
 import { apiClient } from "../../api/client";
 import { getToken, isAdmin } from "../auth/utils/authStorage";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { useFormErrors } from "../../hooks/useFormErrors";
+import type { ErrorResponse } from "../../types/ErrorResponse";
+import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
 
 export default function TripsPage() {
   const navigate = useNavigate();
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { generalErrors, applyErrors, clearErrors } = useFormErrors<Trip>()
 
   useEffect(() => {
-    async function loadTrips() {
-      try {
-        setLoading(true);
-        const tripsData = await getTrips();
-        setTrips(tripsData);
-      } catch (err) {
-        setError("Failed to load trips.");
-      } finally {
-        setLoading(false);
-      }
-    }
     loadTrips();
   }, []); // [] run once on first load
+
+  async function loadTrips() {
+    try {
+      clearErrors();
+      setLoading(true);
+      const tripsData = await getTrips();
+      setTrips(tripsData);
+    } catch (err) {
+      applyErrors(err as ErrorResponse);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function onDeleteClick(tripId: number) {
     const confirmed = window.confirm("Are you sure you want to delete this trip?");
@@ -36,14 +41,14 @@ export default function TripsPage() {
       return;
     }
     try {
+      clearErrors();
       setLoading(true);
-      setError(null);
       await deleteTrip(tripId);
 
       const trips = await getTrips();
       setTrips(trips);
-    } catch (error) {
-      setError("Failed to delete trip.");
+    } catch (err) {
+      applyErrors(err as ErrorResponse);
     } finally {
       setLoading(false);
     }
@@ -122,10 +127,8 @@ export default function TripsPage() {
         onChange={handleFileChange}
       />
 
-      {error && (
-        <Card className="border-red-200 bg-red-50">
-          <p className="text-sm text-red-700">{error}</p>
-        </Card>
+      {generalErrors.length > 0 && (
+        <ServerErrorAlert errors={generalErrors} />
       )}
 
       <Card className="p-0">
@@ -151,19 +154,6 @@ export default function TripsPage() {
                     <th className="px-4 py-3 font-medium text-right">Free Qty</th>
                     <th className="px-4 py-3 font-medium text-right">Actual Cash</th>
                     <th className="px-4 py-3 font-medium">Notes</th>
-
-                    {/* Uncomment if you want more columns in desktop table */}
-                    {/* <th className="px-4 py-3 font-medium">Source</th> */}
-                    {/* <th className="px-4 py-3 font-medium">Trip Type</th> */}
-                    {/* <th className="px-4 py-3 font-medium">Customer Category</th> */}
-                    {/* <th className="px-4 py-3 font-medium text-right">Collected</th> */}
-                    {/* <th className="px-4 py-3 font-medium text-right">Loaded</th> */}
-                    {/* <th className="px-4 py-3 font-medium text-right">Free</th> */}
-                    {/* <th className="px-4 py-3 font-medium text-right">Returned</th> */}
-                    {/* <th className="px-4 py-3 font-medium text-right">Replacement</th> */}
-                    {/* <th className="px-4 py-3 font-medium text-right">Estimated Cash</th> */}
-                    {/* <th className="px-4 py-3 font-medium">Start</th> */}
-                    {/* <th className="px-4 py-3 font-medium">End</th> */}
 
                     <th className="px-4 py-3 font-medium">Action</th>
                   </tr>
@@ -199,27 +189,6 @@ export default function TripsPage() {
                       <td className="px-4 py-3">
                         {trip.notes || "-"}
                       </td>
-
-                      {/* Uncomment if you want more columns in desktop table */}
-                      {/* <td className="px-4 py-3">{trip.source || "-"}</td> */}
-                      {/* <td className="px-4 py-3">{trip.tripType || "-"}</td> */}
-                      {/* <td className="px-4 py-3">{trip.customerCategory || "-"}</td> */}
-                      {/* <td className="px-4 py-3 text-right">{trip.collectedQty}</td> */}
-                      {/* <td className="px-4 py-3 text-right">{trip.loadedQty}</td> */}
-                      {/* <td className="px-4 py-3 text-right">{trip.freeQty}</td> */}
-                      {/* <td className="px-4 py-3 text-right">{trip.returnedQty}</td> */}
-                      {/* <td className="px-4 py-3 text-right">{trip.replacementQty}</td> */}
-                      {/* <td className="px-4 py-3 text-right">₱{trip.estimatedCash.toLocaleString()}</td> */}
-                      {/* <td className="px-4 py-3">
-                                                {trip.timeStarted
-                                                    ? new Date(trip.timeStarted).toLocaleTimeString()
-                                                    : "-"}
-                                            </td> */}
-                      {/* <td className="px-4 py-3">
-                                                {trip.timeEnded
-                                                    ? new Date(trip.timeEnded).toLocaleTimeString()
-                                                    : "-"}
-                                            </td> */}
 
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
@@ -299,16 +268,6 @@ export default function TripsPage() {
                       </span>{" "}
                       {trip.notes || "-"}
                     </p>
-
-                    {/* Mobile optional details */}
-                    {/* <p><span className="font-medium text-slate-700">Source:</span> {trip.source || "-"}</p> */}
-                    {/* <p><span className="font-medium text-slate-700">Type:</span> {trip.tripType || "-"}</p> */}
-                    {/* <p><span className="font-medium text-slate-700">Category:</span> {trip.customerCategory || "-"}</p> */}
-                    {/* <p><span className="font-medium text-slate-700">Collected:</span> {trip.collectedQty}</p> */}
-                    {/* <p><span className="font-medium text-slate-700">Loaded:</span> {trip.loadedQty}</p> */}
-                    {/* <p><span className="font-medium text-slate-700">Returned:</span> {trip.returnedQty}</p> */}
-                    {/* <p><span className="font-medium text-slate-700">Replacement:</span> {trip.replacementQty}</p> */}
-                    {/* <p><span className="font-medium text-slate-700">Estimated Cash:</span> ₱{trip.estimatedCash.toLocaleString()}</p> */}
                   </div>
 
                   <div className="mt-4 flex gap-2">
