@@ -7,7 +7,7 @@ const navItems = [
     { to: "/trips", label: "Trips" },
     { to: "/customers", label: "Customers" },
     { to: "/expenses", label: "Expenses" },
-    { to: "/debt-entries", label: "Debts" },
+    { to: "/customer-debts", label: "Debts" },
     { to: "/payrolls", label: "Payrolls", adminOnly: true },
     { to: "/monthly-summary", label: "Monthly Summary", adminOnly: true },
 

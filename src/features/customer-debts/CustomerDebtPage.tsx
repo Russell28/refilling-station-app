@@ -1,37 +1,39 @@
 import { useEffect, useRef, useState } from "react";
-import type { CreateUpdateCustomerDebtRequest, CustomerDebt } from "./CustomerDebt";
-import { createCustomerDebt, deleteCustomerDebt, getCustomerDebts, updateCustomerDebt } from "./customerDebtsApi";
+import type { CustomerDebt, CustomerDebtFormValues } from "./CustomerDebt";
+import { deleteCustomerDebt, getCustomerDebts } from "./customerDebtsApi";
 import CustomerDebtForm from "./CustomerDebtForm";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import PageHeader from "../../components/ui/PageHeader";
 import { apiClient } from "../../api/client";
 import { getToken, isAdmin } from "../auth/utils/authStorage";
-import { CustomerProvider } from "../customers/CustomerContext";
+import { useFormErrors } from "../../hooks/useFormErrors";
+import type { ErrorResponse } from "../../types/ErrorResponse";
+import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
 
 export default function CustomerDebtPage() {
     const [customerDebts, setCustomerDebts] = useState<CustomerDebt[]>([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const { applyErrors, clearErrors, generalErrors } = useFormErrors<CustomerDebtFormValues>()
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedDebt, setSelectedDebt] = useState<CustomerDebt | null>(null);
-    const [formError, setFormError] = useState<string | null>(null);
-    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        const loadDebts = async () => {
-            try {
-                setLoading(true);
-                const debts = await getCustomerDebts();
-                setCustomerDebts(debts);
-            } catch (err) {
-                setError("Failed to load customer debts.");
-            } finally {
-                setLoading(false);
-            }
-        }
         loadDebts();
     }, []); // [] run once on first load
+
+    async function loadDebts() {
+        try {
+            clearErrors();
+            setLoading(true);
+            const debts = await getCustomerDebts();
+            setCustomerDebts(debts);
+        } catch (err) {
+            applyErrors(err as ErrorResponse);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     function onAddClick() {
         setSelectedDebt(null); // clear any selected debt when adding new
@@ -41,7 +43,6 @@ export default function CustomerDebtPage() {
     function onEditClick(debt: CustomerDebt) {
         setSelectedDebt(debt);
         setIsFormOpen(true);
-        console.log("Edit debt:", selectedDebt);
     }
 
     function onCancelClick() {
@@ -49,26 +50,10 @@ export default function CustomerDebtPage() {
         setIsFormOpen(false);
     }
 
-    async function handleSubmit(formValues: CreateUpdateCustomerDebtRequest) {
-        try {
-            setSaving(true);
-            if (selectedDebt) {
-                await updateCustomerDebt(selectedDebt.id, formValues);
-            } else {
-                await createCustomerDebt(formValues);
-            }
-
-            // refresh list after save
-            const debts = await getCustomerDebts();
-            setCustomerDebts(debts);
-            setIsFormOpen(false);
-            setSelectedDebt(null);
-            setFormError(null);
-        } catch (err) {
-            setFormError("Failed to save customer debt.");
-        } finally {
-            setSaving(false);
-        }
+    function onSuccessSave() {
+        loadDebts();
+        setIsFormOpen(false);
+        setSelectedDebt(null);
     }
 
     async function onDeleteClick(id: number) {
@@ -77,15 +62,15 @@ export default function CustomerDebtPage() {
             return;
         }
         try {
+            clearErrors();
             setLoading(true);
-            setError(null);
             await deleteCustomerDebt(id);
 
             // refresh list after delete
             const debts = await getCustomerDebts();
             setCustomerDebts(debts);
         } catch (err) {
-            setError("Failed to delete customer debt.");
+            applyErrors(err as ErrorResponse);
         } finally {
             setLoading(false);
         }
@@ -108,7 +93,7 @@ export default function CustomerDebtPage() {
             formData.append("file", file);
 
             const res = await fetch(
-                `${apiClient.defaults.baseURL}/debt-entries/import`,
+                `${apiClient.defaults.baseURL}/customer-debts/import`,
                 {
                     method: "POST",
                     body: formData,
@@ -129,11 +114,8 @@ export default function CustomerDebtPage() {
         }
     };
 
-    if (loading) {
-        return <p>Loading customer debts...</p>;
-    }
-    if (error) {
-        return <p style={{ color: "red" }}>{error}</p>;
+    if (generalErrors.length > 0) {
+        return <ServerErrorAlert errors={generalErrors} />;
     }
     return (
         <div className="space-y-4">
@@ -167,33 +149,13 @@ export default function CustomerDebtPage() {
                 onChange={handleFileChange}
             />
 
-            {error && (
-                <Card className="border-red-200 bg-red-50">
-                    <p className="text-sm text-red-700">{error}</p>
-                </Card>
-            )}
-
-            {formError && (
-                <Card className="border-red-200 bg-red-50">
-                    <p className="text-sm text-red-700">{formError}</p>
-                </Card>
-            )}
-
-            {saving && (
-                <Card>
-                    <p className="text-sm text-slate-500">Saving...</p>
-                </Card>
-            )}
-
+            {/* Customer Debt Form */}
             {isFormOpen && (
-                <CustomerProvider>
-                    {/* This provider is needed to ensure the form has access to the customer list for the dropdown */}
-                    <CustomerDebtForm
-                        debt={selectedDebt}
-                        onSubmit={handleSubmit}
-                        onCancel={onCancelClick}
-                    />
-                </CustomerProvider>
+                <CustomerDebtForm
+                    debt={selectedDebt}
+                    onSuccess={onSuccessSave}
+                    onCancel={onCancelClick}
+                />
             )}
 
             <Card className="p-0">

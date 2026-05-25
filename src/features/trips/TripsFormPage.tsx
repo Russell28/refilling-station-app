@@ -14,7 +14,7 @@ import PageHeader from "../../components/ui/PageHeader";
 import Card from "../../components/ui/Card";
 import TextInput from "../../components/ui/TextInput";
 import Button from "../../components/ui/Button";
-import normalizeServerErrors from "../../utils/normalizeServerErrors"
+import { normalizeServerErrors } from "../../utils/normalizeServerErrors"
 import Dropdown from "../../components/ui/Dropdown";
 import { CUSTOMER_CATEGORIES } from "../constants/constants";
 import { useEmployees } from "../employees/EmployeeContext";
@@ -353,78 +353,78 @@ export default function TripsFormPage() {
 
     return (
         <div className="space-y-4">
-                <PageHeader
-                    title={isEditMode ? "Edit Trip" : "New Trip"}
-                    description="Fill in trip, quantity, and payment details."
-                />
+            <PageHeader
+                title={isEditMode ? "Edit Trip" : "New Trip"}
+                description="Fill in trip, quantity, and payment details."
+            />
 
-                {error && (
-                    <Card className="border-red-200 bg-red-50">
-                        <p className="text-sm text-red-700">{error}</p>
-                    </Card>
-                )}
+            {error && (
+                <Card className="border-red-200 bg-red-50">
+                    <p className="text-sm text-red-700">{error}</p>
+                </Card>
+            )}
 
-                {loading && (
+            {loading && (
+                <Card>
+                    <p className="text-sm text-slate-500">Loading trip...</p>
+                </Card>
+            )}
+
+            {!loading && (
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <Card>
-                        <p className="text-sm text-slate-500">Loading trip...</p>
-                    </Card>
-                )}
+                        <h2 className="mb-4 text-lg font-semibold text-slate-900">
+                            Trip Details
+                        </h2>
 
-                {!loading && (
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <Card>
-                            <h2 className="mb-4 text-lg font-semibold text-slate-900">
-                                Trip Details
-                            </h2>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div>
+                                <TextInput
+                                    label="Date"
+                                    type="date"
+                                    name="date"
+                                    value={form.date}
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("date") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("date")}
+                                    </p>
+                                )}
+                            </div>
 
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                <div>
-                                    <TextInput
-                                        label="Date"
-                                        type="date"
-                                        name="date"
-                                        value={form.date}
-                                        onChange={handleInputChange}
-                                    />
-                                    {getFieldError("date") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("date")}
-                                        </p>
-                                    )}
-                                </div>
+                            <div>
+                                <TextInput
+                                    label="Trip Number"
+                                    type="number"
+                                    name="tripNumber"
+                                    value={form.tripNumber}
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("tripNumber") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("tripNumber")}
+                                    </p>
+                                )}
+                            </div>
 
-                                <div>
-                                    <TextInput
-                                        label="Trip Number"
-                                        type="number"
-                                        name="tripNumber"
-                                        value={form.tripNumber}
-                                        onChange={handleInputChange}
-                                    />
-                                    {getFieldError("tripNumber") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("tripNumber")}
-                                        </p>
-                                    )}
-                                </div>
+                            <div>
+                                <Dropdown
+                                    label="Employee"
+                                    name="employeeId"
+                                    options={employees}
+                                    value={form.employeeId}
+                                    valueField="id"
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("employeeId") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("employeeId")}
+                                    </p>
+                                )}
+                            </div>
 
-                                <div>
-                                    <Dropdown
-                                        label="Employee"
-                                        name="employeeId"
-                                        options={employees}
-                                        value={form.employeeId}
-                                        valueField="id"
-                                        onChange={handleInputChange}
-                                    />
-                                    {getFieldError("employeeId") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("employeeId")}
-                                        </p>
-                                    )}
-                                </div>
-
-                                {/* <div>
+                            {/* <div>
                                 <TextInput
                                     label="Employee Name"
                                     type="text"
@@ -439,7 +439,7 @@ export default function TripsFormPage() {
                                 )}
                             </div> */}
 
-                                {/* <div>
+                            {/* <div>
                                 <TextInput
                                     label="Source"
                                     type="text"
@@ -454,7 +454,7 @@ export default function TripsFormPage() {
                                 )}
                             </div> */}
 
-                                {/* <div>
+                            {/* <div>
                                 <TextInput
                                     label="Trip Type"
                                     type="text"
@@ -469,143 +469,143 @@ export default function TripsFormPage() {
                                 )}
                             </div> */}
 
-                                <div>
-                                    <Dropdown
-                                        label="Customer Category"
-                                        name="customerCategory"
-                                        options={CUSTOMER_CATEGORIES}
-                                        value={form.customerCategory}
-                                        onChange={handleInputChange}
-                                    />
-                                    {getFieldError("customerCategory") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("customerCategory")}
-                                        </p>
-                                    )}
-                                </div>
+                            <div>
+                                <Dropdown
+                                    label="Customer Category"
+                                    name="customerCategory"
+                                    options={CUSTOMER_CATEGORIES}
+                                    value={form.customerCategory}
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("customerCategory") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("customerCategory")}
+                                    </p>
+                                )}
                             </div>
-                        </Card>
+                        </div>
+                    </Card>
 
-                        <Card>
-                            <h2 className="mb-4 text-lg font-semibold text-slate-900">
-                                Quantities
-                            </h2>
+                    <Card>
+                        <h2 className="mb-4 text-lg font-semibold text-slate-900">
+                            Quantities
+                        </h2>
 
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                                <div>
-                                    <TextInput
-                                        label="Collected Qty"
-                                        type="number"
-                                        name="collectedQty"
-                                        value={form.collectedQty}
-                                        onChange={handleInputChange}
-                                    />
-                                    {getFieldError("collectedQty") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("collectedQty")}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <TextInput
-                                        label="Loaded Qty"
-                                        type="number"
-                                        name="loadedQty"
-                                        value={form.loadedQty}
-                                        onChange={handleInputChange}
-                                    />
-                                    {getFieldError("loadedQty") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("loadedQty")}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <TextInput
-                                        label="Delivered Qty"
-                                        type="number"
-                                        name="deliveredQty"
-                                        value={form.deliveredQty}
-                                        onChange={handleInputChange}
-                                    />
-                                    {getFieldError("deliveredQty") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("deliveredQty")}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <TextInput
-                                        label="Free Qty"
-                                        type="number"
-                                        name="freeQty"
-                                        value={form.freeQty}
-                                        onChange={handleInputChange}
-                                    />
-                                    {getFieldError("freeQty") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("freeQty")}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <TextInput
-                                        label="Returned Qty"
-                                        type="number"
-                                        name="returnedQty"
-                                        value={form.returnedQty}
-                                        onChange={handleInputChange}
-                                    />
-                                    {getFieldError("returnedQty") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("returnedQty")}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <TextInput
-                                        label="Replacement Qty"
-                                        type="number"
-                                        name="replacementQty"
-                                        value={form.replacementQty}
-                                        onChange={handleInputChange}
-                                    />
-                                    {getFieldError("replacementQty") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("replacementQty")}
-                                        </p>
-                                    )}
-                                </div>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                            <div>
+                                <TextInput
+                                    label="Collected Qty"
+                                    type="number"
+                                    name="collectedQty"
+                                    value={form.collectedQty}
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("collectedQty") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("collectedQty")}
+                                    </p>
+                                )}
                             </div>
-                        </Card>
 
-                        <Card>
-                            <h2 className="mb-4 text-lg font-semibold text-slate-900">
-                                Payment
-                            </h2>
+                            <div>
+                                <TextInput
+                                    label="Loaded Qty"
+                                    type="number"
+                                    name="loadedQty"
+                                    value={form.loadedQty}
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("loadedQty") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("loadedQty")}
+                                    </p>
+                                )}
+                            </div>
 
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                                <div>
-                                    <TextInput
-                                        label="Actual Cash Collected"
-                                        type="number"
-                                        name="actualCashCollected"
-                                        value={form.actualCashCollected}
-                                        onChange={handleInputChange}
-                                    />
-                                    {getFieldError("actualCashCollected") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("actualCashCollected")}
-                                        </p>
-                                    )}
-                                </div>
+                            <div>
+                                <TextInput
+                                    label="Delivered Qty"
+                                    type="number"
+                                    name="deliveredQty"
+                                    value={form.deliveredQty}
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("deliveredQty") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("deliveredQty")}
+                                    </p>
+                                )}
+                            </div>
 
-                                {/* <div>
+                            <div>
+                                <TextInput
+                                    label="Free Qty"
+                                    type="number"
+                                    name="freeQty"
+                                    value={form.freeQty}
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("freeQty") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("freeQty")}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div>
+                                <TextInput
+                                    label="Returned Qty"
+                                    type="number"
+                                    name="returnedQty"
+                                    value={form.returnedQty}
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("returnedQty") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("returnedQty")}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div>
+                                <TextInput
+                                    label="Replacement Qty"
+                                    type="number"
+                                    name="replacementQty"
+                                    value={form.replacementQty}
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("replacementQty") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("replacementQty")}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </Card>
+
+                    <Card>
+                        <h2 className="mb-4 text-lg font-semibold text-slate-900">
+                            Payment
+                        </h2>
+
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                            <div>
+                                <TextInput
+                                    label="Actual Cash Collected"
+                                    type="number"
+                                    name="actualCashCollected"
+                                    value={form.actualCashCollected}
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("actualCashCollected") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("actualCashCollected")}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* <div>
                                 <TextInput
                                     label="Time Started"
                                     type="time"
@@ -635,72 +635,72 @@ export default function TripsFormPage() {
                                 )}
                             </div> */}
 
-                                <div>
-                                    <TextInput
-                                        label="Estimated Cash"
-                                        type="number"
-                                        name="estimatedCash"
-                                        value={estimatedCash}
-                                        disabled
-                                    />
-                                    {getFieldError("timeEnded") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("timeEnded")}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <TextInput
-                                        label="Notes"
-                                        type="text"
-                                        name="notes"
-                                        value={form.notes}
-                                        onChange={handleInputChange}
-                                    />
-                                    {getFieldError("notes") && (
-                                        <p className="mt-1 text-sm text-red-600">
-                                            {getFieldError("notes")}
-                                        </p>
-                                    )}
-                                </div>
+                            <div>
+                                <TextInput
+                                    label="Estimated Cash"
+                                    type="number"
+                                    name="estimatedCash"
+                                    value={estimatedCash}
+                                    disabled
+                                />
+                                {getFieldError("timeEnded") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("timeEnded")}
+                                    </p>
+                                )}
                             </div>
 
-                            {isEditMode && (
-                                <div className="mt-4">
-                                    <label className="flex items-center gap-2 text-sm text-slate-700">
-                                        <input
-                                            type="checkbox"
-                                            name="isRemitted"
-                                            checked={form.isRemitted}
-                                            onChange={handleInputChange}
-                                        />
-                                        Is Remitted
-                                    </label>
-                                </div>
-                            )}
-                        </Card>
-
-                        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                            <Button
-                                type="button"
-                                variant="secondary"
-                                onClick={handleCancel}
-                                disabled={saving}
-                            >
-                                Cancel
-                            </Button>
-
-                            <Button type="submit" disabled={saving}>
-                                {saving
-                                    ? "Saving..."
-                                    : isEditMode
-                                        ? "Update"
-                                        : "Save"}
-                            </Button>
+                            <div>
+                                <TextInput
+                                    label="Notes"
+                                    type="text"
+                                    name="notes"
+                                    value={form.notes}
+                                    onChange={handleInputChange}
+                                />
+                                {getFieldError("notes") && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {getFieldError("notes")}
+                                    </p>
+                                )}
+                            </div>
                         </div>
-                    </form>
-                )}
-            </div>
+
+                        {isEditMode && (
+                            <div className="mt-4">
+                                <label className="flex items-center gap-2 text-sm text-slate-700">
+                                    <input
+                                        type="checkbox"
+                                        name="isRemitted"
+                                        checked={form.isRemitted}
+                                        onChange={handleInputChange}
+                                    />
+                                    Is Remitted
+                                </label>
+                            </div>
+                        )}
+                    </Card>
+
+                    <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={handleCancel}
+                            disabled={saving}
+                        >
+                            Cancel
+                        </Button>
+
+                        <Button type="submit" disabled={saving}>
+                            {saving
+                                ? "Saving..."
+                                : isEditMode
+                                    ? "Update"
+                                    : "Save"}
+                        </Button>
+                    </div>
+                </form>
+            )}
+        </div>
     );
 }
