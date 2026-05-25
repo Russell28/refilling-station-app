@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getToken } from "../features/auth/utils/authStorage";
-import normalizeError from "../utils/normalizeServerErrors";
+import { normalizeError } from "../utils/normalizeServerErrors";
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/api",

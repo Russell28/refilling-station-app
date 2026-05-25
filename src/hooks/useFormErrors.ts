@@ -26,5 +26,13 @@ export function useFormErrors<T extends object>() {
     setGeneralErrors([])
   }
 
-  return { fieldErrors, generalErrors, applyErrors, clearErrors }
+  return {
+    fieldErrors,
+    generalErrors,
+    applyErrors,
+    clearErrors,
+    // expose setters for client-side validation
+    setFieldErrors,
+    setGeneralErrors,
+  }
 }
