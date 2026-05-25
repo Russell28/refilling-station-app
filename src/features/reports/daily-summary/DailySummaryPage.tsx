@@ -384,7 +384,6 @@ export default function DailySummaryPage() {
                                         <tr>
                                             <TableHeader>Category</TableHeader>
                                             <TableHeader>Amount</TableHeader>
-                                            <TableHeader>Notes</TableHeader>
                                         </tr>
                                     </thead>
                                     <tbody>

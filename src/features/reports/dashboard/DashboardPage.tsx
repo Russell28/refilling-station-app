@@ -112,57 +112,76 @@ export default function DashboardPage() {
                             Summary
                         </h3>
 
-                        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                            <SummaryCard
-                                label="Total Trips"
-                                value={formatNumber(dashboard.summary.totalTrips)}
-                            />
-                            <SummaryCard
-                                label="Collected Qty"
-                                value={formatNumber(dashboard.summary.totalCollectedQty)}
-                            />
-                            <SummaryCard
-                                label="Delivered Qty"
-                                value={formatNumber(dashboard.summary.totalDeliveredQty)}
-                            />
-                            <SummaryCard
-                                label="Backlog End"
-                                value={formatNumber(dashboard.summary.backlogEndQty)}
-                            />
+                        {/* OPERATIONS */}
+                        <div className="mb-6">
+                            <h4 className="text-sm font-medium text-slate-700 mb-2">Operations</h4>
+                            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                                <SummaryCard
+                                    label="Trip Count"
+                                    value={formatNumber(dashboard.summary.totalTrips)}
+                                />
+                                <SummaryCard
+                                    label="Collected Qty"
+                                    value={formatNumber(dashboard.summary.totalCollectedQty)}
+                                />
+                                <SummaryCard
+                                    label="Delivered Qty"
+                                    value={formatNumber(dashboard.summary.totalDeliveredQty)}
+                                />
+                                <SummaryCard
+                                    label="Backlog End"
+                                    value={formatNumber(dashboard.summary.backlogEndQty)}
+                                />
+                            </div>
+                        </div>
 
-                            <SummaryCard
-                                label="Cash Collected"
-                                value={formatCurrency(dashboard.summary.totalCashCollected)}
-                            />
-                            <SummaryCard
-                                label="Expenses"
-                                value={formatCurrency(dashboard.summary.totalExpenses)}
-                            />
-                            <SummaryCard
-                                label="Payroll Paid"
-                                value={formatCurrency(dashboard.summary.totalPayrollPaid)}
-                            />
-                            <SummaryCard
-                                label="Net Cash Flow"
-                                value={formatCurrency(dashboard.summary.netCashFlow)}
-                            />
+                        {/* CASHFLOW */}
+                        <div className="mb-6">
+                            <h4 className="text-sm font-medium text-slate-700 mb-2">Cashflow</h4>
+                            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                                <SummaryCard
+                                    label="Cash Collected"
+                                    value={formatCurrency(dashboard.summary.totalCashCollected)}
+                                />
+                                <SummaryCard
+                                    label="Expenses"
+                                    value={formatCurrency(dashboard.summary.totalExpense)}
+                                />
+                                <SummaryCard
+                                    label="Net After Expense"
+                                    value={formatCurrency(dashboard.summary.netAfterExpense)}
+                                />
+                                <SummaryCard
+                                    label="Net After Payroll"
+                                    value={formatCurrency(dashboard.summary.netAfterPayroll)}
+                                />
+                            </div>
+                        </div>
 
-                            <SummaryCard
-                                label="New Debt"
-                                value={formatCurrency(dashboard.summary.totalDebtCreated)}
-                            />
-                            <SummaryCard
-                                label="Debt Payments"
-                                value={formatCurrency(dashboard.summary.totalDebtPayments)}
-                            />
-                            <SummaryCard
-                                label="Outstanding Debt"
-                                value={formatCurrency(dashboard.summary.outstandingDebt)}
-                            />
-                            <SummaryCard
-                                label="Outstanding Payroll"
-                                value={formatCurrency(dashboard.summary.outstandingPayroll)}
-                            />
+                        {/* PAYROLL */}
+                        <div className="mb-6">
+                            <h4 className="text-sm font-medium text-slate-700 mb-2">Payroll</h4>
+                            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                                <SummaryCard
+                                    label="Payroll Earned"
+                                    value={formatCurrency(dashboard.summary.totalPayrollEarned)}
+                                />
+                                <SummaryCard
+                                    label="Outstanding Payroll"
+                                    value={formatCurrency(dashboard.summary.outstandingPayroll)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* LIABILITIES */}
+                        <div>
+                            <h4 className="text-sm font-medium text-slate-700 mb-2">Liabilities</h4>
+                            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                                <SummaryCard
+                                    label="Outstanding Debt"
+                                    value={formatCurrency(dashboard.summary.outstandingDebt)}
+                                />
+                            </div>
                         </div>
                     </section>
 
@@ -181,32 +200,32 @@ export default function DashboardPage() {
                                     <thead className="bg-slate-50 text-left text-slate-600">
                                         <tr>
                                             <TableHeader>Date</TableHeader>
-                                            <TableHeader>Trips</TableHeader>
-                                            <TableHeader>Collected</TableHeader>
+                                            {/* <TableHeader>Trips</TableHeader>
+                                            <TableHeader>Collected</TableHeader> */}
                                             <TableHeader>Delivered</TableHeader>
                                             <TableHeader>Cash</TableHeader>
-                                            <TableHeader>Expenses</TableHeader>
-                                            <TableHeader>Payroll</TableHeader>
-                                            <TableHeader>Debt</TableHeader>
-                                            <TableHeader>Payments</TableHeader>
+                                            <TableHeader>Expense</TableHeader>
                                             <TableHeader>Net</TableHeader>
-                                            <TableHeader>Backlog End</TableHeader>
+                                            {/* <TableHeader>Payroll</TableHeader>
+                                            <TableHeader>Debt</TableHeader>
+                                            <TableHeader>Payment</TableHeader> */}
+                                            {/* <TableHeader>Backlog End</TableHeader> */}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {dashboard.dailyReports.map((item) => (
                                             <tr key={item.date} className="border-t border-slate-200">
                                                 <TableCell>{formatDateForInput(item.date)}</TableCell>
-                                                <TableCell>{formatNumber(item.tripCount)}</TableCell>
-                                                <TableCell>{formatNumber(item.collectedQty)}</TableCell>
-                                                <TableCell>{formatNumber(item.deliveredQty)}</TableCell>
-                                                <TableCell>{formatCurrency(item.cashCollected)}</TableCell>
-                                                <TableCell>{formatCurrency(item.expenses)}</TableCell>
-                                                <TableCell>{formatCurrency(item.payrollPaid)}</TableCell>
-                                                <TableCell>{formatCurrency(item.debtCreated)}</TableCell>
-                                                <TableCell>{formatCurrency(item.debtPayments)}</TableCell>
-                                                <TableCell>{formatCurrency(item.netCashFlow)}</TableCell>
-                                                <TableCell>{formatNumber(item.backlogEndQty)}</TableCell>
+                                                {/* <TableCell>{formatNumber(item.tripCount)}</TableCell> */}
+                                                {/* <TableCell>{formatNumber(item.totalCollectedQty)}</TableCell> */}
+                                                <TableCell>{formatNumber(item.totalDeliveredQty)}</TableCell>
+                                                <TableCell>{formatCurrency(item.totalCashCollected)}</TableCell>
+                                                <TableCell>{formatCurrency(item.totalExpenses)}</TableCell>
+                                                <TableCell>{formatCurrency(item.cashAfterExpense)}</TableCell>
+                                                {/* <TableCell>{formatCurrency(item.totalPayrollEarned)}</TableCell> */}
+                                                {/* <TableCell>{formatCurrency(item.totalDebtCreated)}</TableCell> */}
+                                                {/* <TableCell>{formatCurrency(item.totalDebtPayment)}</TableCell> */}
+                                                {/* <TableCell>{formatNumber(item.backlogEndQty)}</TableCell> */}
                                             </tr>
                                         ))}
                                     </tbody>
