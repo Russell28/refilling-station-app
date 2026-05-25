@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import type { CreateUpdatePayrollRequest, Payroll } from "./Payroll";
-import { createPayroll, deletePayroll, getPayrolls, updatePayroll } from "./payrollApi";
+import type { Payroll, PayrollFormValues } from "./Payroll";
+import { deletePayroll, getPayrolls } from "./payrollApi";
 import { formatDateForInput } from "../../utils/date";
 import PayrollEntryForm from "./PayrollEntryForm";
 import Card from "../../components/ui/Card";
@@ -8,33 +8,35 @@ import PageHeader from "../../components/ui/PageHeader";
 import Button from "../../components/ui/Button";
 import { apiClient } from "../../api/client";
 import { getToken } from "../auth/utils/authStorage";
-import { EmployeeProvider } from "../employees/EmployeeContext";
+import { useFormErrors } from "../../hooks/useFormErrors";
+import type { ErrorResponse } from "../../types/ErrorResponse";
+import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
 
 export default function PayrollsPage() {
     const [payrolls, setPayrolls] = useState<Payroll[]>([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedPayroll, setSelectedPayroll] = useState<Payroll | null>(null);
-    const [saving, setSaving] = useState(false);
-    const [formError, setFormError] = useState<string | null>(null);
+    const { generalErrors, applyErrors, clearErrors } = useFormErrors<PayrollFormValues>()
+
 
     useEffect(() => {
-        const loadPayrolls = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const payrolls = await getPayrolls();
-                setPayrolls(payrolls);
-            } catch (err) {
-                console.error("Error loading payrolls:", err);
-                setError("Failed to load payrolls.");
-            } finally {
-                setLoading(false);
-            }
-        };
         loadPayrolls();
     }, []);
+
+    async function loadPayrolls() {
+        clearErrors();
+
+        try {
+            setLoading(true);
+            const payrolls = await getPayrolls();
+            setPayrolls(payrolls);
+        } catch (err) {
+            applyErrors(err as ErrorResponse);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     function onAddClick() {
         setSelectedPayroll(null); // clear any selected payroll when adding new
@@ -43,7 +45,6 @@ export default function PayrollsPage() {
 
     function onEditClick(payroll: Payroll) {
         setSelectedPayroll(payroll);
-        console.log("Edit payroll:", selectedPayroll);
         setIsFormOpen(true);
     }
 
@@ -52,26 +53,10 @@ export default function PayrollsPage() {
         setIsFormOpen(false);
     }
 
-    async function handleSubmit(formValues: CreateUpdatePayrollRequest) {
-        try {
-            setSaving(true);
-            setFormError(null);
-            if (selectedPayroll) {
-                await updatePayroll(selectedPayroll.id, formValues);
-            } else {
-                await createPayroll(formValues);
-            }
-
-            // refresh list after save            
-            const payrolls = await getPayrolls();
-            setPayrolls(payrolls);
-            setIsFormOpen(false);
-            setSelectedPayroll(null);
-        } catch (err) {
-            setFormError("Failed to create payroll.");
-        } finally {
-            setSaving(false);
-        }
+    function onSuccess() {
+        loadPayrolls();
+        setIsFormOpen(false);
+        setSelectedPayroll(null);
     }
 
     async function onDeleteClick(payrollId: number) {
@@ -79,15 +64,15 @@ export default function PayrollsPage() {
         if (!confirmed) {
             return;
         }
+
+        clearErrors();
         try {
             setLoading(true);
-            setError(null);
             await deletePayroll(payrollId);
             // refresh list after delete
-            const payrolls = await getPayrolls();
-            setPayrolls(payrolls);
+            await loadPayrolls();
         } catch (err) {
-            setError("Failed to delete payroll.");
+            applyErrors(err as ErrorResponse);
         } finally {
             setLoading(false);
         }
@@ -110,7 +95,7 @@ export default function PayrollsPage() {
             formData.append("file", file);
 
             const res = await fetch(
-                `${apiClient.defaults.baseURL}/payroll-entries/import`,
+                `${apiClient.defaults.baseURL}/payrolls/import`,
                 {
                     method: "POST",
                     body: formData,
@@ -130,15 +115,6 @@ export default function PayrollsPage() {
             alert("Import failed");
         }
     };
-
-
-    if (loading) {
-        return <div>Loading payrolls...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
 
     return (
         <div className="space-y-4">
@@ -170,32 +146,16 @@ export default function PayrollsPage() {
                 onChange={handleFileChange}
             />
 
-            {error && (
-                <Card className="border-red-200 bg-red-50">
-                    <p className="text-sm text-red-700">{error}</p>
-                </Card>
-            )}
-
-            {formError && (
-                <Card className="border-red-200 bg-red-50">
-                    <p className="text-sm text-red-700">{formError}</p>
-                </Card>
-            )}
-
-            {saving && (
-                <Card>
-                    <p className="text-sm text-slate-500">Saving...</p>
-                </Card>
+            {generalErrors.length > 0 && (
+                <ServerErrorAlert errors={generalErrors} />
             )}
 
             {isFormOpen && (
-                <EmployeeProvider>
-                    <PayrollEntryForm
-                        selectedPayroll={selectedPayroll}
-                        onSubmit={handleSubmit}
-                        onCancel={handleCancel}
-                    />
-                </EmployeeProvider>
+                <PayrollEntryForm
+                    selectedPayroll={selectedPayroll}
+                    onSuccess={onSuccess}
+                    onCancel={handleCancel}
+                />
             )}
 
             <Card className="p-0">
