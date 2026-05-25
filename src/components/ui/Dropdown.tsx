@@ -6,6 +6,7 @@ interface DropdownProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   options: { id: number; name: string;[key: string]: any }[];
   valueField?: "id" | "name"; // defaults to "id"
   className?: string;
+  error?: string;
 }
 
 export default function Dropdown({
@@ -13,6 +14,7 @@ export default function Dropdown({
   options,
   valueField = "name",
   className = "",
+  error,
   ...props
 }: DropdownProps) {
   return (
@@ -32,6 +34,12 @@ export default function Dropdown({
           </option>
         ))}
       </select>
+
+      {error && (
+        <p className="mt-1 text-xs text-red-600">
+          {error}
+        </p>
+      )}
     </label>
   );
 }

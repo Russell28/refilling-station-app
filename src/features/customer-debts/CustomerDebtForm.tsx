@@ -160,6 +160,7 @@ export default function CustomerDebtForm({
                             value={form.customerId}
                             valueField="id"
                             onChange={handleTextChange}
+                            error={fieldErrors.customerId?.[0]}
                         />
 
                         <TextInput

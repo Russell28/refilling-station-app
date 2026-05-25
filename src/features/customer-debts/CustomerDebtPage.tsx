@@ -114,9 +114,6 @@ export default function CustomerDebtPage() {
         }
     };
 
-    if (generalErrors.length > 0) {
-        return <ServerErrorAlert errors={generalErrors} />;
-    }
     return (
         <div className="space-y-4">
             <PageHeader
@@ -156,6 +153,10 @@ export default function CustomerDebtPage() {
                     onSuccess={onSuccessSave}
                     onCancel={onCancelClick}
                 />
+            )}
+
+            {generalErrors.length > 0 && (
+                <ServerErrorAlert errors={generalErrors} />
             )}
 
             <Card className="p-0">
