@@ -9,7 +9,9 @@ export async function getExpenses() : Promise<Expense[]> {
 export async function createExpense(payload: CreateUpdateExpenseRequest): Promise<Expense> {
     const apiPayload = {
         ...payload,
-        date: payload.date ? new Date(payload.date).toISOString() : null,
+        date: payload.date 
+            ? new Date(payload.date).toISOString().split("T")[0] // Convert to DateOnly format (YYYY-MM-DD)
+            : null,
     };
     const response = await apiClient.post("/expenses", apiPayload);
     return response.data;
@@ -18,7 +20,9 @@ export async function createExpense(payload: CreateUpdateExpenseRequest): Promis
 export async function updateExpense(id: number, payload: CreateUpdateExpenseRequest): Promise<Expense> {
     const apiPayload = {
         ...payload,
-        date: payload.date ? new Date(payload.date).toISOString() : null,
+        date: payload.date 
+            ? new Date(payload.date).toISOString().split("T")[0] // Convert to DateOnly format (YYYY-MM-DD)
+            : null,
     };
     const response = await apiClient.put(`/expenses/${id}`, apiPayload);
     return response.data;

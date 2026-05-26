@@ -14,7 +14,9 @@ export async function getTripById(id: number): Promise<Trip> {
 export async function createTrip(payload: CreateTripRequest): Promise<Trip> {
     const apiPayload = {
         ...payload,
-        date: payload.date ? new Date(payload.date).toISOString() : null,
+        date: payload.date 
+            ? new Date(payload.date).toISOString().split("T")[0] // Convert to DateOnly format (YYYY-MM-DD)
+            : null,
         timeStarted: payload.timeStarted
             ? new Date(`1970-01-01T${payload.timeStarted}:00`).toISOString()
             : null,
@@ -30,7 +32,9 @@ export async function createTrip(payload: CreateTripRequest): Promise<Trip> {
 export async function updateTrip(id: number, payload: UpdateTripRequest): Promise<Trip> {
     const apiPayload = {
         ...payload,
-        date: payload.date ? new Date(payload.date).toISOString() : null,
+        date: payload.date 
+            ? new Date(payload.date).toISOString().split("T")[0] // Convert to DateOnly format (YYYY-MM-DD)
+            : null,
         timeStarted: payload.timeStarted
             ? new Date(`1970-01-01T${payload.timeStarted}:00`).toISOString()
             : null,

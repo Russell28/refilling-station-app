@@ -9,7 +9,9 @@ export async function getCustomerDebts(): Promise<CustomerDebt[]> {
 export async function createCustomerDebt(payload: CreateUpdateCustomerDebtRequest): Promise<CustomerDebt> {
     const apiPayload = {
         ...payload,
-        date: payload.date ? new Date(payload.date).toISOString() : null,
+        date: payload.date 
+            ? new Date(payload.date).toISOString().split("T")[0] // Convert to DateOnly format (YYYY-MM-DD)
+            : null,
     };
 
     const response = await apiClient.post("/customer-debts", apiPayload);
@@ -19,7 +21,9 @@ export async function createCustomerDebt(payload: CreateUpdateCustomerDebtReques
 export async function updateCustomerDebt(id: number, payload: CreateUpdateCustomerDebtRequest): Promise<CustomerDebt> {
     const apiPayload = {
         ...payload,
-        date: payload.date ? new Date(payload.date).toISOString() : null,
+        date: payload.date 
+            ? new Date(payload.date).toISOString().split("T")[0] // Convert to DateOnly format (YYYY-MM-DD)
+            : null,
     };
 
     const response = await apiClient.put(`/customer-debts/${id}`, apiPayload);
