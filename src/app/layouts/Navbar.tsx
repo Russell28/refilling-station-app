@@ -17,13 +17,13 @@ const navItems = [
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
-    const navigate = useNavigate(); // Get navigate function for programmatic navigation
-    const user = getStoredUser(); // Get current user info for display in navbar
-    const isAdmin = user?.role === "Admin"; // Check if the user has admin role
+    const navigate = useNavigate();
+    const user = getStoredUser();
+    const isAdmin = user?.role === "Admin";
 
     function handleLogout() {
-        clearAuth(); // Clear auth info from localStorage
-        navigate("/login"); // Redirect to login page after logout
+        clearAuth();
+        navigate("/login");
     }
 
     return (
@@ -34,7 +34,47 @@ export default function Navbar() {
                     <h1 className="truncate text-lg font-semibold tracking-tight text-slate-900">
                         Water Refilling Station
                     </h1>
-                    {/* <p className="text-sm text-slate-500">Operations App</p> */}
+                    <p className="text-sm text-slate-500">Operations App</p>
+                </div>
+
+                {/* Desktop nav + user */}
+                <div className="hidden md:flex items-center gap-6">
+                    <nav className="flex gap-2">
+                        {navItems
+                            .filter((item) => !item.adminOnly || isAdmin)
+                            .map((item) => (
+                                <NavLink
+                                    key={item.to}
+                                    to={item.to}
+                                    end={item.to === "/"}
+                                    className={({ isActive }) =>
+                                        [
+                                            "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                            isActive
+                                                ? "bg-slate-900 text-white"
+                                                : "bg-slate-100 text-slate-700 hover:bg-slate-200",
+                                        ].join(" ")
+                                    }
+                                >
+                                    {item.label}
+                                </NavLink>
+                            ))}
+                    </nav>
+
+                    <div className="flex items-center gap-3">
+                        {user && (
+                            <span className="text-sm text-slate-500">
+                                {user.username} ({user.role})
+                            </span>
+                        )}
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            className="rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200"
+                        >
+                            Logout
+                        </button>
+                    </div>
                 </div>
 
                 {/* Hamburger (mobile only) */}
@@ -44,25 +84,9 @@ export default function Navbar() {
                 >
                     {open ? <FaTimes /> : <FaBars />}
                 </button>
-
-                {/* Right side (desktop only) */}
-                <div className="hidden md:flex items-center gap-3">
-                    {user && (
-                        <span className="text-sm text-slate-500">
-                            {user.username} ({user.role})
-                        </span>
-                    )}
-                    <button
-                        type="button"
-                        onClick={handleLogout}
-                        className="rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200"
-                    >
-                        Logout
-                    </button>
-                </div>
             </div>
 
-            {/* Slide-out nav (mobile) */}
+            {/* Mobile nav */}
             {open && (
                 <nav className="md:hidden flex flex-col gap-2 px-4 pb-4">
                     {navItems
@@ -72,7 +96,7 @@ export default function Navbar() {
                                 key={item.to}
                                 to={item.to}
                                 end={item.to === "/"}
-                                onClick={() => setOpen(false)} // close menu on click
+                                onClick={() => setOpen(false)}
                                 className={({ isActive }) =>
                                     [
                                         "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
@@ -86,7 +110,6 @@ export default function Navbar() {
                             </NavLink>
                         ))}
 
-                    {/* Logout (mobile) */}
                     <button
                         type="button"
                         onClick={handleLogout}
@@ -96,29 +119,7 @@ export default function Navbar() {
                     </button>
                 </nav>
             )}
-
-            {/* Full nav (desktop) */}
-            <nav className="hidden md:flex flex-wrap gap-2 px-4 pb-4">
-                {navItems
-                    .filter((item) => !item.adminOnly || isAdmin)
-                    .map((item) => (
-                        <NavLink
-                            key={item.to}
-                            to={item.to}
-                            end={item.to === "/"}
-                            className={({ isActive }) =>
-                                [
-                                    "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                                    isActive
-                                        ? "bg-slate-900 text-white"
-                                        : "bg-slate-100 text-slate-700 hover:bg-slate-200",
-                                ].join(" ")
-                            }
-                        >
-                            {item.label}
-                        </NavLink>
-                    ))}
-            </nav>
         </header>
     );
 }
+
