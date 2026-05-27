@@ -13,6 +13,7 @@ import type { ErrorResponse } from "../../types/ErrorResponse";
 import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
 import type { DateRangeSearchRequest } from "../../types/DateRangeRequest";
 import TextInput from "../../components/ui/TextInput";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 export default function ExpensesPage() {
     const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -128,9 +129,7 @@ export default function ExpensesPage() {
                 title="Expenses"
                 description="Track daily and operational expenses."
                 action={
-
                     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between w-full">
-
                         {/* Top row: actions */}
                         <div className="flex gap-2">
                             {isAdmin() && (
@@ -138,38 +137,43 @@ export default function ExpensesPage() {
                                     variant="secondary"
                                     onClick={handleImportClick}
                                 >
-                                    Import CSV
+                                    Import
                                 </Button>
                             )}
 
                             <Button onClick={onAddClick}>
-                                New Expense
+                                Add
                             </Button>
                         </div>
-                        {isAdmin() && (
-                            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                                <TextInput
-                                    label="Start Date"
-                                    type="date"
-                                    value={searchRequest.startDate}
-                                    onChange={(e) =>
-                                        setSearchRequest({ ...searchRequest, startDate: e.target.value })
-                                    }
-                                />
-                                <TextInput
-                                    label="End Date"
-                                    type="date"
-                                    value={searchRequest.endDate}
-                                    onChange={(e) =>
-                                        setSearchRequest({ ...searchRequest, endDate: e.target.value })
-                                    }
-                                />
-                                {/* <Button onClick={loadPayrolls}>Apply</Button> */}
-                            </div>
-                        )}
                     </div>
                 }
             />
+            {/* Search filters */}
+            {isAdmin() && (
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-3">
+                    <TextInput
+                        label="Start Date"
+                        type="date"
+                        value={searchRequest.startDate}
+                        onChange={(e) =>
+                            setSearchRequest({ ...searchRequest, startDate: e.target.value })
+                        }
+                        className="sm:w-48"
+                    />
+                    <TextInput
+                        label="End Date"
+                        type="date"
+                        value={searchRequest.endDate}
+                        onChange={(e) =>
+                            setSearchRequest({ ...searchRequest, endDate: e.target.value })
+                        }
+                        className="sm:w-48"
+                    />
+                    {/* <Button onClick={loadExpenses} className="sm:self-start">
+                        Apply
+                    </Button> */}
+                </div>
+            )}
 
             {/* hidden input */}
             <input
@@ -254,55 +258,56 @@ export default function ExpensesPage() {
                             </table>
                         </div>
 
-                        <div className="space-y-3 p-4 md:hidden">
+                        <div className="space-y-3 p-1 md:hidden">
                             {expenses.map((expense) => (
                                 <div
                                     key={expense.id}
-                                    className="rounded-xl border border-slate-200 p-4"
+                                    className="rounded-xl border border-slate-200 bg-white shadow-sm"
                                 >
-                                    <div className="flex items-start justify-between gap-3">
+                                    {/* Header */}
+                                    <div className="flex items-center justify-between px-4 py-3">
                                         <div>
-                                            <p className="font-medium text-slate-900">
+                                            <p className="font-semibold text-slate-900 truncate">
                                                 {expense.expenseCategory}
                                             </p>
-                                            <p className="text-sm text-slate-500">
+                                            <p className="text-xs text-slate-500">
                                                 {formatDateForInput(expense.date)}
                                             </p>
                                         </div>
-
-                                        <p className="font-semibold text-slate-900">
+                                        <p className="text-base font-bold text-slate-900">
                                             ₱{expense.amount.toLocaleString()}
                                         </p>
                                     </div>
 
-                                    <div className="mt-3 text-sm text-slate-600">
-                                        <p>
-                                            <span className="font-medium text-slate-700">
-                                                Notes:
-                                            </span>{" "}
-                                            {expense.notes || "-"}
-                                        </p>
-                                    </div>
+                                    {/* Notes only if present */}
+                                    {expense.notes && (
+                                        <div className="px-4 pb-3 text-sm">
+                                            <span className="block text-xs text-slate-500">Notes</span>
+                                            <span className="font-medium text-slate-700">{expense.notes}</span>
+                                        </div>
+                                    )}
 
-                                    <div className="mt-4 flex gap-2">
+                                    {/* Footer actions */}
+                                    <div className="flex justify-end gap-2 border-t border-slate-100 px-4 py-3">
                                         <Button
-                                            variant="secondary"
-                                            className="flex-1"
+                                            variant="primary"
+                                            className="rounded-md p-2 bg-blue-600 text-white hover:bg-blue-700"
                                             onClick={() => onEditClick(expense)}
                                         >
-                                            Edit
+                                            <FaEdit className="w-3 h-3" />
                                         </Button>
                                         <Button
                                             variant="danger"
-                                            className="flex-1"
+                                            className="rounded-md p-2 bg-red-600 text-white hover:bg-red-700"
                                             onClick={() => onDeleteClick(expense.id)}
                                         >
-                                            Delete
+                                            <FaTrash className="w-3 h-3" />
                                         </Button>
                                     </div>
                                 </div>
                             ))}
                         </div>
+
                     </>
                 )}
             </Card>

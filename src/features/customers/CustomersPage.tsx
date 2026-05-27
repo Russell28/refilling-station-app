@@ -8,8 +8,7 @@ import PageHeader from "../../components/ui/PageHeader";
 import { useFormErrors } from "../../hooks/useFormErrors";
 import type { ErrorResponse } from "../../types/ErrorResponse";
 import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
-
-
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 export default function CustomersPage() {
     const [customers, setCustomers] = useState<Customer[]>([]);
@@ -78,10 +77,10 @@ export default function CustomersPage() {
         <div className="space-y-4">
             <PageHeader
                 title="Customers"
-                description="Manage your customers and their information."
+                description="Manage customers."
                 action={
                     <Button onClick={onAddClick}>
-                        New Customer
+                        Add
                     </Button>
                 }
             />
@@ -101,7 +100,7 @@ export default function CustomersPage() {
             <Card className="p-0">
                 {loading ? (
                     <div className="p-4">
-                        <p className="text-sm text-slate-500">Loading expenses...</p>
+                        <p className="text-sm text-slate-500">Loading customers...</p>
                     </div>
                 ) : customers.length === 0 ? (
                     <div className="p-4">
@@ -156,42 +155,40 @@ export default function CustomersPage() {
                             </table>
                         </div>
 
-                        <div className="space-y-3 p-4 md:hidden">
+                        <div className="space-y-3 p-1 md:hidden">
                             {customers.map((customer) => (
                                 <div
                                     key={customer.id}
-                                    className="rounded-xl border border-slate-200 p-4"
+                                    className="rounded-xl border border-slate-200 bg-white shadow-sm"
                                 >
-                                    <div className="flex items-start justify-between gap-3">
-                                        <div>
-                                            <p className="font-medium text-slate-900">
-                                                {customer.name}
-                                            </p>
-                                            <p className="text-sm text-slate-500">
-                                                ID: {customer.id}
-                                            </p>
-                                        </div>
+                                    {/* Header */}
+                                    <div className="flex items-center justify-between px-4 py-3">
+                                        <p className="font-semibold text-slate-900 truncate">
+                                            {customer.name}
+                                        </p>
                                     </div>
 
-                                    <div className="mt-3 flex gap-2">
+                                    {/* Footer actions */}
+                                    <div className="flex justify-end gap-2 border-t border-slate-100 px-3 py-2">
                                         <Button
-                                            variant="secondary"
+                                            variant="primary"
+                                            className="flex items-center gap-1 rounded-md px-3 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700"
                                             onClick={() => onEditClick(customer)}
                                         >
-                                            Edit
+                                            <FaEdit className="w-3 h-3" />
                                         </Button>
                                         <Button
                                             variant="danger"
-                                            onClick={() =>
-                                                onDeleteClick(customer.id)
-                                            }
+                                            className="flex items-center gap-1 rounded-md px-3 py-2 text-sm bg-red-600 text-white hover:bg-red-700"
+                                            onClick={() => onDeleteClick(customer.id)}
                                         >
-                                            Delete
+                                            <FaTrash className="w-3 h-3" />
                                         </Button>
                                     </div>
                                 </div>
                             ))}
                         </div>
+
                     </>
                 )}
             </Card>

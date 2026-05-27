@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { clearAuth, getStoredUser } from "../../features/auth/utils/authStorage";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 const navItems = [
     { to: "/", label: "Dashboard", adminOnly: true },
@@ -14,6 +16,7 @@ const navItems = [
 ];
 
 export default function Navbar() {
+    const [open, setOpen] = useState(false);
     const navigate = useNavigate(); // Get navigate function for programmatic navigation
     const user = getStoredUser(); // Get current user info for display in navbar
     const isAdmin = user?.role === "Admin"; // Check if the user has admin role
@@ -25,19 +28,79 @@ export default function Navbar() {
 
     return (
         <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
-            <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 lg:px-8 md:flex-row md:items-center md:justify-between">
-                <div className="min-w-0">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+                {/* Brand */}
+                <div>
                     <h1 className="truncate text-lg font-semibold tracking-tight text-slate-900">
                         Water Refilling Station
                     </h1>
-                    <p className="text-sm text-slate-500">
-                        Operations App
-                    </p>
+                    {/* <p className="text-sm text-slate-500">Operations App</p> */}
                 </div>
 
-                <nav className="flex flex-wrap gap-2">
+                {/* Hamburger (mobile only) */}
+                <button
+                    className="md:hidden rounded-lg p-2 text-slate-700 hover:bg-slate-200"
+                    onClick={() => setOpen(!open)}
+                >
+                    {open ? <FaTimes /> : <FaBars />}
+                </button>
+
+                {/* Right side (desktop only) */}
+                <div className="hidden md:flex items-center gap-3">
+                    {user && (
+                        <span className="text-sm text-slate-500">
+                            {user.username} ({user.role})
+                        </span>
+                    )}
+                    <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200"
+                    >
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            {/* Slide-out nav (mobile) */}
+            {open && (
+                <nav className="md:hidden flex flex-col gap-2 px-4 pb-4">
                     {navItems
-                    .filter(item => !item.adminOnly || isAdmin)
+                        .filter((item) => !item.adminOnly || isAdmin)
+                        .map((item) => (
+                            <NavLink
+                                key={item.to}
+                                to={item.to}
+                                end={item.to === "/"}
+                                onClick={() => setOpen(false)} // close menu on click
+                                className={({ isActive }) =>
+                                    [
+                                        "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                        isActive
+                                            ? "bg-slate-900 text-white"
+                                            : "bg-slate-100 text-slate-700 hover:bg-slate-200",
+                                    ].join(" ")
+                                }
+                            >
+                                {item.label}
+                            </NavLink>
+                        ))}
+
+                    {/* Logout (mobile) */}
+                    <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200"
+                    >
+                        Logout
+                    </button>
+                </nav>
+            )}
+
+            {/* Full nav (desktop) */}
+            <nav className="hidden md:flex flex-wrap gap-2 px-4 pb-4">
+                {navItems
+                    .filter((item) => !item.adminOnly || isAdmin)
                     .map((item) => (
                         <NavLink
                             key={item.to}
@@ -55,24 +118,7 @@ export default function Navbar() {
                             {item.label}
                         </NavLink>
                     ))}
-                </nav>
-
-                <div className="flex items-center gap-3">
-                    {user ? (
-                        <span className="text-sm text-slate-500">
-                            {user.username} ({user.role})
-                        </span>
-                    ) : null}
-
-                    <button
-                        type="button"
-                        onClick={handleLogout}
-                        className="rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200"
-                    >
-                        Logout
-                    </button>
-                </div>
-            </div>
+            </nav>
         </header>
     );
 }

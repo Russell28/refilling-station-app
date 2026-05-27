@@ -10,21 +10,20 @@ export default function PageHeader({
     action,
 }: PageHeaderProps) {
     return (
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-4 flex items-center justify-between">
+            {/* Left side: title + description */}
             <div>
                 <h2 className="text-2xl font-semibold tracking-tight">
                     {title}
                 </h2>
-
                 {description && (
-                    <p className="text-sm text-slate-500">
-                        {description}
-                    </p>
+                    <p className="text-sm text-slate-500">{description}</p>
                 )}
             </div>
 
+            {/* Right side: action */}
             {action && (
-                <div className="sm:shrink-0">
+                <div className="flex-shrink-0">
                     {action}
                 </div>
             )}
