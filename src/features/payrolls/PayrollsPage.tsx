@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import type { Payroll, PayrollFormValues } from "./Payroll";
-import { deletePayroll, getPayrolls } from "./payrollApi";
-import { formatDateForInput } from "../../utils/date";
+import { deletePayroll, getPayrolls, searchPayrolls } from "./payrollApi";
 import PayrollEntryForm from "./PayrollEntryForm";
 import Card from "../../components/ui/Card";
 import PageHeader from "../../components/ui/PageHeader";
@@ -11,25 +10,32 @@ import { getToken } from "../auth/utils/authStorage";
 import { useFormErrors } from "../../hooks/useFormErrors";
 import type { ErrorResponse } from "../../types/ErrorResponse";
 import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
+import { formatDateForInput, getFirstDayOfCurrentWeek, getTodayDateOnly } from "../../utils/date";
+import type { DateRangeSearchRequest } from "../../types/DateRangeRequest";
+import TextInput from "../../components/ui/TextInput";
 
 export default function PayrollsPage() {
     const [payrolls, setPayrolls] = useState<Payroll[]>([]);
     const [loading, setLoading] = useState(false);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedPayroll, setSelectedPayroll] = useState<Payroll | null>(null);
-    const { generalErrors, applyErrors, clearErrors } = useFormErrors<PayrollFormValues>()
+    const { generalErrors, applyErrors, clearErrors } = useFormErrors<PayrollFormValues>();
+    const [searchRequest, setSearchRequest] = useState<DateRangeSearchRequest>({
+        startDate: getFirstDayOfCurrentWeek(),
+        endDate: getTodayDateOnly(),
+    });
 
 
     useEffect(() => {
         loadPayrolls();
-    }, []);
+    }, [searchRequest]);
 
     async function loadPayrolls() {
         clearErrors();
 
         try {
             setLoading(true);
-            const payrolls = await getPayrolls();
+            const payrolls = await searchPayrolls(searchRequest);
             setPayrolls(payrolls);
         } catch (err) {
             applyErrors(err as ErrorResponse);
@@ -122,17 +128,41 @@ export default function PayrollsPage() {
                 title="Payroll"
                 description="Track employee salary, advances, and cash paid."
                 action={
-                    <div className="flex gap-2">
-                        <Button
-                            variant="secondary"
-                            onClick={handleImportClick}
-                        >
-                            Import CSV
-                        </Button>
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between w-full">
 
-                        <Button onClick={onAddClick}>
-                            New Payroll Entry
-                        </Button>
+                        {/* Top row: actions */}
+                        <div className="flex gap-2">
+                            <Button
+                                variant="secondary"
+                                onClick={handleImportClick}
+                            >
+                                Import CSV
+                            </Button>
+
+                            <Button onClick={onAddClick}>
+                                New Payroll Entry
+                            </Button>
+                        </div>
+
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                            <TextInput
+                                label="Start Date"
+                                type="date"
+                                value={searchRequest.startDate}
+                                onChange={(e) =>
+                                    setSearchRequest({ ...searchRequest, startDate: e.target.value })
+                                }
+                            />
+                            <TextInput
+                                label="End Date"
+                                type="date"
+                                value={searchRequest.endDate}
+                                onChange={(e) =>
+                                    setSearchRequest({ ...searchRequest, endDate: e.target.value })
+                                }
+                            />
+                            {/* <Button onClick={loadPayrolls}>Apply</Button> */}
+                        </div>
                     </div>
                 }
             />
