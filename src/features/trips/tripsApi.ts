@@ -1,8 +1,14 @@
 import { apiClient } from "../../api/client";
+import type { DateRangeSearchRequest } from "../../types/DateRangeRequest";
 import type { CreateTripRequest, Trip, UpdateTripRequest } from "./Trip";
 
 export async function getTrips(): Promise<Trip[]> {
     const response = await apiClient.get("/trips");
+    return response.data;
+}
+
+export async function searchTrips(searchParams: DateRangeSearchRequest): Promise<Trip[]> {
+    const response = await apiClient.post("/trips/search", searchParams);
     return response.data;
 }
 

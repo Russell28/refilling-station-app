@@ -45,3 +45,17 @@ export function formatTimeForInput(value?: string | null) {
 
   return `${hours}:${minutes}`;
 }
+
+export const getTodayDateOnly = (): string => {
+  return new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+};
+
+export function getFirstDayOfCurrentWeek(): string {
+  const today = new Date();
+  const day = today.getDay(); // Sunday = 0, Monday = 1, ...
+  const diff = today.getDate() - day + (day === 0 ? -6 : 1); 
+  // if Sunday (0), go back 6 days, else subtract (day - 1)
+
+  const firstDay = new Date(today.setDate(diff));
+  return firstDay.toISOString().split("T")[0]; // "YYYY-MM-DD"
+}

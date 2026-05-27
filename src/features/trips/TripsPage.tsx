@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { deleteTrip, getTrips } from "./tripsApi";
+import { deleteTrip, getTrips, searchTrips } from "./tripsApi";
 import type { Trip } from "./Trip";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/ui/Button";
@@ -11,22 +11,29 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { useFormErrors } from "../../hooks/useFormErrors";
 import type { ErrorResponse } from "../../types/ErrorResponse";
 import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
+import { getFirstDayOfCurrentWeek, getTodayDateOnly } from "../../utils/date";
+import type { DateRangeSearchRequest } from "../../types/DateRangeRequest";
+import TextInput from "../../components/ui/TextInput";
 
 export default function TripsPage() {
   const navigate = useNavigate();
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const { generalErrors, applyErrors, clearErrors } = useFormErrors<Trip>()
+  const [searchRequest, setSearchRequest] = useState<DateRangeSearchRequest>({
+    startDate: getFirstDayOfCurrentWeek(),
+    endDate: getTodayDateOnly(),
+  });
 
   useEffect(() => {
     loadTrips();
-  }, []); // [] run once on first load
+  }, [searchRequest]); 
 
   async function loadTrips() {
     try {
       clearErrors();
       setLoading(true);
-      const tripsData = await getTrips();
+      const tripsData = await searchTrips(searchRequest);
       setTrips(tripsData);
     } catch (err) {
       applyErrors(err as ErrorResponse);
@@ -98,25 +105,49 @@ export default function TripsPage() {
         title="Trips"
         description="Track deliveries, quantities, and collections."
         action={
-          <div className="flex gap-2">
-            {isAdmin() && (
-              <Button
-                variant="secondary"
-                onClick={handleImportClick}
-              >
-                Import CSV
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between w-full">
+
+            {/* Top row: actions */}
+            <div className="flex gap-2">
+              {isAdmin() && (
+                <Button
+                  variant="secondary"
+                  onClick={handleImportClick}
+                >
+                  Import CSV
+                </Button>
+              )}
+              <Button onClick={() => navigate("/trips/new")}>
+                New Trip
               </Button>
+            </div>
+
+            {isAdmin() && (
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <TextInput
+                  label="Start Date"
+                  type="date"
+                  value={searchRequest.startDate}
+                  onChange={(e) =>
+                    setSearchRequest({ ...searchRequest, startDate: e.target.value })
+                  }
+                />
+                <TextInput
+                  label="End Date"
+                  type="date"
+                  value={searchRequest.endDate}
+                  onChange={(e) =>
+                    setSearchRequest({ ...searchRequest, endDate: e.target.value })
+                  }
+                />
+                {/* <Button onClick={loadTrips}>Apply</Button> */}
+              </div>
             )}
-
-            <Button
-              onClick={() => navigate("/trips/new")}
-            >
-              New Trip
-            </Button>
-
           </div>
         }
       />
+
+
 
       {/* hidden input */}
       <input
