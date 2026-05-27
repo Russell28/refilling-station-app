@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { deleteTrip, getTrips } from "./tripsApi";
+import { deleteTrip, getTrips, searchTrips } from "./tripsApi";
 import type { Trip } from "./Trip";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/ui/Button";
@@ -7,26 +7,33 @@ import Card from "../../components/ui/Card";
 import PageHeader from "../../components/ui/PageHeader";
 import { apiClient } from "../../api/client";
 import { getToken, isAdmin } from "../auth/utils/authStorage";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import { useFormErrors } from "../../hooks/useFormErrors";
 import type { ErrorResponse } from "../../types/ErrorResponse";
 import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
+import { getFirstDayOfCurrentWeek, getTodayDateOnly } from "../../utils/date";
+import type { DateRangeSearchRequest } from "../../types/DateRangeRequest";
+import TextInput from "../../components/ui/TextInput";
 
 export default function TripsPage() {
   const navigate = useNavigate();
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const { generalErrors, applyErrors, clearErrors } = useFormErrors<Trip>()
+  const [searchRequest, setSearchRequest] = useState<DateRangeSearchRequest>({
+    startDate: getFirstDayOfCurrentWeek(),
+    endDate: getTodayDateOnly(),
+  });
 
   useEffect(() => {
     loadTrips();
-  }, []); // [] run once on first load
+  }, [searchRequest]);
 
   async function loadTrips() {
     try {
       clearErrors();
       setLoading(true);
-      const tripsData = await getTrips();
+      const tripsData = await searchTrips(searchRequest);
       setTrips(tripsData);
     } catch (err) {
       applyErrors(err as ErrorResponse);
@@ -96,27 +103,49 @@ export default function TripsPage() {
     <div className="space-y-4">
       <PageHeader
         title="Trips"
-        description="Track deliveries, quantities, and collections."
+        description="Track deliveries and collections."
         action={
-          <div className="flex gap-2">
-            {isAdmin() && (
-              <Button
-                variant="secondary"
-                onClick={handleImportClick}
-              >
-                Import CSV
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between w-full">
+
+            {/* Top row: actions */}
+            <div className="flex gap-2">
+              {isAdmin() && (
+                <Button
+                  variant="secondary"
+                  onClick={handleImportClick}
+                >
+                  Import CSV
+                </Button>
+              )}
+              <Button onClick={() => navigate("/trips/new")}>
+                New Trip
               </Button>
-            )}
-
-            <Button
-              onClick={() => navigate("/trips/new")}
-            >
-              New Trip
-            </Button>
-
+            </div>
           </div>
         }
       />
+
+      {isAdmin() && (
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <TextInput
+            label="Start Date"
+            type="date"
+            value={searchRequest.startDate}
+            onChange={(e) =>
+              setSearchRequest({ ...searchRequest, startDate: e.target.value })
+            }
+          />
+          <TextInput
+            label="End Date"
+            type="date"
+            value={searchRequest.endDate}
+            onChange={(e) =>
+              setSearchRequest({ ...searchRequest, endDate: e.target.value })
+            }
+          />
+          {/* <Button onClick={loadTrips}>Apply</Button> */}
+        </div>
+      )}
 
       {/* hidden input */}
       <input
@@ -216,85 +245,83 @@ export default function TripsPage() {
               </table>
             </div>
 
-            <div className="space-y-3 p-4 md:hidden">
+            <div className="space-y-3 p-1 md:hidden">
               {trips.map((trip) => (
                 <div
                   key={trip.id}
-                  className="rounded-xl border border-slate-200 p-4"
+                  className="rounded-xl border border-slate-200 bg-white shadow-sm"
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  {/* Header */}
+                  <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
                     <div>
-                      <p className="font-medium text-slate-900">
+                      <p className="font-semibold text-slate-900">
                         Trip #{trip.tripNumber}
                       </p>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-xs text-slate-500">
                         {new Date(trip.date).toLocaleDateString()}
                       </p>
                     </div>
-
-                    <p className="font-semibold text-slate-900">
+                    <p className="text-base font-bold text-slate-900">
                       ₱{trip.actualCashCollected.toLocaleString()}
                     </p>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-1 gap-1 text-sm text-slate-600">
-                    <p>
+                  {/* Body */}
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 px-4 py-3 text-sm">
+                    <div>
+                      <span className="block text-xs text-slate-500">Employee</span>
                       <span className="font-medium text-slate-700">
-                        Employee:
-                      </span>{" "}
-                      {trip.employeeName || "-"}
-                    </p>
-                    <p>
+                        {trip.employeeName || "-"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block text-xs text-slate-500">Collected</span>
                       <span className="font-medium text-slate-700">
-                        Collected:
-                      </span>{" "}
-                      {trip.collectedQty}
-                    </p>
-                    <p>
+                        {trip.collectedQty}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block text-xs text-slate-500">Delivered</span>
                       <span className="font-medium text-slate-700">
-                        Delivered:
-                      </span>{" "}
-                      {trip.deliveredQty}
-                    </p>
-                    <p>
+                        {trip.deliveredQty}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block text-xs text-slate-500">Free</span>
                       <span className="font-medium text-slate-700">
-                        Free:
-                      </span>{" "}
-                      {trip.freeQty}
-                    </p>
-                    <p>
-                      <span className="font-medium text-slate-700">
-                        Notes:
-                      </span>{" "}
-                      {trip.notes || "-"}
-                    </p>
+                        {trip.freeQty}
+                      </span>
+                    </div>
+                    {/* Notes only if present */}
+                    {trip.notes && (
+                      <div className="col-span-2">
+                        <span className="block text-xs text-slate-500">Notes</span>
+                        <span className="font-medium text-slate-700">{trip.notes}</span>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="mt-4 flex gap-2">
+                  {/* Footer actions */}
+                  <div className="flex justify-end gap-2 border-t border-slate-100 px-4 py-3">
                     <Button
-                      variant="warning"
-                      className="p-3 rounded-full bg-green-600 text-white flex items-center justify-center 
-                                  hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400
-                                  sm:p-2 sm:rounded-md"
-                      onClick={() =>
-                        navigate(`/trips/${trip.id}/edit`)
-                      }
+                      variant="primary"
+                      className="rounded-md px-3 py-2 text-sm bg-green-600 text-white hover:bg-green-700"
+                      onClick={() => navigate(`/trips/${trip.id}/edit`)}
                     >
-                      <FaEdit className="w-4 h-4 sm:w-4 sm:h-4" />
+                      <FaEdit className="w-3 h-3" />
                     </Button>
                     <Button
                       variant="danger"
-                      className="p-3 rounded-full bg-red-600 text-white flex items-center justify-center 
-                                  hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-400
-                                  sm:p-2 sm:rounded-md"
+                      className="rounded-md px-3 py-2 text-sm bg-red-600 text-white hover:bg-red-700"
                       onClick={() => onDeleteClick(trip.id)}
                     >
-                      <FaTrashAlt className="w-4 h-4 sm:w-4 sm:h-4" />
+                      <FaTrash className="w-3 h-3" />
                     </Button>
                   </div>
                 </div>
               ))}
             </div>
+
           </>
         )}
       </Card>
