@@ -16,6 +16,7 @@ const navItems = [
 ];
 
 export default function Navbar() {
+    const isDev = import.meta.env.MODE === "development";
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
     const user = getStoredUser();
@@ -34,6 +35,11 @@ export default function Navbar() {
                     <h1 className="truncate text-lg font-semibold tracking-tight text-slate-900">
                         Water Refilling Station
                     </h1>
+                    {isDev && (
+                        <span className="rounded-md bg-red-600 px-2 py-1 text-xs font-bold text-white">
+                            DEV
+                        </span>
+                    )}
                     <p className="text-sm text-slate-500">Operations App</p>
                 </div>
 
