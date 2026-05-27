@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { Expense, ExpenseFormValues } from "./Expense";
-import { deleteExpense, getExpenses } from "./expenseApi";
-import { formatDateForInput } from "../../utils/date";
+import { deleteExpense, searchExpenses } from "./expenseApi";
+import { formatDateForInput, getFirstDayOfCurrentWeek, getTodayDateOnly } from "../../utils/date";
 import ExpenseForm from "./ExpenseForm";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
@@ -11,6 +11,8 @@ import { getToken, isAdmin } from "../auth/utils/authStorage";
 import { useFormErrors } from "../../hooks/useFormErrors";
 import type { ErrorResponse } from "../../types/ErrorResponse";
 import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
+import type { DateRangeSearchRequest } from "../../types/DateRangeRequest";
+import TextInput from "../../components/ui/TextInput";
 
 export default function ExpensesPage() {
     const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -18,17 +20,21 @@ export default function ExpensesPage() {
     const { generalErrors, applyErrors, clearErrors } = useFormErrors<ExpenseFormValues>()
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+    const [searchRequest, setSearchRequest] = useState<DateRangeSearchRequest>({
+        startDate: getFirstDayOfCurrentWeek(),
+        endDate: getTodayDateOnly(),
+    });
 
     useEffect(() => {
         loadExpenses();
-    }, []); // [] run once on first load
+    }, [searchRequest]); // Run whenever searchRequest changes
 
     async function loadExpenses() {
         clearErrors();
 
         try {
             setLoading(true);
-            const expenses = await getExpenses();
+            const expenses = await searchExpenses(searchRequest);
             setExpenses(expenses);
         } catch (err) {
             console.error("Error loading expenses:", err);
@@ -122,19 +128,45 @@ export default function ExpensesPage() {
                 title="Expenses"
                 description="Track daily and operational expenses."
                 action={
-                    <div>
-                        {isAdmin() && (
-                            <Button
-                                variant="secondary"
-                                onClick={handleImportClick}
-                            >
-                                Import CSV
-                            </Button>
-                        )}
 
-                        <Button onClick={onAddClick}>
-                            New Expense
-                        </Button>
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between w-full">
+
+                        {/* Top row: actions */}
+                        <div className="flex gap-2">
+                            {isAdmin() && (
+                                <Button
+                                    variant="secondary"
+                                    onClick={handleImportClick}
+                                >
+                                    Import CSV
+                                </Button>
+                            )}
+
+                            <Button onClick={onAddClick}>
+                                New Expense
+                            </Button>
+                        </div>
+                        {isAdmin() && (
+                            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                                <TextInput
+                                    label="Start Date"
+                                    type="date"
+                                    value={searchRequest.startDate}
+                                    onChange={(e) =>
+                                        setSearchRequest({ ...searchRequest, startDate: e.target.value })
+                                    }
+                                />
+                                <TextInput
+                                    label="End Date"
+                                    type="date"
+                                    value={searchRequest.endDate}
+                                    onChange={(e) =>
+                                        setSearchRequest({ ...searchRequest, endDate: e.target.value })
+                                    }
+                                />
+                                {/* <Button onClick={loadPayrolls}>Apply</Button> */}
+                            </div>
+                        )}
                     </div>
                 }
             />
