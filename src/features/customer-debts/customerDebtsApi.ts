@@ -1,8 +1,14 @@
 import { apiClient } from "../../api/client";
+import type { DateRangeSearchRequest } from "../../types/DateRangeRequest";
 import type { CreateUpdateCustomerDebtRequest, CustomerDebt } from "./CustomerDebt";
 
 export async function getCustomerDebts(): Promise<CustomerDebt[]> {
     const response = await apiClient.get("/customer-debts");
+    return response.data;
+}
+
+export async function searchCustomerDebts(searchRequest: DateRangeSearchRequest): Promise<CustomerDebt[]> {
+    const response = await apiClient.post("/customer-debts/search", searchRequest);
     return response.data;
 }
 

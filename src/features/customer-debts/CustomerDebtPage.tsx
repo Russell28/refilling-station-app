@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { CustomerDebt, CustomerDebtFormValues } from "./CustomerDebt";
-import { deleteCustomerDebt, getCustomerDebts } from "./customerDebtsApi";
+import { deleteCustomerDebt, getCustomerDebts, searchCustomerDebts } from "./customerDebtsApi";
 import CustomerDebtForm from "./CustomerDebtForm";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
@@ -10,6 +10,9 @@ import { getToken, isAdmin } from "../auth/utils/authStorage";
 import { useFormErrors } from "../../hooks/useFormErrors";
 import type { ErrorResponse } from "../../types/ErrorResponse";
 import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
+import { getFirstDayOfCurrentWeek, getTodayDateOnly } from "../../utils/date";
+import type { DateRangeSearchRequest } from "../../types/DateRangeRequest";
+import TextInput from "../../components/ui/TextInput";
 
 export default function CustomerDebtPage() {
     const [customerDebts, setCustomerDebts] = useState<CustomerDebt[]>([]);
@@ -17,16 +20,20 @@ export default function CustomerDebtPage() {
     const { applyErrors, clearErrors, generalErrors } = useFormErrors<CustomerDebtFormValues>()
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedDebt, setSelectedDebt] = useState<CustomerDebt | null>(null);
+    const [searchRequest, setSearchRequest] = useState<DateRangeSearchRequest>({
+        startDate: getFirstDayOfCurrentWeek(),
+        endDate: getTodayDateOnly(),
+    });
 
     useEffect(() => {
         loadDebts();
-    }, []); // [] run once on first load
+    }, [searchRequest]);
 
     async function loadDebts() {
         try {
             clearErrors();
             setLoading(true);
-            const debts = await getCustomerDebts();
+            const debts = await searchCustomerDebts(searchRequest);
             setCustomerDebts(debts);
         } catch (err) {
             applyErrors(err as ErrorResponse);
@@ -67,8 +74,7 @@ export default function CustomerDebtPage() {
             await deleteCustomerDebt(id);
 
             // refresh list after delete
-            const debts = await getCustomerDebts();
-            setCustomerDebts(debts);
+            loadDebts();
         } catch (err) {
             applyErrors(err as ErrorResponse);
         } finally {
@@ -120,20 +126,47 @@ export default function CustomerDebtPage() {
                 title="Customer Debt Entries"
                 description="Track unpaid balances and customer debt records."
                 action={
-                    <div className="flex gap-2">
-                        {isAdmin() && (
-                            <Button
-                                variant="secondary"
-                                onClick={handleImportClick}
-                            >
-                                Import CSV
-                            </Button>
-                        )}
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between w-full">
 
-                        <Button onClick={onAddClick}>
-                            New Debt
-                        </Button>
+                        {/* Top row: actions */}
+                        <div className="flex gap-2">
+                            {isAdmin() && (
+                                <Button
+                                    variant="secondary"
+                                    onClick={handleImportClick}
+                                >
+                                    Import CSV
+                                </Button>
+                            )}
+
+                            <Button onClick={onAddClick}>
+                                New Debt
+                            </Button>
+                        </div>
+
+                        {isAdmin() && (
+                            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                                <TextInput
+                                    label="Start Date"
+                                    type="date"
+                                    value={searchRequest.startDate}
+                                    onChange={(e) =>
+                                        setSearchRequest({ ...searchRequest, startDate: e.target.value })
+                                    }
+                                />
+                                <TextInput
+                                    label="End Date"
+                                    type="date"
+                                    value={searchRequest.endDate}
+                                    onChange={(e) =>
+                                        setSearchRequest({ ...searchRequest, endDate: e.target.value })
+                                    }
+                                />
+                                {/* <Button onClick={loadDebts}>Apply</Button> */}
+                            </div>
+                        )}
                     </div>
+
                 }
             />
 
@@ -181,7 +214,6 @@ export default function CustomerDebtPage() {
                                         <th className="px-4 py-3 font-medium">Date</th>
                                         <th className="px-4 py-3 font-medium">Customer</th>
                                         <th className="px-4 py-3 font-medium">Amount</th>
-                                        <th className="px-4 py-3 font-medium">Related Trip</th>
                                         <th className="px-4 py-3 font-medium">Notes</th>
                                         <th className="px-4 py-3 font-medium">Action</th>
                                     </tr>
@@ -200,9 +232,6 @@ export default function CustomerDebtPage() {
                                             </td>
                                             <td className="px-4 py-3">
                                                 ₱{debt.amount.toLocaleString()}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                {debt.relatedTripId ?? "-"}
                                             </td>
                                             <td className="px-4 py-3">
                                                 {debt.notes || "-"}
@@ -253,12 +282,6 @@ export default function CustomerDebtPage() {
                                     </div>
 
                                     <div className="mt-3 space-y-1 text-sm text-slate-600">
-                                        <p>
-                                            <span className="font-medium text-slate-700">
-                                                Related Trip:
-                                            </span>{" "}
-                                            {debt.relatedTripId ?? "-"}
-                                        </p>
                                         <p>
                                             <span className="font-medium text-slate-700">
                                                 Notes:
