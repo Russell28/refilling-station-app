@@ -10,7 +10,7 @@ import { getToken, isAdmin } from "../auth/utils/authStorage";
 import { useFormErrors } from "../../hooks/useFormErrors";
 import type { ErrorResponse } from "../../types/ErrorResponse";
 import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
-import { getFirstDayOfCurrentWeek, getTodayDateOnly } from "../../utils/date";
+import { getFirstDayOfCurrentMonth, getTodayDateOnly } from "../../utils/date";
 import type { DateRangeSearchRequest } from "../../types/DateRangeRequest";
 import TextInput from "../../components/ui/TextInput";
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -23,7 +23,7 @@ export default function CustomerDebtPage() {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedDebt, setSelectedDebt] = useState<CustomerDebt | null>(null);
     const [searchRequest, setSearchRequest] = useState<DateRangeSearchRequest>({
-        startDate: getFirstDayOfCurrentWeek(),
+        startDate: getFirstDayOfCurrentMonth(),
         endDate: getTodayDateOnly(),
     });
 
