@@ -21,6 +21,10 @@ export interface Dashboard {
     totalCashCollected: number;
     netAfterExpense: number;
     netAfterPayroll: number;
+
+    costPerGallon: number;
+    retailPerGallon: number;
+    profitPerGallon: number;
 }
 export interface DailyReport {
     date: string;

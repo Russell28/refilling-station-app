@@ -13,15 +13,15 @@ export function formatDateForInput(value: string | Date | null): string {
 }
 
 export function getToday() {
-    return new Date();
+  return new Date();
 }
 
 export function getCurrentMonthInputValue() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
 
-    return `${year}-${month}`;
+  return `${year}-${month}`;
 }
 
 export function formatTimeForInput(value?: string | null) {
@@ -58,5 +58,5 @@ export function getFirstDayOfCurrentWeek(): string {
 export function getFirstDayOfCurrentMonth(): string {
   const today = new Date();
   const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-  return firstDay.toISOString().split("T")[0]; // "YYYY-MM-DD"
+  return firstDay.toLocaleDateString("en-CA"); // "YYYY-MM-DD"
 }
