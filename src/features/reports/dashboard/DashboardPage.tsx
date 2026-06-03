@@ -174,12 +174,31 @@ export default function DashboardPage() {
                         </div>
 
                         {/* LIABILITIES */}
-                        <div>
+                        <div className="mb-6">
                             <h4 className="text-sm font-medium text-slate-700 mb-2">Liabilities</h4>
                             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                                 <SummaryCard
                                     label="Outstanding Debt"
                                     value={formatCurrency(dashboard.summary.outstandingDebt)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* UNIT ECONOMICS */}
+                        <div>
+                            <h4 className="text-sm font-medium text-slate-700 mb-2">Unit Economics</h4>
+                            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                                <SummaryCard
+                                    label="Cost per Gallon"
+                                    value={formatCurrency(dashboard.summary.costPerGallon)}
+                                />
+                                <SummaryCard
+                                    label="Retail per Gallon"
+                                    value={formatCurrency(dashboard.summary.retailPerGallon)}
+                                />
+                                <SummaryCard
+                                    label="Profit per Gallon"
+                                    value={formatCurrency(dashboard.summary.profitPerGallon)}
                                 />
                             </div>
                         </div>

@@ -14,6 +14,7 @@ import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 import AdminRoute from "../features/auth/components/AdminRoute";
 import CustomerDebtPageWithProvider from "../features/customer-debts/CustomerDebtPageWithProvider";
 import PayrollsPageWithProvider from "../features/payrolls/PayrollsPageWithProvider";
+import UsersPage from "../features/users/UsersPage";
 
 export const routes: RouteObject[] = [
     {
@@ -30,6 +31,7 @@ export const routes: RouteObject[] = [
                         element: <AdminRoute />, // Only allows admin users to access these routes
                         children: [
                             { path: "/", element: <DashboardPage /> },
+                            { path: "/users", element: <UsersPage /> },
                             { path: "/payrolls", element: <PayrollsPageWithProvider /> },
                             { path: "/monthly-summary", element: <MonthlySummaryPage /> },
                         ]
