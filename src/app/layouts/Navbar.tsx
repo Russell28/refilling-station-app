@@ -5,6 +5,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 
 const navItems = [
     { to: "/", label: "Dashboard", adminOnly: true },
+    { to: "/users", label: "Users", adminOnly: true },
     { to: "/daily-summary", label: "Daily Summary" },
     { to: "/trips", label: "Trips" },
     { to: "/customers", label: "Customers" },
