@@ -37,7 +37,7 @@ export default function LoginPage() {
             const response = await login(loginRequest);
 
             // Save auth info to localStorage
-            saveAuth(response.token, response.username, response.role);
+            saveAuth(response.accessToken, response.refreshToken, response.username, response.role);
             navigate("/"); // Redirect to dashboard after successful login
         } catch (err) {
             setError("Invalid username or password.");

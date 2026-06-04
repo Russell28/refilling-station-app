@@ -1,4 +1,5 @@
-const TOKEN_KEY = "token";
+const ACCESS_TOKEN_KEY = "accessToken";
+const REFRESH_TOKEN_KEY = "refreshToken";
 const USERNAME_KEY = "username";
 const ROLE_KEY = "role";
 
@@ -7,20 +8,22 @@ export type AuthUser = {
     role: string;
 }
 
-export function saveAuth(token: string, username: string, role: string): void {
-    localStorage.setItem(TOKEN_KEY, token);
+export function saveAuth(accessToken: string, refreshToken: string, username: string, role: string): void {
+    localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
     localStorage.setItem(USERNAME_KEY, username);
     localStorage.setItem(ROLE_KEY, role);
 }
 
 export function clearAuth(): void {
-    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USERNAME_KEY);
     localStorage.removeItem(ROLE_KEY);
 }
 
 export function getToken(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+    return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
 
 export function getStoredUser(): AuthUser | null {
