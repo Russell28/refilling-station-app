@@ -10,3 +10,7 @@ export async function getMe(): Promise<MeResponse> {
     const response = await apiClient.get<MeResponse>("/auth/me");
     return response.data;
 }
+
+export async function logout(): Promise<void> {
+    await apiClient.post("/auth/logout");
+}
