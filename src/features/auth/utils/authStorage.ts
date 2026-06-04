@@ -8,9 +8,12 @@ export type AuthUser = {
     role: string;
 }
 
-export function saveAuth(accessToken: string, refreshToken: string, username: string, role: string): void {
+export function saveAuth(accessToken: string, refreshToken: string): void {
     localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
     localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+}
+
+export function saveUserDetails(username: string, role: string): void {
     localStorage.setItem(USERNAME_KEY, username);
     localStorage.setItem(ROLE_KEY, role);
 }
