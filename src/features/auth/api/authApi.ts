@@ -2,7 +2,11 @@ import { apiClient } from "../../../api/client";
 import type { LoginRequest, LoginResponse, MeResponse } from "../types/auth";
 
 export async function login(request: LoginRequest): Promise<LoginResponse> {
-    const response = await apiClient.post<LoginResponse>("/auth/login", request);
+    const response = await apiClient.post<LoginResponse>(
+        "/auth/login",
+        request,
+        { withCredentials: true } // critical for cookies
+    );
     return response.data;
 }
 
@@ -12,5 +16,5 @@ export async function getMe(): Promise<MeResponse> {
 }
 
 export async function logout(): Promise<void> {
-    await apiClient.post("/auth/logout");
+    await apiClient.post("/auth/logout", {}, { withCredentials: true });
 }
