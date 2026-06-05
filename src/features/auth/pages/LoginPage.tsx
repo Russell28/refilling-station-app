@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { LoginRequest } from "../types/auth";
 import { login, getMe } from "../api/authApi";
-import { isAuthenticated, saveAuth, saveUserDetails } from "../utils/authStorage";
+import { clearAuth, isAuthenticated, saveAuth, saveUserDetails } from "../utils/authStorage";
 import { Navigate, useNavigate } from "react-router";
 import Card from "../../../components/ui/Card";
 import Button from "../../../components/ui/Button";
@@ -45,14 +45,18 @@ export default function LoginPage() {
             };
             const response = await login(loginRequest);
 
-            // Save auth info to memory
-            saveAuth(response.accessToken);
+            if (response.accessToken) {
+                // Login successful
+                // Save auth info to memory
+                saveAuth(response.accessToken);
 
-            const user = await getMe(); // Fetch user info after login
-            saveUserDetails(user.username, user.role); // Save user details to localStorage
+                const user = await getMe(); // Fetch user info after login
+                saveUserDetails(user.username, user.role); // Save user details
 
-            navigate("/"); // Redirect to dashboard after successful login
+                navigate("/"); // Redirect to dashboard after successful login
+            }
         } catch (err) {
+            clearAuth(); // Clear any auth info in case of error (e.g. invalid credentials)
             applyErrors(err as ErrorResponse);
         } finally {
             setIsSubmitting(false);

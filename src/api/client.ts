@@ -1,9 +1,6 @@
 import axios from "axios";
 import { clearAuth, getToken, saveAuth } from "../features/auth/utils/authStorage";
 import { normalizeError } from "../utils/normalizeServerErrors";
-import { getMe } from "../features/auth/api/authApi";
-import { saveUserDetails } from "../features/auth/utils/authStorage";
-
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
@@ -25,15 +22,19 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // If no response, reject immediately
     if (!error.response) {
       return Promise.reject(error);
     }
 
-    // Don’t try to refresh if the failing call *is* the refresh endpoint
+    const isLoginCall = originalRequest.url?.includes("/auth/login");
     const isRefreshCall = originalRequest.url?.includes("/auth/refresh-token");
 
-    if (error.response.status === 401 && !originalRequest._retry && !isRefreshCall) {
+    if (
+      error.response.status === 401 &&
+      !originalRequest._retry &&
+      !isLoginCall && // skip refresh if login failed
+      !isRefreshCall  // skip refresh if refresh itself failed
+    ) {
       originalRequest._retry = true;
       try {
         const refreshRes = await apiClient.post("/auth/refresh-token", {}, { withCredentials: true });
@@ -41,9 +42,6 @@ apiClient.interceptors.response.use(
 
         saveAuth(newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        
-        const authUserResponse = await getMe();
-        saveUserDetails(authUserResponse.username, authUserResponse.role);
 
         return apiClient(originalRequest);
       } catch (refreshError) {
@@ -56,7 +54,6 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 
 // Final interceptor -> normalize errors for UI
 apiClient.interceptors.response.use(
