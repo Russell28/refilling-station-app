@@ -2,7 +2,7 @@ import { useRoutes } from "react-router-dom";
 import { routes } from "./routes";
 import { useEffect, useState } from "react";
 import { getMe, refreshToken } from "../features/auth/api/authApi";
-import { saveAuth, saveUserDetails } from "../features/auth/utils/authStorage";
+import { clearAuth, saveAuth, saveUserDetails } from "../features/auth/utils/authStorage";
 
 export default function App() {
   const [authInitializing, setAuthInitializing] = useState(true); // Track whether we're still bootstrapping auth on app load
@@ -20,6 +20,7 @@ export default function App() {
           saveUserDetails(authUserResponse.username, authUserResponse.role);
         }
       } catch (error) {
+        clearAuth(); // Clear any existing auth info if refresh fails (e.g. token expired)
         console.error("Error during auth bootstrap:", error);
       } finally {
         setAuthInitializing(false); // done bootstrapping
