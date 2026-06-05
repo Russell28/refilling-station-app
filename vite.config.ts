@@ -7,7 +7,17 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 export default defineConfig({
   plugins: [
     react(),
-    basicSsl(),
-    tailwindcss()
+    tailwindcss(),
+    ...(process.env.NODE_ENV === 'development' // Only enable basic SSL in development for local testing with HTTPS
+      ? [basicSsl()]
+      : [])
   ],
+  server: { // Vite dev server configuration
+    port: 5173,
+    hmr: {
+      protocol: 'wss',
+      host: 'localhost',
+      port: 5173,
+    },
+  },
 })
