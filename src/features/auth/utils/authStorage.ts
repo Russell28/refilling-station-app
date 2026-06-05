@@ -1,40 +1,25 @@
-const TOKEN_KEY = "token";
-const USERNAME_KEY = "username";
-const ROLE_KEY = "role";
+import { clearAccessToken, getAccessToken, setAccessToken } from "../api/accessToken";
+import { clearUserInfo, getUserInfo, setUserInfo, type AuthUser } from "../api/userInfo";
 
-export type AuthUser = {
-    username: string;
-    role: string;
+export function saveAuth(accessToken: string): void {
+    setAccessToken(accessToken);
 }
 
-export function saveAuth(token: string, username: string, role: string): void {
-    localStorage.setItem(TOKEN_KEY, token);
-    localStorage.setItem(USERNAME_KEY, username);
-    localStorage.setItem(ROLE_KEY, role);
+export function saveUserDetails(username: string, role: string): void {
+    setUserInfo(username, role);
 }
 
 export function clearAuth(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USERNAME_KEY);
-    localStorage.removeItem(ROLE_KEY);
+    clearAccessToken();
+    clearUserInfo();
 }
 
 export function getToken(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+    return getAccessToken();
 }
 
 export function getStoredUser(): AuthUser | null {
-    const username = localStorage.getItem(USERNAME_KEY);
-    const role = localStorage.getItem(ROLE_KEY);
-
-    if (!username || !role) {
-        return null;
-    }
-
-    return { 
-        username, 
-        role 
-    };
+    return getUserInfo();
 }
 
 export function isAuthenticated(): boolean {

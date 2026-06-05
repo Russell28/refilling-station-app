@@ -1,11 +1,20 @@
 import { useState } from "react";
 import type { LoginRequest } from "../types/auth";
-import { login } from "../api/authApi";
-import { isAuthenticated, saveAuth } from "../utils/authStorage";
+import { login, getMe } from "../api/authApi";
+import { isAuthenticated, saveAuth, saveUserDetails } from "../utils/authStorage";
 import { Navigate, useNavigate } from "react-router";
 import Card from "../../../components/ui/Card";
 import Button from "../../../components/ui/Button";
 import TextInput from "../../../components/ui/TextInput";
+import { useFormErrors } from "../../../hooks/useFormErrors";
+import { ServerErrorAlert } from "../../../components/ui/ServerErrorAlert";
+import type { ErrorResponse } from "../../../types/ErrorResponse";
+
+
+type LoginFormValues = {
+    username: string;
+    password: string;
+}
 
 export default function LoginPage() {
     if (isAuthenticated()) { // If already logged in, redirect to dashboard
@@ -13,37 +22,55 @@ export default function LoginPage() {
     }
 
     const navigate = useNavigate();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
+    const [formValues, setFormValues] = useState<LoginFormValues>({ username: "", password: "" });
+    const { fieldErrors, generalErrors, applyErrors, clearErrors, setFieldErrors } = useFormErrors<LoginFormValues>()
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
-        setError(null);
+        clearErrors();
 
-        // Basic validation
-        if (!username.trim() || !password.trim()) {
-            setError("Username and password are required.");
+        // Validation
+        const validationErrors = validate(formValues);
+        if (Object.keys(validationErrors).length > 0) {
+            setFieldErrors(validationErrors);
             return;
         }
 
         try {
             setIsSubmitting(true);
             const loginRequest: LoginRequest = {
-                username: username.trim(),
-                password: password
+                username: formValues.username.trim(),
+                password: formValues.password
             };
             const response = await login(loginRequest);
 
-            // Save auth info to localStorage
-            saveAuth(response.token, response.username, response.role);
+            // Save auth info to memory
+            saveAuth(response.accessToken);
+
+            const user = await getMe(); // Fetch user info after login
+            saveUserDetails(user.username, user.role); // Save user details to localStorage
+
             navigate("/"); // Redirect to dashboard after successful login
         } catch (err) {
-            setError("Invalid username or password.");
+            applyErrors(err as ErrorResponse);
         } finally {
             setIsSubmitting(false);
         }
+    }
+
+    function validate(values: LoginFormValues): Partial<Record<keyof LoginFormValues, string[]>> {
+        const errors: Partial<Record<keyof LoginFormValues, string[]>> = {}
+
+        if (!values.username.trim()) {
+            errors.username = ["Username is required"]
+        }
+
+        if (!values.password.trim()) {
+            errors.password = ["Password is required"]
+        }
+
+        return errors
     }
 
     return (
@@ -59,27 +86,26 @@ export default function LoginPage() {
                         </p>
                     </div>
 
+                    {generalErrors.length > 0 && <ServerErrorAlert errors={generalErrors} />}
+
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <TextInput
                             label="Username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            type="text"
+                            value={formValues.username}
+                            onChange={(e) => setFormValues({ ...formValues, username: e.target.value })}
                             disabled={isSubmitting}
+                            error={fieldErrors.username?.[0]}
                         />
 
                         <TextInput
                             label="Password"
                             type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            value={formValues.password}
+                            onChange={(e) => setFormValues({ ...formValues, password: e.target.value })}
                             disabled={isSubmitting}
+                            error={fieldErrors.password?.[0]}
                         />
-
-                        {error ? (
-                            <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
-                                {error}
-                            </div>
-                        ) : null}
 
                         <Button
                             type="submit"

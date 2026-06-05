@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { clearAuth, getStoredUser } from "../../features/auth/utils/authStorage";
 import { FaBars, FaTimes } from "react-icons/fa";
+import { logout } from "../../features/auth/api/authApi";
 
 const navItems = [
     { to: "/", label: "Dashboard", adminOnly: true },
@@ -23,9 +24,15 @@ export default function Navbar() {
     const user = getStoredUser();
     const isAdmin = user?.role === "Admin";
 
-    function handleLogout() {
-        clearAuth();
-        navigate("/login");
+    async function handleLogout() {
+        try {
+            await logout();
+        } catch (err) {
+            console.error("Error occurred while logging out:", err);
+        } finally {
+            clearAuth();
+            navigate("/login");
+        }
     }
 
     return (
