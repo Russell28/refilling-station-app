@@ -15,6 +15,15 @@ export async function getMe(): Promise<MeResponse> {
     return response.data;
 }
 
+export async function refreshToken(): Promise<LoginResponse> {
+    const response = await apiClient.post<LoginResponse>(
+        "/auth/refresh-token",
+        {},
+        { withCredentials: true }
+    );
+    return response.data;
+}
+
 export async function logout(): Promise<void> {
     await apiClient.post("/auth/logout", {}, { withCredentials: true });
 }

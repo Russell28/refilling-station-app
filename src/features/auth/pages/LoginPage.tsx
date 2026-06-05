@@ -45,8 +45,8 @@ export default function LoginPage() {
             };
             const response = await login(loginRequest);
 
-            // Save auth info to localStorage
-            saveAuth(response.accessToken, response.refreshToken);
+            // Save auth info to memory
+            saveAuth(response.accessToken);
 
             const user = await getMe(); // Fetch user info after login
             saveUserDetails(user.username, user.role); // Save user details to localStorage

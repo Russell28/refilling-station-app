@@ -1,6 +1,9 @@
 import axios from "axios";
 import { clearAuth, getToken, saveAuth } from "../features/auth/utils/authStorage";
 import { normalizeError } from "../utils/normalizeServerErrors";
+import { getMe } from "../features/auth/api/authApi";
+import { saveUserDetails } from "../features/auth/utils/authStorage";
+
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
@@ -38,6 +41,9 @@ apiClient.interceptors.response.use(
 
         saveAuth(newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        
+        const authUserResponse = await getMe();
+        saveUserDetails(authUserResponse.username, authUserResponse.role);
 
         return apiClient(originalRequest);
       } catch (refreshError) {
