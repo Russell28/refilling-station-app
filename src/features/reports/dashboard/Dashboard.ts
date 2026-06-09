@@ -25,6 +25,7 @@ export interface Dashboard {
     costPerGallon: number;
     retailPerGallon: number;
     profitPerGallon: number;
+    salaryPaidPerGallon: number;
 }
 export interface DailyReport {
     date: string;
