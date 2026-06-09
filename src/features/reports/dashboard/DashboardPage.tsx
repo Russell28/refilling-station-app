@@ -200,6 +200,10 @@ export default function DashboardPage() {
                                     label="Profit per Gallon"
                                     value={formatCurrency(dashboard.summary.profitPerGallon)}
                                 />
+                                <SummaryCard
+                                    label="Salary Paid per Gallon"
+                                    value={formatCurrency(dashboard.summary.salaryPaidPerGallon)}
+                                />
                             </div>
                         </div>
                     </section>
