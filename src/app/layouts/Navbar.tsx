@@ -7,6 +7,7 @@ import { logout } from "../../features/auth/api/authApi";
 const navItems = [
     { to: "/", label: "Dashboard", adminOnly: true },
     { to: "/users", label: "Users", adminOnly: true },
+    { to: "/employees", label: "Employees", adminOnly: true },
     { to: "/daily-summary", label: "Daily Summary" },
     { to: "/trips", label: "Trips" },
     { to: "/customers", label: "Customers" },
