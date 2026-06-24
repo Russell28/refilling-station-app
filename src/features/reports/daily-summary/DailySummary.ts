@@ -9,23 +9,23 @@ export type DailySummaryInfo = {
     tripCount: number;
 
     backlogStartQty: number;
-    totalCollectedQty: number;
-    totalLoadedQty: number;
-    totalDeliveredQty: number;
+    collectedQtyTotal: number;
+    loadedQtyTotal: number;
+    deliveredQtyTotal: number;
     backlogEndQty: number;
 
-    totalFreeQty: number;
-    totalReturnedQty: number;
-    totalReplacementQty: number;
+    freeQtyTotal: number;
+    returnedQtyTotal: number;
+    replacementQtyTotal: number;
 
-    totalCashCollected: number;
-    totalExpenses: number;
+    cashCollectedTotal: number;
+    expensesTotal: number;
     
-    totalDebtCreatedToday: number;
-    totalDebtPaymentsToday: number;
+    debtCreatedTodayTotal: number;
+    debtPaymentsTodayTotal: number;
     outstandingDebt: number;
     
-    cashAfterExpense: number;
+    netBeforePayroll: number;
 }
 
 export type DailySummaryResponse = {
@@ -39,26 +39,26 @@ export type DailySummaryInfoAdmin = {
     tripCount: number;
 
     backlogStartQty: number;
-    totalCollectedQty: number;
-    totalLoadedQty: number;
-    totalDeliveredQty: number;
+    collectedQtyTotal: number;
+    loadedQtyTotal: number;
+    deliveredQtyTotal: number;
     backlogEndQty: number;
 
-    totalFreeQty: number;
-    totalReturnedQty: number;
-    totalReplacementQty: number;
+    freeQtyTotal: number;
+    returnedQtyTotal: number;
+    replacementQtyTotal: number;
 
-    totalCashCollected: number;
-    totalExpenses: number;
-    totalPayrollEarned: number;
-    totalPayrollPaid: number;
+    cashCollectedTotal: number;
+    expensesTotal: number;
+    payrollEarnedTotal: number;
+    payrollPaidTotal: number;
     
-    totalDebtCreatedToday: number;
-    totalDebtPaymentsToday: number;
+    debtCreatedTodayTotal: number;
+    debtPaymentsTodayTotal: number;
     outstandingDebt: number;
     
-    cashAfterExpense: number;
-    cashAfterPayroll: number;
+    netBeforePayroll: number;
+    netAfterPayroll: number;
 }
 
 export type DailySummaryAdminResponse = {

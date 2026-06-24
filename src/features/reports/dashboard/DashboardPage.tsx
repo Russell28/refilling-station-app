@@ -118,15 +118,15 @@ export default function DashboardPage() {
                             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                                 <SummaryCard
                                     label="Trip Count"
-                                    value={formatNumber(dashboard.summary.totalTrips)}
+                                    value={formatNumber(dashboard.summary.tripCount)}
                                 />
                                 <SummaryCard
                                     label="Collected Qty"
-                                    value={formatNumber(dashboard.summary.totalCollectedQty)}
+                                    value={formatNumber(dashboard.summary.collectedQtyTotal)}
                                 />
                                 <SummaryCard
                                     label="Delivered Qty"
-                                    value={formatNumber(dashboard.summary.totalDeliveredQty)}
+                                    value={formatNumber(dashboard.summary.deliveredQtyTotal)}
                                 />
                                 <SummaryCard
                                     label="Backlog End"
@@ -141,16 +141,20 @@ export default function DashboardPage() {
                             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                                 <SummaryCard
                                     label="Cash Collected"
-                                    value={formatCurrency(dashboard.summary.totalCashCollected)}
+                                    value={formatCurrency(dashboard.summary.cashCollectedTotal)}
+                                />
+                                <SummaryCard
+                                    label="Net Cash Flow"
+                                    value={formatCurrency(dashboard.summary.netCashFlow)}
                                 />
                                 <SummaryCard
                                     label="Expenses"
-                                    value={formatCurrency(dashboard.summary.totalExpense)}
+                                    value={formatCurrency(dashboard.summary.expensesTotal)}
                                 />
-                                <SummaryCard
+                                {/* <SummaryCard
                                     label="Net After Expense"
-                                    value={formatCurrency(dashboard.summary.netAfterExpense)}
-                                />
+                                    value={formatCurrency(dashboard.summary.netBeforePayroll)}
+                                /> */}
                                 <SummaryCard
                                     label="Net After Payroll"
                                     value={formatCurrency(dashboard.summary.netAfterPayroll)}
@@ -164,7 +168,7 @@ export default function DashboardPage() {
                             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                                 <SummaryCard
                                     label="Payroll Earned"
-                                    value={formatCurrency(dashboard.summary.totalPayrollEarned)}
+                                    value={formatCurrency(dashboard.summary.payrollEarnedTotal)}
                                 />
                                 <SummaryCard
                                     label="Outstanding Payroll"
@@ -190,19 +194,19 @@ export default function DashboardPage() {
                             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                                 <SummaryCard
                                     label="Cost per Gallon"
-                                    value={formatCurrency(dashboard.summary.costPerGallon)}
+                                    value={formatCurrency(dashboard.summary.costPerGal)}
                                 />
                                 <SummaryCard
                                     label="Retail per Gallon"
-                                    value={formatCurrency(dashboard.summary.retailPerGallon)}
+                                    value={formatCurrency(dashboard.summary.retailPerGal)}
                                 />
                                 <SummaryCard
                                     label="Profit per Gallon"
-                                    value={formatCurrency(dashboard.summary.profitPerGallon)}
+                                    value={formatCurrency(dashboard.summary.profitPerGal)}
                                 />
                                 <SummaryCard
                                     label="Salary Paid per Gallon"
-                                    value={formatCurrency(dashboard.summary.salaryPaidPerGallon)}
+                                    value={formatCurrency(dashboard.summary.salaryPaidPerGal)}
                                 />
                             </div>
                         </div>
@@ -228,7 +232,7 @@ export default function DashboardPage() {
                                             <TableHeader>Delivered</TableHeader>
                                             <TableHeader>Cash</TableHeader>
                                             <TableHeader>Expense</TableHeader>
-                                            <TableHeader>Net</TableHeader>
+                                            <TableHeader>Net After Payroll</TableHeader>
                                             {/* <TableHeader>Payroll</TableHeader>
                                             <TableHeader>Debt</TableHeader>
                                             <TableHeader>Payment</TableHeader> */}
@@ -241,10 +245,10 @@ export default function DashboardPage() {
                                                 <TableCell>{formatDateForInput(item.date)}</TableCell>
                                                 {/* <TableCell>{formatNumber(item.tripCount)}</TableCell> */}
                                                 {/* <TableCell>{formatNumber(item.totalCollectedQty)}</TableCell> */}
-                                                <TableCell>{formatNumber(item.totalDeliveredQty)}</TableCell>
-                                                <TableCell>{formatCurrency(item.totalCashCollected)}</TableCell>
-                                                <TableCell>{formatCurrency(item.totalExpenses)}</TableCell>
-                                                <TableCell>{formatCurrency(item.cashAfterExpense)}</TableCell>
+                                                <TableCell>{formatNumber(item.deliveredQtyPerDay)}</TableCell>
+                                                <TableCell>{formatCurrency(item.cashCollectedTotalPerDay)}</TableCell>
+                                                <TableCell>{formatCurrency(item.expensesTotalPerDay)}</TableCell>
+                                                <TableCell>{formatCurrency(item.netAfterPayrollPerDay)}</TableCell>
                                                 {/* <TableCell>{formatCurrency(item.totalPayrollEarned)}</TableCell> */}
                                                 {/* <TableCell>{formatCurrency(item.totalDebtCreated)}</TableCell> */}
                                                 {/* <TableCell>{formatCurrency(item.totalDebtPayment)}</TableCell> */}

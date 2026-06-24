@@ -6,7 +6,7 @@ export interface SavedClosing {
 }
 
 export interface SummaryTotals {
-  grossTotal: number;
+  cashCollected: number;
   debtTotal: number;
   expenseTotal: number;
   payrollEarnedTotal: number;

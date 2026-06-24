@@ -162,7 +162,7 @@ export default function MonthlySummaryPage() {
                         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                             <SummaryCard
                                 label="Cash Collected"
-                                value={formatCurrency(summary.summaryTotals.grossTotal)}
+                                value={formatCurrency(summary.summaryTotals.cashCollected)}
                             />
                             <SummaryCard
                                 label="Expenses"
