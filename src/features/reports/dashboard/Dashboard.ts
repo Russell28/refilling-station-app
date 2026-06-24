@@ -4,28 +4,29 @@ export interface Dashboard {
     backlogStartQty: number;
     backlogEndQty: number;
 
-    totalTrips: number;
-    totalCollectedQty: number;
-    totalDeliveredQty: number;
+    tripCount: number;
+    collectedQtyTotal: number;
+    deliveredQtyTotal: number;
 
-    totalExpense: number;
+    expensesTotal: number;
     
-    totalPayrollEarned: number;
-    totalPayrollPaid: number;
+    payrollEarnedTotal: number;
+    payrollPaidTotal: number;
     outstandingPayroll: number;
     
-    totalDebtCreated: number;
-    totalDebtPayments: number;
+    debtCreatedTotal: number;
+    debtPaymentsTotal: number;
     outstandingDebt: number;
     
-    totalCashCollected: number;
-    netAfterExpense: number;
+    cashCollectedTotal: number;
+    netBeforePayroll: number;
     netAfterPayroll: number;
+    netCashFlow: number;
 
-    costPerGallon: number;
-    retailPerGallon: number;
-    profitPerGallon: number;
-    salaryPaidPerGallon: number;
+    costPerGal: number;
+    retailPerGal: number;
+    profitPerGal: number;
+    salaryPaidPerGal: number;
 }
 export interface DailyReport {
     date: string;
@@ -33,23 +34,25 @@ export interface DailyReport {
     backlogStartQty: number;
     backlogEndQty: number;
 
-    tripCount: number;
+    tripCountPerDay: number;
     
-    totalCollectedQty: number;
-    totalDeliveredQty: number;
-    totalFreeQty: number;
+    collectedQtyPerDay: number;
+    deliveredQtyPerDay: number;
+    freeQtyPerDay: number;
+    returnedQtyPerDay: number;
+    replacementQtyPerDay: number;
 
-    totalExpenses: number;
+    expensesTotalPerDay: number;
 
-    totalPayrollEarned: number;
-    totalPayrollPaid: number;
+    payrollEarnedTotalPerDay: number;
+    payrollPaidTotalPerDay: number;
 
-    totalDebtCreated: number;
-    totalDebtPayment: number;
+    debtCreatedPerDay: number;
+    debtPaymentsPerDay: number;
 
-    totalCashCollected: number;
-    cashAfterExpense: number;
-    cashAfterPayroll: number;
+    cashCollectedTotalPerDay: number;
+    netBeforePayrollPerDay: number;
+    netAfterPayrollPerDay: number;
 };
 
 export interface DashboardResponse {

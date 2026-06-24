@@ -128,9 +128,9 @@ export default function DailySummaryPage() {
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                             <SummaryMetricCard
                                 label="Cash After Expenses"
-                                value={`₱${dailySummary.summary.cashAfterExpense.toLocaleString()}`}
+                                value={`₱${dailySummary.summary.netBeforePayroll.toLocaleString()}`}
                                 valueClassName={
-                                    dailySummary.summary.cashAfterExpense >= 0
+                                    dailySummary.summary.netBeforePayroll >= 0
                                         ? "text-emerald-600"
                                         : "text-red-600"
                                 }
@@ -138,12 +138,12 @@ export default function DailySummaryPage() {
 
                             <SummaryMetricCard
                                 label="Total Cash Collected"
-                                value={`₱${dailySummary.summary.totalCashCollected.toLocaleString()}`}
+                                value={`₱${dailySummary.summary.cashCollectedTotal.toLocaleString()}`}
                             />
 
                             <SummaryMetricCard
                                 label="Total Expenses"
-                                value={`₱${dailySummary.summary.totalExpenses.toLocaleString()}`}
+                                value={`₱${dailySummary.summary.expensesTotal.toLocaleString()}`}
                             />
                         </div>
                     </div>
@@ -157,9 +157,9 @@ export default function DailySummaryPage() {
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                                 <SummaryMetricCard
                                     label="Cash After Payroll"
-                                    value={`₱${dailySummary.summary.cashAfterPayroll.toLocaleString()}`}
+                                    value={`₱${dailySummary.summary.netAfterPayroll.toLocaleString()}`}
                                     valueClassName={
-                                        dailySummary.summary.cashAfterPayroll >= 0
+                                        dailySummary.summary.netAfterPayroll >= 0
                                             ? "text-emerald-600"
                                             : "text-red-600"
                                     }
@@ -167,12 +167,12 @@ export default function DailySummaryPage() {
 
                                 <SummaryMetricCard
                                     label="Total Salary Earned"
-                                    value={`₱${dailySummary.summary.totalPayrollEarned.toLocaleString()}`}
+                                    value={`₱${dailySummary.summary.payrollEarnedTotal.toLocaleString()}`}
                                 />
 
                                 <SummaryMetricCard
                                     label="Total Salary Paid"
-                                    value={`₱${dailySummary.summary.totalPayrollPaid.toLocaleString()}`}
+                                    value={`₱${dailySummary.summary.payrollPaidTotal.toLocaleString()}`}
                                 />
                             </div>
                         </div>
@@ -212,14 +212,14 @@ export default function DailySummaryPage() {
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Collected Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {dailySummary.summary.totalCollectedQty}
+                                        {dailySummary.summary.collectedQtyTotal}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Delivered Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {dailySummary.summary.totalDeliveredQty}
+                                        {dailySummary.summary.deliveredQtyTotal}
                                     </span>
                                 </div>
 
@@ -233,21 +233,21 @@ export default function DailySummaryPage() {
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Free Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {dailySummary.summary.totalFreeQty}
+                                        {dailySummary.summary.freeQtyTotal}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Returned Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {dailySummary.summary.totalReturnedQty}
+                                        {dailySummary.summary.returnedQtyTotal}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Replacement Qty</span>
                                     <span className="font-medium text-slate-900">
-                                        {dailySummary.summary.totalReplacementQty}
+                                        {dailySummary.summary.replacementQtyTotal}
                                     </span>
                                 </div>
                             </div>
@@ -262,14 +262,14 @@ export default function DailySummaryPage() {
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Cash Collected</span>
                                     <span className="font-medium text-slate-900">
-                                        ₱{dailySummary.summary.totalCashCollected.toLocaleString()}
+                                        ₱{dailySummary.summary.cashCollectedTotal.toLocaleString()}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Total Expenses</span>
                                     <span className="font-medium text-slate-900">
-                                        ₱{dailySummary.summary.totalExpenses.toLocaleString()}
+                                        ₱{dailySummary.summary.expensesTotal.toLocaleString()}
                                     </span>
                                 </div>
 
@@ -277,7 +277,7 @@ export default function DailySummaryPage() {
                                     <div className="flex justify-between gap-4">
                                         <span className="text-slate-500">Total Salary Paid</span>
                                         <span className="font-medium text-slate-900">
-                                            ₱{dailySummary.summary.totalPayrollPaid.toLocaleString()}
+                                            ₱{dailySummary.summary.payrollPaidTotal.toLocaleString()}
                                         </span>
                                     </div>
                                 )}
@@ -285,14 +285,14 @@ export default function DailySummaryPage() {
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Debt Created Today</span>
                                     <span className="font-medium text-slate-900">
-                                        ₱{dailySummary.summary.totalDebtCreatedToday.toLocaleString()}
+                                        ₱{dailySummary.summary.debtCreatedTodayTotal.toLocaleString()}
                                     </span>
                                 </div>
 
                                 <div className="flex justify-between gap-4">
                                     <span className="text-slate-500">Debt Payments Today</span>
                                     <span className="font-medium text-slate-900">
-                                        ₱{dailySummary.summary.totalDebtPaymentsToday.toLocaleString()}
+                                        ₱{dailySummary.summary.debtPaymentsTodayTotal.toLocaleString()}
                                     </span>
                                 </div>
 
@@ -308,12 +308,12 @@ export default function DailySummaryPage() {
                                         Cash After Expenses
                                     </span>
                                     <span
-                                        className={`font-semibold ${dailySummary.summary.cashAfterExpense >= 0
+                                        className={`font-semibold ${dailySummary.summary.netBeforePayroll >= 0
                                             ? "text-emerald-600"
                                             : "text-red-600"
                                             }`}
                                     >
-                                        ₱{dailySummary.summary.cashAfterExpense.toLocaleString()}
+                                        ₱{dailySummary.summary.netBeforePayroll.toLocaleString()}
                                     </span>
                                 </div>
                             </div>
