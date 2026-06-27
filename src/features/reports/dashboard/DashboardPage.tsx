@@ -109,7 +109,7 @@ export default function DashboardPage() {
                 <>
                     <section>
                         <h3 className="mb-3 text-lg font-semibold text-slate-900">
-                            Summary
+                            Summary - {dashboard.summary.workedDaysCount} work days
                         </h3>
 
                         {/* OPERATIONS */}
@@ -148,16 +148,23 @@ export default function DashboardPage() {
                                     value={formatCurrency(dashboard.summary.netCashFlow)}
                                 />
                                 <SummaryCard
+                                    label="Net After Payroll"
+                                    value={formatCurrency(dashboard.summary.netAfterPayroll)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* EXPENSES */}
+                        <div className="mb-6">
+                            <h4 className="text-sm font-medium text-slate-700 mb-2">Expenses</h4>
+                            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                                <SummaryCard
                                     label="Expenses"
                                     value={formatCurrency(dashboard.summary.expensesTotal)}
                                 />
-                                {/* <SummaryCard
-                                    label="Net After Expense"
-                                    value={formatCurrency(dashboard.summary.netBeforePayroll)}
-                                /> */}
                                 <SummaryCard
-                                    label="Net After Payroll"
-                                    value={formatCurrency(dashboard.summary.netAfterPayroll)}
+                                    label="Average Daily Expenses"
+                                    value={formatCurrency(dashboard.summary.expensesDailyAverage)}
                                 />
                             </div>
                         </div>
@@ -278,6 +285,7 @@ export default function DashboardPage() {
                                             <tr>
                                                 <TableHeader>Category</TableHeader>
                                                 <TableHeader>Total</TableHeader>
+                                                <TableHeader>Daily Average</TableHeader>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -288,6 +296,7 @@ export default function DashboardPage() {
                                                 >
                                                     <TableCell>{item.categoryName}</TableCell>
                                                     <TableCell>{formatCurrency(item.amount)}</TableCell>
+                                                    <TableCell>{formatCurrency(item.dailyAverage)}</TableCell>
                                                 </tr>
                                             ))}
                                         </tbody>

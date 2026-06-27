@@ -4,11 +4,13 @@ export interface Dashboard {
     backlogStartQty: number;
     backlogEndQty: number;
 
+    workedDaysCount: number;
     tripCount: number;
     collectedQtyTotal: number;
     deliveredQtyTotal: number;
 
     expensesTotal: number;
+    expensesDailyAverage: number;
     
     payrollEarnedTotal: number;
     payrollPaidTotal: number;

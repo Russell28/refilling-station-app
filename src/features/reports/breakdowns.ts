@@ -19,6 +19,7 @@ export type ExpenseBreakdownItem = {
     expenseCategoryId: number
     categoryName: string;
     amount: number;
+    dailyAverage: number;
 }
 
 export type DebtBreakdownItem = {
