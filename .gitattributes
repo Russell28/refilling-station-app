@@ -1,0 +1,15 @@
+# Image files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary
+*.webp binary
+
+# Disable line ending conversion for binary files
+*.png -text
+*.jpg -text
+*.jpeg -text
+*.gif -text
+*.svg -text
+*.webp -text
