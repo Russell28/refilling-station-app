@@ -102,7 +102,7 @@ export default function PayrollsPage() {
             formData.append("file", file);
 
             const res = await fetch(
-                `${apiClient.defaults.baseURL}/payrolls/import`,
+                `${apiClient.defaults.baseURL}/payroll-entries/import`,
                 {
                     method: "POST",
                     body: formData,
@@ -126,12 +126,9 @@ export default function PayrollsPage() {
     return (
         <div className="space-y-4">
             <PageHeader
-                title="Payroll"
-                description="Track employee salary, advances, and cash paid."
+                title="Entries"
                 action={
                     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between w-full">
-
-                        {/* Top row: actions */}
                         <div className="flex gap-2">
                             <Button
                                 variant="secondary"
