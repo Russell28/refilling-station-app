@@ -207,8 +207,6 @@ export default function PayrollsPage() {
                                         <th className="px-4 py-3 font-medium">Earned Date</th>
                                         <th className="px-4 py-3 font-medium">Employee</th>
                                         <th className="px-4 py-3 font-medium">Salary</th>
-                                        <th className="px-4 py-3 font-medium">Cash Paid</th>
-                                        <th className="px-4 py-3 font-medium">Paid Date</th>
                                         <th className="px-4 py-3 font-medium">Notes</th>
                                         <th className="px-4 py-3 font-medium">Action</th>
                                     </tr>
@@ -227,12 +225,6 @@ export default function PayrollsPage() {
                                             </td>
                                             <td className="px-4 py-3">
                                                 ₱{payroll.salaryAmount.toLocaleString()}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                ₱{payroll.cashPaid.toLocaleString()}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                {formatDateForInput(payroll.paidDate)}
                                             </td>
                                             <td className="px-4 py-3">
                                                 {payroll.notes || "-"}
@@ -273,14 +265,6 @@ export default function PayrollsPage() {
                                             </p>
                                             <p className="text-xs text-slate-500">
                                                 {formatDateForInput(payroll.earnedDate)}
-                                            </p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-base font-bold text-slate-900">
-                                                ₱{payroll.cashPaid.toLocaleString()}
-                                            </p>
-                                            <p className="text-xs text-slate-500">
-                                                {formatDateForInput(payroll.paidDate)}
                                             </p>
                                         </div>
                                     </div>

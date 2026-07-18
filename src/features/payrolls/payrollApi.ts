@@ -3,12 +3,12 @@ import type { DateRangeSearchRequest } from "../../types/DateRangeRequest";
 import type { CreateUpdatePayrollRequest, Payroll } from "./Payroll";
 
 export async function getPayrolls(): Promise<Payroll[]> {
-    const response = await apiClient.get("/payrolls");
+    const response = await apiClient.get("/payroll-entries");
     return response.data;
 }
 
 export async function searchPayrolls(searchParams: DateRangeSearchRequest): Promise<Payroll[]> {
-    const response = await apiClient.post("/payrolls/search", searchParams);
+    const response = await apiClient.post("/payroll-entries/search", searchParams);
     return response.data;
 }
 
@@ -18,12 +18,9 @@ export async function createPayroll(payload: CreateUpdatePayrollRequest): Promis
         earnedDate: payload.earnedDate 
             ? new Date(payload.earnedDate).toISOString().split("T")[0] // Convert to DateOnly format (YYYY-MM-DD)
             : null,
-        paidDate: payload.paidDate 
-            ? new Date(payload.paidDate).toISOString().split("T")[0] // Convert to DateOnly format (YYYY-MM-DD)
-            : null,
     };
 
-    const response = await apiClient.post("/payrolls", apiPayload);
+    const response = await apiClient.post("/payroll-entries", apiPayload);
     return response.data;
 }
 
@@ -33,14 +30,11 @@ export async function updatePayroll(id: number, payload: CreateUpdatePayrollRequ
         earnedDate: payload.earnedDate 
             ? new Date(payload.earnedDate).toISOString().split("T")[0] // Convert to DateOnly format (YYYY-MM-DD)
             : null,
-        paidDate: payload.paidDate 
-            ? new Date(payload.paidDate).toISOString().split("T")[0] // Convert to DateOnly format (YYYY-MM-DD)
-            : null,
     };
-    const response = await apiClient.put(`/payrolls/${id}`, apiPayload);
+    const response = await apiClient.put(`/payroll-entries/${id}`, apiPayload);
     return response.data;
 }
 
 export async function deletePayroll(id: number): Promise<void> {
-    await apiClient.delete(`/payrolls/${id}`);
+    await apiClient.delete(`/payroll-entries/${id}`);
 }

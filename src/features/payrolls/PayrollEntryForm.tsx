@@ -41,10 +41,8 @@ export default function PayrollEntryForm({
     function mapPayrollToFormValues(payroll: Payroll): PayrollFormValues {
         return {
             earnedDate: payroll.earnedDate,
-            paidDate: payroll?.paidDate ?? "", // Use empty string if paidDate is null or undefined
             employeeId: payroll.employeeId.toString(),
             salaryAmount: payroll.salaryAmount.toString(),
-            cashPaid: payroll.cashPaid.toString(),
             notes: payroll.notes ?? "",
         };
     }
@@ -52,10 +50,8 @@ export default function PayrollEntryForm({
     function mapFormValuesToCreate(values: PayrollFormValues): CreateUpdatePayrollRequest {
         return {
             earnedDate: values.earnedDate,
-            paidDate: values.paidDate,
             employeeId: Number(values.employeeId),
             salaryAmount: Number(values.salaryAmount || 0),
-            cashPaid: Number(values.cashPaid || 0),
             notes: values.notes,
         };
     }
@@ -116,12 +112,8 @@ export default function PayrollEntryForm({
                 errors.employeeId = ["Employee is required"]
             }
     
-            if (isNaN(Number(values.salaryAmount)) || Number(values.salaryAmount) < 0) {
+            if (values.salaryAmount === "" || isNaN(Number(values.salaryAmount)) || Number(values.salaryAmount) < 0) {
                 errors.salaryAmount = ["Salary must be a valid number and greater than or equal to zero"]
-            }
-
-            if (isNaN(Number(values.cashPaid)) || Number(values.cashPaid) < 0) {
-                errors.cashPaid = ["Cash Paid must be a valid number and greater than or equal to zero"]
             }
     
             return errors
@@ -161,15 +153,6 @@ export default function PayrollEntryForm({
                             error={fieldErrors.earnedDate?.[0]}
                         />
 
-                        <TextInput
-                            label="Paid Date"
-                            type="date"
-                            name="paidDate"
-                            value={formatDateForInput(formValues.paidDate)}
-                            onChange={handleInputChange}
-                            error={fieldErrors.paidDate?.[0]}
-                        />
-
                         <Dropdown
                             label="Employee"
                             name="employeeId"
@@ -187,15 +170,6 @@ export default function PayrollEntryForm({
                             value={formValues.salaryAmount}
                             onChange={handleInputChange}
                             error={fieldErrors.salaryAmount?.[0]}
-                        />
-
-                        <TextInput
-                            label="Cash Paid"
-                            type="number"
-                            name="cashPaid"
-                            value={formValues.cashPaid}
-                            onChange={handleInputChange}
-                            error={fieldErrors.cashPaid?.[0]}
                         />
                     </div>
 
