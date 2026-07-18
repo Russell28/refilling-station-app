@@ -1,26 +1,26 @@
 import { useState, useEffect, useRef } from "react";
-import type { Payroll, PayrollFormValues } from "./Payroll";
-import { deletePayroll, getPayrolls, searchPayrolls } from "./payrollApi";
+import type { PayrollEntry, PayrollEntryFormValues } from "./PayrollEntry";
+import { deletePayrollEntry, getPayrollEntries, searchPayrollEntries } from "./payrollEntryApi";
 import PayrollEntryForm from "./PayrollEntryForm";
-import Card from "../../components/ui/Card";
-import PageHeader from "../../components/ui/PageHeader";
-import Button from "../../components/ui/Button";
-import { apiClient } from "../../api/client";
-import { getToken } from "../auth/utils/authStorage";
-import { useFormErrors } from "../../hooks/useFormErrors";
-import type { ErrorResponse } from "../../types/ErrorResponse";
-import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
-import { formatDateForInput, getFirstDayOfCurrentWeek, getTodayDateOnly } from "../../utils/date";
-import type { DateRangeSearchRequest } from "../../types/DateRangeRequest";
-import TextInput from "../../components/ui/TextInput";
+import Card from "../../../components/ui/Card";
+import PageHeader from "../../../components/ui/PageHeader";
+import Button from "../../../components/ui/Button";
+import { apiClient } from "../../../api/client";
+import { getToken } from "../../auth/utils/authStorage";
+import { useFormErrors } from "../../../hooks/useFormErrors";
+import type { ErrorResponse } from "../../../types/ErrorResponse";
+import { ServerErrorAlert } from "../../../components/ui/ServerErrorAlert";
+import { formatDateForInput, getFirstDayOfCurrentWeek, getTodayDateOnly } from "../../../utils/date";
+import type { DateRangeSearchRequest } from "../../../types/DateRangeRequest";
+import TextInput from "../../../components/ui/TextInput";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 export default function PayrollsPage() {
-    const [payrolls, setPayrolls] = useState<Payroll[]>([]);
+    const [payrolls, setPayrolls] = useState<PayrollEntry[]>([]);
     const [loading, setLoading] = useState(false);
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [selectedPayroll, setSelectedPayroll] = useState<Payroll | null>(null);
-    const { generalErrors, applyErrors, clearErrors } = useFormErrors<PayrollFormValues>();
+    const [selectedPayroll, setSelectedPayroll] = useState<PayrollEntry | null>(null);
+    const { generalErrors, applyErrors, clearErrors } = useFormErrors<PayrollEntryFormValues>();
     const [searchRequest, setSearchRequest] = useState<DateRangeSearchRequest>({
         startDate: getFirstDayOfCurrentWeek(),
         endDate: getTodayDateOnly(),
@@ -36,7 +36,7 @@ export default function PayrollsPage() {
 
         try {
             setLoading(true);
-            const payrolls = await searchPayrolls(searchRequest);
+            const payrolls = await searchPayrollEntries(searchRequest);
             setPayrolls(payrolls);
         } catch (err) {
             applyErrors(err as ErrorResponse);
@@ -50,7 +50,7 @@ export default function PayrollsPage() {
         setIsFormOpen(true);
     }
 
-    function onEditClick(payroll: Payroll) {
+    function onEditClick(payroll: PayrollEntry) {
         setSelectedPayroll(payroll);
         setIsFormOpen(true);
     }
@@ -75,7 +75,7 @@ export default function PayrollsPage() {
         clearErrors();
         try {
             setLoading(true);
-            await deletePayroll(payrollId);
+            await deletePayrollEntry(payrollId);
             // refresh list after delete
             await loadPayrolls();
         } catch (err) {
@@ -114,7 +114,7 @@ export default function PayrollsPage() {
 
             const data = await res.json();
 
-            const payrolls = await getPayrolls();
+            const payrolls = await getPayrollEntries();
             setPayrolls(payrolls);
             alert(`Imported ${data.insertedRows} rows`);
         } catch (err) {

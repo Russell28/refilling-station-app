@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
-import { type CreateUpdatePayrollRequest, type Payroll, type PayrollFormValues, emptyPayrollFormValues } from "./Payroll";
-import { formatDateForInput } from "../../utils/date";
-import Button from "../../components/ui/Button";
-import Card from "../../components/ui/Card";
-import TextInput from "../../components/ui/TextInput";
-import { useEmployees } from "../employees/EmployeeContext";
-import Dropdown from "../../components/ui/Dropdown";
-import { useFormErrors } from "../../hooks/useFormErrors";
-import { createPayroll, updatePayroll } from "./payrollApi";
-import type { ErrorResponse } from "../../types/ErrorResponse";
-import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
+import { type CreateUpdatePayrollEntryRequest, type PayrollEntry, type PayrollEntryFormValues, emptyPayrollFormValues } from "./PayrollEntry";
+import { formatDateForInput } from "../../../utils/date";
+import Button from "../../../components/ui/Button";
+import Card from "../../../components/ui/Card";
+import TextInput from "../../../components/ui/TextInput";
+import { useEmployees } from "../../employees/EmployeeContext";
+import Dropdown from "../../../components/ui/Dropdown";
+import { useFormErrors } from "../../../hooks/useFormErrors";
+import { createPayrollEntry, updatePayrollEntry } from "./payrollEntryApi";
+import type { ErrorResponse } from "../../../types/ErrorResponse";
+import { ServerErrorAlert } from "../../../components/ui/ServerErrorAlert";
 
 type PayrollEntryFormProps = {
-    selectedPayroll: Payroll | null;
+    selectedPayroll: PayrollEntry | null;
     onSuccess: () => void;
     onCancel: () => void;
 };
@@ -22,10 +22,10 @@ export default function PayrollEntryForm({
     onSuccess,
     onCancel,
 }: PayrollEntryFormProps) {
-    const [formValues, setFormValues] = useState<PayrollFormValues>(emptyPayrollFormValues);
+    const [formValues, setFormValues] = useState<PayrollEntryFormValues>(emptyPayrollFormValues);
     const employees = useEmployees();
     const [saving, setSaving] = useState(false);
-    const { fieldErrors, generalErrors, applyErrors, clearErrors, setFieldErrors } = useFormErrors<PayrollFormValues>()
+    const { fieldErrors, generalErrors, applyErrors, clearErrors, setFieldErrors } = useFormErrors<PayrollEntryFormValues>()
 
     useEffect(() => {
         if (selectedPayroll) {
@@ -38,7 +38,7 @@ export default function PayrollEntryForm({
         }
     }, [selectedPayroll]);
 
-    function mapPayrollToFormValues(payroll: Payroll): PayrollFormValues {
+    function mapPayrollToFormValues(payroll: PayrollEntry): PayrollEntryFormValues {
         return {
             earnedDate: payroll.earnedDate,
             employeeId: payroll.employeeId.toString(),
@@ -47,7 +47,7 @@ export default function PayrollEntryForm({
         };
     }
 
-    function mapFormValuesToCreate(values: PayrollFormValues): CreateUpdatePayrollRequest {
+    function mapFormValuesToCreate(values: PayrollEntryFormValues): CreateUpdatePayrollEntryRequest {
         return {
             earnedDate: values.earnedDate,
             employeeId: Number(values.employeeId),
@@ -87,9 +87,9 @@ export default function PayrollEntryForm({
             setSaving(true);
 
             if (selectedPayroll) {
-                await updatePayroll(selectedPayroll.id, payload);
+                await updatePayrollEntry(selectedPayroll.id, payload);
             } else {
-                await createPayroll(payload);
+                await createPayrollEntry(payload);
             }
             
             onSuccess();
@@ -101,8 +101,8 @@ export default function PayrollEntryForm({
         }
     }
 
-    function validate(values: PayrollFormValues) {
-            const errors: Partial<Record<keyof PayrollFormValues, string[]>> = {}
+    function validate(values: PayrollEntryFormValues) {
+            const errors: Partial<Record<keyof PayrollEntryFormValues, string[]>> = {}
     
             if (!values.earnedDate) {
                 errors.earnedDate = ["Earned Date is required"]

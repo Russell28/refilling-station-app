@@ -1,5 +1,5 @@
 
-export type Payroll = {
+export type PayrollEntry = {
     id: number;
     earnedDate: string; // ISO date string (e.g. "2024-06-30")
     employeeId: number;
@@ -8,21 +8,21 @@ export type Payroll = {
     notes: string | null;
 };
 
-export type PayrollFormValues = {
+export type PayrollEntryFormValues = {
     earnedDate: string;
     employeeId: string;
     salaryAmount: string;
     notes?: string;
 };
 
-export const emptyPayrollFormValues: PayrollFormValues = {
+export const emptyPayrollFormValues: PayrollEntryFormValues = {
     earnedDate: new Date().toISOString().split("T")[0], // Default to today's date in YYYY-MM-DD format
     employeeId: '', 
     salaryAmount: '',
     notes: ''
 };
 
-export type CreateUpdatePayrollRequest = {
+export type CreateUpdatePayrollEntryRequest = {
     earnedDate: string;
     employeeId: number;
     salaryAmount: number;

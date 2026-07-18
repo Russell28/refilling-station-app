@@ -13,7 +13,7 @@ import LoginPage from "../features/auth/pages/LoginPage";
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 import AdminRoute from "../features/auth/components/AdminRoute";
 import CustomerDebtPageWithProvider from "../features/customer-debts/CustomerDebtPageWithProvider";
-import PayrollsPageWithProvider from "../features/payrolls/PayrollsPageWithProvider";
+import PayrollsPageWithProvider from "../features/payrolls/payroll-entries/PayrollEntriesPageWithProvider";
 import UsersPage from "../features/users/UsersPage";
 import EmployeesPage from "../features/employees/EmployeesPage";
 
