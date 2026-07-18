@@ -1,38 +1,30 @@
 
-export type Payroll = {
+export type PayrollEntry = {
     id: number;
     earnedDate: string; // ISO date string (e.g. "2024-06-30")
-    paidDate: string | null; // ISO date string (e.g. "2024-07-01")
     employeeId: number;
     employeeName: string;
     salaryAmount: number;
-    cashPaid: number;
     notes: string | null;
 };
 
-export type PayrollFormValues = {
+export type PayrollEntryFormValues = {
     earnedDate: string;
-    paidDate: string;
     employeeId: string;
     salaryAmount: string;
-    cashPaid: string;
     notes?: string;
 };
 
-export const emptyPayrollFormValues: PayrollFormValues = {
+export const emptyPayrollFormValues: PayrollEntryFormValues = {
     earnedDate: new Date().toISOString().split("T")[0], // Default to today's date in YYYY-MM-DD format
-    paidDate: "", 
     employeeId: '', 
     salaryAmount: '',
-    cashPaid: '',
     notes: ''
 };
 
-export type CreateUpdatePayrollRequest = {
+export type CreateUpdatePayrollEntryRequest = {
     earnedDate: string;
-    paidDate: string | null;
     employeeId: number;
     salaryAmount: number;
-    cashPaid: number;
     notes?: string;
 };

@@ -1,61 +1,57 @@
 import { useState, useEffect } from "react";
-import { type CreateUpdatePayrollRequest, type Payroll, type PayrollFormValues, emptyPayrollFormValues } from "./Payroll";
-import { formatDateForInput } from "../../utils/date";
-import Button from "../../components/ui/Button";
-import Card from "../../components/ui/Card";
-import TextInput from "../../components/ui/TextInput";
-import { useEmployees } from "../employees/EmployeeContext";
-import Dropdown from "../../components/ui/Dropdown";
-import { useFormErrors } from "../../hooks/useFormErrors";
-import { createPayroll, updatePayroll } from "./payrollApi";
-import type { ErrorResponse } from "../../types/ErrorResponse";
-import { ServerErrorAlert } from "../../components/ui/ServerErrorAlert";
+import { type CreateUpdatePayrollPaymentRequest, type PayrollPayment, type PayrollPaymentFormValues, emptyPaymentFormValues } from "./PayrollPayment";
+import { formatDateForInput } from "../../../utils/date";
+import Button from "../../../components/ui/Button";
+import Card from "../../../components/ui/Card";
+import TextInput from "../../../components/ui/TextInput";
+import { useEmployees } from "../../employees/EmployeeContext";
+import Dropdown from "../../../components/ui/Dropdown";
+import { useFormErrors } from "../../../hooks/useFormErrors";
+import { createPayrollPayment, updatePayrollPayment } from "./payrollPaymentApi";
+import type { ErrorResponse } from "../../../types/ErrorResponse";
+import { ServerErrorAlert } from "../../../components/ui/ServerErrorAlert";
 
-type PayrollEntryFormProps = {
-    selectedPayroll: Payroll | null;
+type PayrollPaymentFormProps = {
+    selectedPayroll: PayrollPayment | null;
     onSuccess: () => void;
     onCancel: () => void;
 };
 
-export default function PayrollEntryForm({
+export default function PayrollPaymentForm({
     selectedPayroll,
     onSuccess,
     onCancel,
-}: PayrollEntryFormProps) {
-    const [formValues, setFormValues] = useState<PayrollFormValues>(emptyPayrollFormValues);
+}: PayrollPaymentFormProps) {
+    const [formValues, setFormValues] = useState<PayrollPaymentFormValues>(emptyPaymentFormValues);
     const employees = useEmployees();
     const [saving, setSaving] = useState(false);
-    const { fieldErrors, generalErrors, applyErrors, clearErrors, setFieldErrors } = useFormErrors<PayrollFormValues>()
+    const { fieldErrors, generalErrors, applyErrors, clearErrors, setFieldErrors } = useFormErrors<PayrollPaymentFormValues>()
 
     useEffect(() => {
         if (selectedPayroll) {
             setFormValues(mapPayrollToFormValues(selectedPayroll));
         } else {
             setFormValues({
-                ...emptyPayrollFormValues,
+                ...emptyPaymentFormValues,
                 employeeId: employees.length > 0 ? employees[0].id.toString() : '',
             });
         }
     }, [selectedPayroll]);
 
-    function mapPayrollToFormValues(payroll: Payroll): PayrollFormValues {
+    function mapPayrollToFormValues(payroll: PayrollPayment): PayrollPaymentFormValues {
         return {
-            earnedDate: payroll.earnedDate,
-            paidDate: payroll?.paidDate ?? "", // Use empty string if paidDate is null or undefined
+            paidDate: payroll.paidDate,
             employeeId: payroll.employeeId.toString(),
-            salaryAmount: payroll.salaryAmount.toString(),
-            cashPaid: payroll.cashPaid.toString(),
+            amountPaid: payroll.amountPaid.toString(),
             notes: payroll.notes ?? "",
         };
     }
 
-    function mapFormValuesToCreate(values: PayrollFormValues): CreateUpdatePayrollRequest {
+    function mapFormValuesToCreate(values: PayrollPaymentFormValues): CreateUpdatePayrollPaymentRequest {
         return {
-            earnedDate: values.earnedDate,
             paidDate: values.paidDate,
             employeeId: Number(values.employeeId),
-            salaryAmount: Number(values.salaryAmount || 0),
-            cashPaid: Number(values.cashPaid || 0),
+            amountPaid: Number(values.amountPaid || 0),
             notes: values.notes,
         };
     }
@@ -91,9 +87,9 @@ export default function PayrollEntryForm({
             setSaving(true);
 
             if (selectedPayroll) {
-                await updatePayroll(selectedPayroll.id, payload);
+                await updatePayrollPayment(selectedPayroll.id, payload);
             } else {
-                await createPayroll(payload);
+                await createPayrollPayment(payload);
             }
             
             onSuccess();
@@ -105,23 +101,19 @@ export default function PayrollEntryForm({
         }
     }
 
-    function validate(values: PayrollFormValues) {
-            const errors: Partial<Record<keyof PayrollFormValues, string[]>> = {}
+    function validate(values: PayrollPaymentFormValues) {
+            const errors: Partial<Record<keyof PayrollPaymentFormValues, string[]>> = {}
     
-            if (!values.earnedDate) {
-                errors.earnedDate = ["Earned Date is required"]
+            if (!values.paidDate) {
+                errors.paidDate = ["Paid Date is required"]
             }
     
             if (!values.employeeId) {
                 errors.employeeId = ["Employee is required"]
             }
     
-            if (isNaN(Number(values.salaryAmount)) || Number(values.salaryAmount) < 0) {
-                errors.salaryAmount = ["Salary must be a valid number and greater than or equal to zero"]
-            }
-
-            if (isNaN(Number(values.cashPaid)) || Number(values.cashPaid) < 0) {
-                errors.cashPaid = ["Cash Paid must be a valid number and greater than or equal to zero"]
+            if (values.amountPaid === "" || isNaN(Number(values.amountPaid)) || Number(values.amountPaid) < 0) {
+                errors.amountPaid = ["Amount Paid must be a valid number and greater than or equal to zero"]
             }
     
             return errors
@@ -143,7 +135,7 @@ export default function PayrollEntryForm({
             <Card className="border-slate-300">
                 <div className="mb-4">
                     <h2 className="text-lg font-semibold text-slate-900">
-                        {selectedPayroll ? "Edit Payroll Entry" : "New Payroll Entry"}
+                        {selectedPayroll ? "Edit Payroll Payment" : "New Payroll Payment"}
                     </h2>
                     <p className="mt-1 text-sm text-slate-500">
                         Fill in the payroll details below.
@@ -152,15 +144,6 @@ export default function PayrollEntryForm({
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        <TextInput
-                            label="Earned Date"
-                            type="date"
-                            name="earnedDate"
-                            value={formatDateForInput(formValues.earnedDate)}
-                            onChange={handleInputChange}
-                            error={fieldErrors.earnedDate?.[0]}
-                        />
-
                         <TextInput
                             label="Paid Date"
                             type="date"
@@ -181,21 +164,12 @@ export default function PayrollEntryForm({
                         />
 
                         <TextInput
-                            label="Salary"
+                            label="Amount Paid"
                             type="number"
-                            name="salaryAmount"
-                            value={formValues.salaryAmount}
+                            name="amountPaid"
+                            value={formValues.amountPaid}
                             onChange={handleInputChange}
-                            error={fieldErrors.salaryAmount?.[0]}
-                        />
-
-                        <TextInput
-                            label="Cash Paid"
-                            type="number"
-                            name="cashPaid"
-                            value={formValues.cashPaid}
-                            onChange={handleInputChange}
-                            error={fieldErrors.cashPaid?.[0]}
+                            error={fieldErrors.amountPaid?.[0]}
                         />
                     </div>
 
